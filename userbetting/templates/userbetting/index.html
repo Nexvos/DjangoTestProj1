@@ -1,18 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+
+{% block head_title %}Betting | {{ block.super }}{% endblock %}
+
+
+<style>
+{% block style %}
+.navbar-static-top {
+	margin-bottom: 0px !important;
+}
+.jumbotron {
+	background-color:#f6f6f6;
+	color: #000000;
+}
+{% endblock %}
+</style>
+
+
+{% block extracss %}
     {% load static %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'userbetting/style.css' %}" />
     <meta charset="UTF-8">
-    <title>Index</title>
-</head>
-<body>
-<div class="widget">
-    <div class="header">Testing</div>
-    <div id="chart" class="chart-container"></div>
-</div>
+{% endblock %}
 
+{% block jumbotron %}
+<div class="jumbotron">
+    <div class="container">
+    <div class="row">
+    <div class="col-md-8 col-md-offset-1">
+        <div class="widget">
+            <div class="h3">Testing</div>
+            <div id="chart" class="chart-container"></div>
+        </div>
+    </div>
+
+</div>
+</div>
+</div>
 <button id="update">Update</button>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 
@@ -38,7 +65,5 @@ var dataset = [
 <script src="{% static 'userbetting/pie.js' %}"></script>
 
 
+{% endblock %}
 
-</body>
-
-</html>

@@ -114,7 +114,7 @@ var legend=svg.selectAll('.legend')
       class:'legend',
       transform:function(d,i){
           //Just a calculation for x and y position
-          return 'translate('+ (outerRadius + 80) + ',' + ((i*legendHeight) - h/2 +100) + ')';
+          return 'translate('+ (outerRadius + 50) + ',' + ((i*legendHeight) - h/2 +100) + ')';
       }
   });
 

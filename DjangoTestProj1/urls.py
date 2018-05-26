@@ -15,9 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls import url
+from DjangoTestProj1.views import home
 
 urlpatterns = [
     path('polls/', include('polls.urls')),
     path('betting/', include('userbetting.urls')),
     path('admin/', admin.site.urls),
+    url(r'^accounts/', include('registration.backends.default.urls')),
+    url(r'^$', home, name='home'),
 ]
