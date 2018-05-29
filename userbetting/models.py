@@ -48,7 +48,7 @@ class Bet(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     game = models.ForeignKey(Game, on_delete=models.PROTECT)
     chosen_team = models.ForeignKey(Team, on_delete=models.PROTECT)
-    Amount = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    amount = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 
     # get first user (only user) associated with bet in case of deletion - Will this be needed or can I just make it so
     # that if a user wishes to delete their account that they'll just lock themselves out?
@@ -57,4 +57,4 @@ class Bet(models.Model):
 
 
     def __str__(self):
-        return str(self.game) + " | " + str(self.user) + " | £" + str(self.Amount) +" bet for: " + str(self.chosen_team)
+        return str(self.game) + " | " + str(self.user) + " | £" + str(self.amount) +" bet for: " + str(self.chosen_team)

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+
+{% block head_title %}Betting | {{ block.super }}{% endblock %}
+
+
+<style>
+{% block style %}
+.navbar-static-top {
+	margin-bottom: 0px !important;
+}
+.jumbotron {
+	background-color:#f6f6f6;
+	color: #000000;
+}
+{% endblock %}
+</style>
+
+
+{% block extracss %}
+    {% load static %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'userbetting/style.css' %}" />
+    <meta charset="UTF-8">
+{% endblock %}
+
+{% block jumbotron %}
+<div class="jumbotron">
+    <div class="container">
+    <div class="row">
+    <div class="col-md-8 col-md-offset-1">
+        <div class="widget">
+            <div class="h3">Testing</div>
+            <div id="chart" class="chart-container"></div>
+        </div>
+    </div>
+
+</div>
+</div>
+</div>
+<button id="update">Update</button>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+
+<script>
+
+var color = d3.scale.ordinal()
+    .range(["#222222", "#404B69", "#FF7100", "#BE3030", "#F3ECC8"]);
+
+var dataset = [
+	{ name: 'User 56', amount: 50, percent: 26, team: "B"  },
+	{ name: 'User 8', amount: 30, percent: 20, team: "A"  },
+	{ name: 'User 34', amount: 25, percent: 18, team: "B"  },
+	{ name: 'User 13', amount: 10, percent: 10, team: "A"  },
+    { name: 'User 16', amount: 9, percent: 7, team: "B"  },
+    { name: 'User 23', amount: 9.01, percent: 6, team: "A"  },
+    { name: 'User 120', amount: 7.01, percent: 5, team: "B"  },
+    { name: 'User 106', amount: 6.01, percent: 4, team: "A"  },
+    { name: 'Other', amount: 6, percent: 4, team: "None"  }
+];
+</script>
+
+<script src="{% static 'userbetting/pie.js' %}"></script>
+
+
+{% endblock %}
+
+{% block content %}
+
+    <h1>{{ game.game_id }}</h1>
+
+    {{ total_bet }}
+
+<ul>
+{% for bet in game.bet_set.all %}
+    <li>{{ bet.user }} -- {{ bet.chosen_team }} for £{{ bet.amount }}</li>
+{% endfor %}
+</ul>
+
+{% for bet in game.bet_set.all %}{ name:'{{ bet.user }}', amount:{{ bet.amount }}, percent: 5, team:'{{ bet.chosen_team }}' },
+{% endfor %}
+
+{% endblock %}
