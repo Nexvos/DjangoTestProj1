@@ -58,7 +58,7 @@ function mouseover(d) {
 		.duration(200)
 		.style("opacity", .85)
 		.style("background", color(d.data.name));
-	div.html("Name:" + d.data.name + "<br>" + "£" + d.data.amount)
+	div.html("Name: " + d.data.name + "<br>" + "£" + d.data.amount.toFixed(2))
 		.style("left", (d3.event.pageX) + "px")
 		.style("top", (d3.event.pageY - 28) + "px");
 	};
@@ -94,9 +94,9 @@ var text=svg.selectAll('text')
   .attr("dy", ".4em")
   .attr("text-anchor", "middle")
   .attr("class", "strokeme")
-  .text(function(d){
-      return d.data.percent+"%";
-  })
+  .text(function(d){ if (d.data.percent>2){
+  	return d.data.percent.toFixed(2)+"%";
+  }})
   ;
 
 
@@ -118,8 +118,6 @@ var legend=svg.selectAll('.legend')
       }
   });
 
-var newTotalCalc = d3.sum(dataset, function(d) { return d.amount;})
-    console.log(newTotalCalc);
 
 legend.append('rect')
   .attr({
@@ -153,7 +151,7 @@ var totalLabel = svg.append("text")
 		  }
 	  });
 var total = svg.append("text")
-	.html("£" + Math.round(newTotalCalc).toFixed(2))
+	.html("£" + totalamount.toFixed(2))
 	.attr({
 		  class:'total',
 		  transform:function(d,i){

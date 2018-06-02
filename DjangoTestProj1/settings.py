@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'polls.apps.PollsConfig',
     'userbetting.apps.UserbettingConfig',
     'crispy_forms',
+    'mathfilters',
+    'channels',
 ]
 #Registration Settings
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
@@ -131,3 +133,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# Channel layer settings
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [("localhost", 8000)],
+            'capacity':100,
+        },
+        'ROUTING': 'userbetting.routing.channel_routing',
+    },
+
+}
+
+ASGI_APPLICATION = "DjangoTestProj1.routing.application"
