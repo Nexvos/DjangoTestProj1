@@ -45,6 +45,21 @@
 
 <script>
 
+function onOpen (evt) {
+    console.log("connected to websocket!");
+};
+function onMessage (evt) {
+    console.log("connected to websocket!");
+};
+
+var dataSocket = new WebSocket(
+'ws://' + window.location.host +
+'/ws/betting/' + {{ game.game_id }} + '/');
+
+
+dataSocket.onopen = function (evt) { onOpen(evt) };
+dataSocket.onmessage = function (evt) { onMessage(evt) };
+
 var color = d3.scale.ordinal()
     .range(["#222222", "#404B69", "#FF7100", "#BE3030", "#F3ECC8"]);
 

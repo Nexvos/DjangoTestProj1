@@ -7,8 +7,9 @@ from .models import Game
 
 # Create your views here.
 def index(request):
+    latest_game_list = Game.objects.order_by('-game_date')[:5]
     context = {
-
+        'latest_game_list': latest_game_list,
     }
     return render(request, 'userbetting/index.html', context)
 

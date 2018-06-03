@@ -67,3 +67,17 @@ var dataset = [
 
 {% endblock %}
 
+{% block content %}
+    {% if latest_game_list %}
+        <ul>
+        {% for game in latest_game_list %}
+            <li><a href="{% url 'userBetting:detail' game.game_id %}">
+                {{ game.team_a }} vs {{ game.team_b }} <small>{{ game.game_date|date:"d-F Y H:i" }}</small></a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No games are available at this time.</p>
+{% endif %}
+
+{% endblock %}
