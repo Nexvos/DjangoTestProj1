@@ -162,18 +162,179 @@ var total = svg.append("text")
 
 
 //button
-function change() {
-	var pie = d3.pie()
-		.value(function(d) { return d.presses; })(data);
-	path = d3.select("#pie").selectAll("path").data(pie); // Compute the new angles
-	path.attr("d", arc); // redrawing the path
-	d3.selectAll("text").data(pie).attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; }); // recomputing the centroid and translating the text accordingly.
-}
+function change(asd) {
+	var rawData = asd;
 
-d3.select("#update")
-	.on("click", function() {
-		change();
-	})
+
+	var w=700,h=500;
+
+	var svg=d3.select("#chart")
+			.append("svg")
+			.attr({
+				width:w,
+				height:h,
+				class:'shadow'
+			}).append('g')
+			.attr({
+				transform:'translate('+w/2+','+h/2+')'
+			});
+
+	var outerRadius=Math.min(w, h) / 2;
+	var innerRadius=outerRadius - 80;
+
+	var arc=d3.svg.arc()
+			.outerRadius(outerRadius)
+			.innerRadius(innerRadius);
+
+
+	var pie=d3.layout.pie()
+			.value(function(d){return d.percent})
+			.sort(null)
+			.padAngle(0.02);
+
+
+	//tooltip creation
+	var div = d3.select("body").append("div")
+		.attr("class", "tooltip")
+		.style("opacity", 0);
+
+
+	var path=svg.selectAll('path')
+			.data(pie(rawData))
+			.enter()
+			.append('path')
+			.attr({
+				d:arc,
+				fill: function(d,i){
+					return color(d.data.name);
+				}
+			})
+			//tooltip mouseover animation
+			.on("mouseover", mouseover)
+			.on("mouseout", mouseout);
+
+
+
+	function mouseover(d) {
+		d3.select(this).transition()
+			.duration(200)
+			.style("stroke", "black")
+			.style("stroke-width", "1");
+		div.transition()
+			.duration(200)
+			.style("opacity", .85)
+			.style("background", color(d.data.name));
+		div.html("Name: " + d.data.name + "<br>" + "£" + d.data.amount.toFixed(2))
+			.style("left", (d3.event.pageX) + "px")
+			.style("top", (d3.event.pageY - 28) + "px");
+		};
+
+	function mouseout(d) {
+		d3.select(this).transition()
+			.duration(200)
+			.style("stroke", "none");
+		div.transition()
+			.duration(500)
+			.style("opacity", 0);
+	};
+
+	path.transition()
+		.duration(800)
+		.attrTween('d', function(d) {
+			var interpolate = d3.interpolate({startAngle: 0, endAngle: 0}, d);
+			return function(t) {
+				return arc(interpolate(t));
+			};
+		});
+
+	//percentage text
+	var text=svg.selectAll('text')
+	  .data(pie(rawData))
+	  .enter()
+	  .append("text")
+	  .transition()
+	  .duration(1000)
+	  .attr("transform", function (d) {
+		  return "translate(" + arc.centroid(d) + ")";
+	  })
+	  .attr("dy", ".4em")
+	  .attr("text-anchor", "middle")
+	  .attr("class", "strokeme")
+	  .text(function(d){ if (d.data.percent>2){
+		return d.data.percent.toFixed(2)+"%";
+	  }})
+	  ;
+
+
+	//Creation of the legend
+	var legendRectSize=20;
+	var legendSpacing=7;
+	var legendHeight=legendRectSize+legendSpacing;
+
+
+	var legend=svg.selectAll('.legend')
+	  .data(color.domain())
+	  .enter()
+	  .append('g')
+	  .attr({
+		  class:'legend',
+		  transform:function(d,i){
+			  //Just a calculation for x and y position
+			  return 'translate('+ (outerRadius + 50) + ',' + ((i*legendHeight) - h/2 +100) + ')';
+		  }
+	  });
+
+
+	legend.append('rect')
+	  .attr({
+		  width:legendRectSize,
+		  height:legendRectSize,
+		  rx:20,
+		  ry:20
+	  })
+	  .style({
+		  fill:color,
+		  stroke:color
+	  });
+
+	legend.append('text')
+	  .attr({
+		  x:30,
+		  y:15
+	  })
+	  .text(function(d){
+		  return d;
+	  });
+
+	//total
+	var totalLabel = svg.append("text")
+		.html("Total money bet:")
+		.attr({
+			  class:'total',
+			  transform:function(d,i){
+				  //Just a calculation for x and y position
+				  return 'translate(-70,' + -15 + ')';
+			  }
+		  });
+	var total = svg.append("text")
+		.html("£" + total_bet.toFixed(2))
+		.attr({
+			  class:'total',
+			  transform:function(d,i){
+				  //Just a calculation for x and y position
+				  return 'translate(-35,' + 15 + ')';
+			  }
+		  });
+
+
+  }
+
+
+
+// d3.select("#update")
+// 	.on("click", function() {
+// 		change();
+// 	})
 
 
 

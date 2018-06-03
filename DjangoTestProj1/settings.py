@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'mathfilters',
     'channels',
+    'celery',
 ]
 #Registration Settings
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
@@ -136,17 +137,19 @@ STATIC_URL = '/static/'
 
 
 # Channel layer settings
-
+ASGI_APPLICATION = "DjangoTestProj1.routing.application"
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [("localhost", 8000)],
-            'capacity':100,
+            "hosts": [('127.0.0.1', 6379)],
         },
-        'ROUTING': 'userbetting.routing.channel_routing',
     },
-
 }
 
-ASGI_APPLICATION = "DjangoTestProj1.routing.application"
+# Celery settings
+BROKER_URL = 'redis://localhost:6379/0'  # our redis address
+# use json format for everything
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
