@@ -44,6 +44,8 @@
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 
+<script src="{% static 'userbetting/pie.js' %}"></script>
+
 <script>
 {#pie chart stuff#}
 var color = d3.scale.ordinal()
@@ -61,9 +63,12 @@ var dataset = [
 ];
 
 var totalamount = {{ total_bet }};
+
+InitialPie(dataset,totalamount);
+
 </script>
 
-<script src="{% static 'userbetting/pie.js' %}"></script>
+
 
 <script>
 
@@ -76,13 +81,10 @@ function onOpen (evt) {
 function onMessage (evt) {
     var data = JSON.parse(evt.data);
 
-    console.log(data['message']);
     var message = data['message'];
     var total_bet = Number(data['total_bet']);
-    console.log(typeof (total_bet));
-    console.log(total_bet);
 
-    change(JSON.parse(message));
+    change(JSON.parse(message),total_bet);
 };
 function onClose (evt) {
     console.log("Closed websocket!");
