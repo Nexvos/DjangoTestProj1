@@ -1,12 +1,86 @@
-//svg size variables - also controls size of pie
-var w=700,h=500;
+// //svg size variables - also controls size of pie --- Trying to make the pie page size reactive
+var w= (document.getElementsByClassName('jumbotron')[0].clientWidth) * 0.42;
+var h= w *0.75;
 
-//legend variables
+
+
+console.log(w);
+console.log(h);
+
+// //legend variables
 var legendRectSize=20;
 var legendSpacing=7;
 var legendHeight=legendRectSize+legendSpacing;
 
+
+//sorting function
+var sort_by;
+
+(function() {
+    // utility functions
+    var default_cmp = function(a, b) {
+            if (a == b) return 0;
+            return a < b ? -1 : 1;
+        },
+        getCmpFunc = function(primer, reverse) {
+            var dfc = default_cmp, // closer in scope
+                cmp = default_cmp;
+            if (primer) {
+                cmp = function(a, b) {
+                    return dfc(primer(a), primer(b));
+                };
+            }
+            if (reverse) {
+                return function(a, b) {
+                    return -1 * cmp(a, b);
+                };
+            }
+            return cmp;
+        };
+
+    // actual implementation
+    sort_by = function() {
+        var fields = [],
+            n_fields = arguments.length,
+            field, name, reverse, cmp;
+
+        // preprocess sorting options
+        for (var i = 0; i < n_fields; i++) {
+            field = arguments[i];
+            if (typeof field === 'string') {
+                name = field;
+                cmp = default_cmp;
+            }
+            else {
+                name = field.name;
+                cmp = getCmpFunc(field.primer, field.reverse);
+            }
+            fields.push({
+                name: name,
+                cmp: cmp
+            });
+        }
+
+        // final comparison function
+        return function(A, B) {
+            var a, b, name, result;
+            for (var i = 0; i < n_fields; i++) {
+                result = 0;
+                field = fields[i];
+                name = field.name;
+
+                result = field.cmp(A[name], B[name]);
+                if (result !== 0) break;
+            }
+            return result;
+        }
+    }
+}());
+
 function InitialPie(dataset, totalamount) {
+
+	//sort the data
+	dataset.sort(sort_by('team','name',{name:'amount',primer:parseInt,reverse:false}));
 
 	//Create the SVG with correct attributes and transformed g element
 	var svg=d3.select("#chart")
@@ -22,7 +96,7 @@ function InitialPie(dataset, totalamount) {
 
 	//Set outer and inner radius of the donut
 	var outerRadius=Math.min(w, h) / 2;
-	var innerRadius=outerRadius - 80;
+	var innerRadius=outerRadius *0.78;
 
 	//Create d3 arc - This sets up the creation of the
 	var arc=d3.svg.arc()
@@ -65,7 +139,7 @@ function InitialPie(dataset, totalamount) {
 			.duration(200)
 			.style("opacity", .85)
 			.style("background", color(d.data.name));
-		div.html("Name: " + d.data.name + "<br>" + "£" + d.data.amount.toFixed(2))
+		div.html("Name: " + d.data.name + "<br>" + "£" + d.data.amount.toFixed(2)+ "<br>" + d.data.team)
 			.style("left", (d3.event.pageX) + "px")
 			.style("top", (d3.event.pageY - 28) + "px");
 		};
@@ -118,7 +192,7 @@ function InitialPie(dataset, totalamount) {
 		  class:'legend',
 		  transform:function(d,i){
 			  //Just a calculation for x and y position
-			  return 'translate('+ (outerRadius + 50) + ',' + ((i*legendHeight) - h/2 +100) + ')';
+			  return 'translate('+ (outerRadius + 30) + ',' + ((i*legendHeight) - h/2 +100) + ')';
 		  }
 	  });
 
@@ -158,6 +232,7 @@ function InitialPie(dataset, totalamount) {
 		.html("£" + totalamount.toFixed(2))
 		.attr({
 			  class:'total',
+			  "id":'totalMoney',
 			  transform:function(d,i){
 				  //Just a calculation for x and y position
 				  return 'translate(-35,' + 15 + ')';
@@ -168,6 +243,12 @@ function InitialPie(dataset, totalamount) {
 
 //button
 function change(asd, ads) {
+
+	//sort data by amount -> person -> team
+	// asd.sort(sort_by('amount',false,parseInt));
+	// asd.sort(sort_by('name',false,function(a){return a.toUpperCase()}));
+	// asd.sort(sort_by('team',false,function(a){return a.toUpperCase()}));
+	asd.sort(sort_by('team','name',{name:'amount',primer:parseInt,reverse:false}));
 
     var svg = d3.select("#chart")
 		.select("svg")
@@ -199,7 +280,7 @@ function change(asd, ads) {
 
     path.data(pie(asd));
     path.transition().duration(750).attrTween("d", arcTween); // redraw the arcs
-    console.log(asd);
+    // console.log(asd);
 
     // path.data(pie(oldData))
     // 	.exit();
@@ -281,6 +362,8 @@ function change(asd, ads) {
 		return d.data.percent.toFixed(2)+"%";
 	  }})
 	  ;
+
+
 		//Creation of the legend
 	var legend=svg.selectAll('.legend')
 	  .data(color.domain())
@@ -293,7 +376,6 @@ function change(asd, ads) {
 			  return 'translate('+ (outerRadius + 50) + ',' + ((i*legendHeight) - h/2 +100) + ')';
 		  }
 	  });
-
 
 	legend.append('rect')
 	  .attr({
@@ -315,5 +397,10 @@ function change(asd, ads) {
 	  .text(function(d){
 		  return d;
 	  });
+
+
+	//adjust total
+	svg.select("#totalMoney")
+		.html("£" + ads.toFixed(2));
 };
 

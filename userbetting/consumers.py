@@ -1,6 +1,6 @@
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .models import Game
+from .models import Game, Bet, Team
 from django.shortcuts import get_object_or_404
 import json
 
@@ -9,6 +9,7 @@ class DataConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.game_id = self.scope['url_route']['kwargs']['game_id']
         self.room_group_name = 'chat_%s' % self.game_id
+        self.user = self.scope["user"]
         # Join room group
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -26,7 +27,15 @@ class DataConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+        print(text_data_json)
+        chosenTeam = text_data_json['chosenTeam']
+        amountBid = text_data_json['amountBid']
+        print(chosenTeam)
+        print(amountBid)
+
+        newBet = Bet(user= self.user, game= get_object_or_404(Game, pk=self.game_id),chosen_team=get_object_or_404(Team, name=chosenTeam), amount= amountBid)
+        newBet.save()
+        message = "nothing"
 
         # Send message to room group
         await self.channel_layer.group_send(
