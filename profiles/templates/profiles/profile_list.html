@@ -22,10 +22,12 @@
 
 {% block content %}
 
-<ul>
+<div class="list-group">
 {% for profile in model %}
-    <li><a href="{% url 'profiles:profile' profile.username %}">{{ profile.username }}<a/></li>
+    <a href="{% url 'profiles:profile' profile.username %}" class="list-group-item list-group-item-action">
+        {{ profile.username }}
+    <a/>
 {% endfor %}
-</ul>
+</div>
 
 {% endblock %}
