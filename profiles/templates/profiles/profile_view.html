@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block head_title %}Profile | {{ block.super }}{% endblock %}
+
+
+
+{% block jumbotron %}
+<div class="jumbotron jumbotron-fluid" id="jumbo">
+    <div class="container">
+    <div class="row">
+    <div class="col-md-12">
+        <h1>{{ profile.user }}</h1>
+
+        {%  if profile.picture %}
+        <img src="{{ profile.picture.url }}"/>
+        {% endif %}
+
+    </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+    <div>
+
+    </div>
+{% endblock %}

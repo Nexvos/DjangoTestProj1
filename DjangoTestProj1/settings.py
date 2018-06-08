@@ -38,12 +38,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'polls.apps.PollsConfig',
-    'userbetting.apps.UserbettingConfig',
+
     'crispy_forms',
     'mathfilters',
     'channels',
     'celery',
+
+    # My apps
+    'polls.apps.PollsConfig',
+    'userbetting.apps.UserbettingConfig',
+    'profiles.apps.ProfilesConfig',
 ]
 #Registration Settings
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.
@@ -135,6 +139,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "static", "media_root")
 
 # Channel layer settings
 ASGI_APPLICATION = "DjangoTestProj1.routing.application"

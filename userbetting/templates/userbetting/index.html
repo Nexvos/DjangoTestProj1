@@ -43,27 +43,6 @@
 <button id="update">Update</button>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 
-<script>
-
-var color = d3.scale.ordinal()
-    .range(["#222222", "#404B69", "#FF7100", "#BE3030", "#F3ECC8"]);
-
-var dataset = [
-	{ name: 'User 7', amount: 70, percent: 23, team: "A" },
-	{ name: 'User 56', amount: 50, percent: 20, team: "B"  },
-	{ name: 'User 8', amount: 30, percent: 15, team: "A"  },
-	{ name: 'User 34', amount: 25, percent: 12, team: "B"  },
-	{ name: 'User 13', amount: 10, percent: 10, team: "A"  },
-    { name: 'User 16', amount: 9, percent: 7, team: "B"  },
-    { name: 'User 23', amount: 9.01, percent: 5, team: "A"  },
-    { name: 'User 120', amount: 7.01, percent: 4, team: "B"  },
-    { name: 'User 106', amount: 6.01, percent: 2, team: "A"  },
-    { name: 'Other', amount: 6, percent: 2, team: "None"  }
-];
-</script>
-
-<script src="{% static 'userbetting/pie.js' %}"></script>
-
 
 {% endblock %}
 
