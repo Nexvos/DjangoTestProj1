@@ -10,12 +10,28 @@
 <div class="jumbotron jumbotron-fluid" id="jumbo">
     <div class="container">
     <div class="row">
-    <div class="col-md-12">
-        <h1>{{ profile.user }}</h1>
+    <div class="col-md-6" style="background-color: #e4e5e6;">
+
 
         {%  if profile.picture %}
-        <img src="{{ profile.picture.url }}"/>
+        <div style="text-align: center">
+            <img align="middle" src="{{ profile.picture.url }}" style="max-width: 300px; max-height: 600px"/>
+        </div>
         {% endif %}
+
+    </div>
+    <div class="col-md-6">
+        <h1 class="display-1">{{ profile.user }}</h1><br><br>
+        <dl class="row">
+          <dt class="col-sm-3">Bank:</dt>
+          <dd class="col-sm-9">£{{ profile.bank }}</dd>
+
+          <dt class="col-sm-3">Location:</dt>
+          <dd class="col-sm-9">{{ profile.location }}</dd>
+
+          <dt class="col-sm-3">Colour:</dt>
+          <dd class="col-sm-9">{{ profile.colour }}</dd>
+        <dl/>
 
     </div>
     </div>
@@ -24,7 +40,25 @@
 {% endblock %}
 
 {% block content %}
-    <div>
+    <div class="row">
+    <div class="col-md-6">
+        {% if user == profile.user %}
+        <h1>
+            Update Details
+        </h1><br>
+        <form enctype="multipart/form-data" method='POST' action='{% url "profiles:profile" profile.user %}'>{% csrf_token %}
 
+          {{ form|crispy }}
+
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        <br><br><br><br>
+        <p>
+            Lorem Ipsum
+        </p>
+    </div>
     </div>
 {% endblock %}
