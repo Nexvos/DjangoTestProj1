@@ -42,7 +42,7 @@
 </div>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
 <script src="{% static 'userbetting/pie.js' %}"></script>
 
 <script>
@@ -60,11 +60,25 @@ var dataset = [
             },
         {% endfor %}
 ];
+var grouped = [];
 
+dataset.forEach(function (a) {
+    if (!this[a.name + a.team]) {
+        this[a.name + a.team] = { name: a.name, amount: '0', percent: '0', team:a.team };
+        grouped.push(this[a.name + a.team]);
+    }
+    this[a.name + a.team].amount = (+this[a.name + a.team].amount + +a['amount']);
+    this[a.name + a.team].percent = (+this[a.name + a.team].percent + +a['percent']);
+
+}, Object.create(null));
+
+
+console.log(dataset);
+console.log(grouped);
 
 var totalamount = {{ total_bet }};
 
-InitialPie(dataset,totalamount);
+InitialPie(grouped,totalamount);
 
 </script>
 
@@ -81,10 +95,25 @@ function onOpen (evt) {
 function onMessage (evt) {
     var data = JSON.parse(evt.data);
 
-    var message = data['message'];
+    var message = JSON.parse(data['message']);
+    var message_grouped =[];
+
+    message.forEach(function (a) {
+    if (!this[a.name + a.team]) {
+        this[a.name + a.team] = { name: a.name, amount: '0', percent: '0', team:a.team };
+        message_grouped.push(this[a.name + a.team]);
+    }
+    this[a.name + a.team].amount = (+this[a.name + a.team].amount + +a['amount']);
+    this[a.name + a.team].percent = (+this[a.name + a.team].percent + +a['percent']);
+
+    }, Object.create(null));
+
+    console.log(message);
+    console.log(message_grouped);
+
     var total_bet = Number(data['total_bet']);
 
-    change(JSON.parse(message),total_bet);
+    change(message_grouped,total_bet);
 };
 function onClose (evt) {
     console.log("Closed websocket!");

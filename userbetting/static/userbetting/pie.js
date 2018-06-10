@@ -7,6 +7,10 @@ var h= w *0.75;
 console.log(w);
 console.log(h);
 
+//Set outer and inner radius of the donut
+var outerRadius=Math.min(w, h) / 2;
+var innerRadius=outerRadius *0.78;
+
 // //legend variables
 var legendRectSize=20;
 var legendSpacing=7;
@@ -94,9 +98,7 @@ function InitialPie(dataset, totalamount) {
 				transform:'translate('+w/2+','+h/2+')'
 			});
 
-	//Set outer and inner radius of the donut
-	var outerRadius=Math.min(w, h) / 2;
-	var innerRadius=outerRadius *0.78;
+
 
 	//Create d3 arc - This sets up the creation of the
 	var arc=d3.svg.arc()
@@ -117,7 +119,7 @@ function InitialPie(dataset, totalamount) {
 			.attr({
 				d:arc,
 				fill: function(d,i){
-					return color(d.data.name);
+					return color(d.data.team);
 				}
 			})
 			//tooltip mouseover animation
@@ -266,8 +268,6 @@ function change(asd, ads) {
 			.padAngle(0.02);
     //tooltip creation
 
-	var outerRadius=Math.min(w, h) / 2;
-	var innerRadius=outerRadius - 80;
 
 	var arc=d3.svg.arc()
 			.outerRadius(outerRadius)
@@ -295,7 +295,7 @@ function change(asd, ads) {
         .attr({
             d: arc,
             fill: function (d, i) {
-                return color(d.data.name);
+                return color(d.data.team);
             },
             "id": "fadein"
         })
@@ -373,7 +373,7 @@ function change(asd, ads) {
 		  class:'legend',
 		  transform:function(d,i){
 			  //Just a calculation for x and y position
-			  return 'translate('+ (outerRadius + 50) + ',' + ((i*legendHeight) - h/2 +100) + ')';
+			  return 'translate('+ (outerRadius + 30) + ',' + ((i*legendHeight) - h/2 +100) + ')';
 		  }
 	  });
 
