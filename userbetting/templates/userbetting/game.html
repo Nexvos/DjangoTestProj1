@@ -13,8 +13,12 @@
 	margin-bottom: 0px !important;
 }
 .jumbotron {
-	background-color:#f6f6f6;
+	background-color:#e7e7e7;
 	color: #000000;
+    width: 100%;
+}
+jumbotron.container {
+    width: 100%;
 }
 {% endblock %}
 </style>
@@ -31,12 +35,17 @@
 <div class="jumbotron jumbotron-fluid" id="jumbo">
     <div class="container">
     <div class="row">
-    <div class="col-md-12">
-        <div class="widget">
-            <div id="chart" class="chart-container"></div>
-        </div>
-    </div>
+        <div class="col-md-3" style="background-color: #a6e1ec;">
 
+        </div>
+        <div class="col-md-6">
+            <div class="widget">
+                <div id="chart" class="chart-container"></div>
+            </div>
+        </div>
+        <div class="col-md-3" style="background-color: #a6e1ec;">
+
+        </div>
 </div>
 </div>
 </div>

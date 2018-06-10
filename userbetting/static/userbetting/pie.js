@@ -4,7 +4,6 @@ var h= w *0.75;
 
 //Set outer and inner radius of the donut
 var outerRadiusTeam=Math.min(w, h) / 2;
-var innerRadiusTeam=outerRadiusTeam *0.95;
 var innerRadius=outerRadiusTeam *0.78;
 var outerRadius=outerRadiusTeam *0.90;
 
@@ -107,7 +106,7 @@ function InitialPie(dataset, totalamount) {
 				class:'shadow'
 			}).append('g')
 			.attr({
-				transform:'translate('+w/2+','+h/2+')'
+				transform:'translate('+h/2+','+h/2+')'
 			});
 
 
@@ -125,8 +124,14 @@ function InitialPie(dataset, totalamount) {
 			.padAngle(0);
 
 		//team pie
-	var gs = svg.append("g");
-	var gt = svg.append("g");
+	var gs = svg.append("g")
+        .attr(
+            "id","gs"
+        );
+	var gt = svg.append("g")
+        .attr(
+            "id","gt"
+        );;
 
 	var arcTeam=d3.svg.arc()
 			.outerRadius(outerRadiusTeam)
@@ -169,8 +174,9 @@ function InitialPie(dataset, totalamount) {
 	function mouseover(d) {
 		d3.select(this).transition()
 			.duration(200)
-			.style("stroke", "black")
-			.style("stroke-width", "1");
+            .style("border", "black")
+			.style("stroke", "white")
+			.style("stroke-width", "2");
 		div.transition()
 			.duration(200)
 			.style("opacity", .85)
@@ -183,7 +189,8 @@ function InitialPie(dataset, totalamount) {
 	function mouseout(d) {
 		d3.select(this).transition()
 			.duration(200)
-			.style("stroke", "none");
+			.style("stroke", "black")
+            .style("stroke-width", "1");
 		div.transition()
 			.duration(500)
 			.style("opacity", 0);
@@ -221,7 +228,7 @@ function InitialPie(dataset, totalamount) {
 
 	//Creation of the legend
 	var legend=svg.selectAll('.legend')
-	  .data(color.domain())
+	  .data(team_dataset)
 	  .enter()
 	  .append('g')
 	  .attr({
@@ -241,8 +248,12 @@ function InitialPie(dataset, totalamount) {
 		  ry:20
 	  })
 	  .style({
-		  fill:color,
-		  stroke:color
+		  fill:function(d){
+					return color(d.team);
+				},
+		  stroke:function(d){
+					return color(d.team);
+				}
 	  });
 
 	legend.append('text')
@@ -251,7 +262,7 @@ function InitialPie(dataset, totalamount) {
 		  y:15
 	  })
 	  .text(function(d){
-		  return d;
+		  return d.team;
 	  });
 
 	//total
@@ -291,20 +302,37 @@ function change(asd, ads) {
 	// asd.sort(sort_by('team',false,function(a){return a.toUpperCase()}));
 	asd.sort(sort_by('team','name',{name:'amount',primer:parseInt,reverse:false}));
 
+	var team_dataset = [];
+
+	asd.forEach(function (a) {
+    if (!this[a.team]) {
+        this[a.team] = { name: a.team, amount: '0', percent: '0', team:a.team };
+        team_dataset.push(this[a.team]);
+    }
+    this[a.team].amount = (+this[a.team].amount + +a['amount']);
+    this[a.team].percent = (+this[a.team].percent + +a['percent']);
+
+	}, Object.create(null));
+	console.log(team_dataset);
+
+
     var svg = d3.select("#chart")
 		.select("svg")
 		.select("g");
 
+    var gs = svg.select("#gs");
+    var gt = svg.select("#gt");
     // var oldData = svg.selectAll("path")
     //  .data().map(function(d) { return d.data });
     // console.log(oldData);
 
-    var path = svg.selectAll('path')
+    var path = gt.selectAll('path');
+    var pathTeam = gs.selectAll('path');
 
 	var pie=d3.layout.pie()
 			.value(function(d){return d.percent})
 			.sort(null)
-			.padAngle(0.02);
+			.padAngle(0);
     //tooltip creation
 
 
@@ -312,13 +340,22 @@ function change(asd, ads) {
 			.outerRadius(outerRadius)
 			.innerRadius(innerRadius);
 
+	var arcTeam=d3.svg.arc()
+			.outerRadius(outerRadiusTeam)
+			.innerRadius(innerRadius);
+
     path.each(function (d) {
         this._current = d;
     }); // store the initial angles
-
+    pathTeam.each(function (d) {
+        this._current = d;
+    }); // store the initial angles
 
     path.data(pie(asd));
     path.transition().duration(750).attrTween("d", arcTween); // redraw the arcs
+
+    pathTeam.data(pie(team_dataset));
+    pathTeam.transition().duration(750).attrTween("d", arcTweenTeam);
     // console.log(asd);
 
     // path.data(pie(oldData))
@@ -326,6 +363,18 @@ function change(asd, ads) {
 
     $("#fadein").attr("id", "");
 
+
+
+	// Creates the pie elements
+	pathTeam.data(pie(team_dataset))
+			.enter()
+			.append('path')
+			.attr({
+				d:arcTeam,
+				fill: function(d,i){
+					return color(d.data.team);
+				}
+			});
 
     path.data(pie(asd))
         .enter()
@@ -348,8 +397,8 @@ function change(asd, ads) {
 	function mouseover(d) {
 		d3.select(this).transition()
 			.duration(200)
-			.style("stroke", "black")
-			.style("stroke-width", "1");
+			.style("stroke", "white")
+			.style("stroke-width", "2");
 		div.transition()
 			.duration(200)
 			.style("opacity", .85)
@@ -362,13 +411,15 @@ function change(asd, ads) {
 	function mouseout(d) {
 		d3.select(this).transition()
 			.duration(200)
-			.style("stroke", "none");
+			.style("stroke", "black")
+            .style("stroke-width", "1");
 		div.transition()
 			.duration(500)
 			.style("opacity", 0);
 	};
 
     path.transition().duration(750).attrTween("d", arcTween);
+    pathTeam.transition().duration(750).attrTween("d", arcTweenTeam);
 
 
     $("#fadein").hide().fadeIn(3000);
@@ -381,7 +432,13 @@ function change(asd, ads) {
             return arc(i(t));
         };
     }
-
+    function arcTweenTeam(a) {
+        var i = d3.interpolate(this._current, a);
+        this._current = i(0);
+        return function (t) {
+            return arcTeam(i(t));
+        };
+    }
     //Percentage Text
 	var text=svg.selectAll('#percentagetext')
 	    .data(pie(asd))

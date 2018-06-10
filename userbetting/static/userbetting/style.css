@@ -3,6 +3,11 @@ body {
   position: relative;
 }
 
+#gt {
+    stroke: black;
+    stroke-width: 1px;
+}
+
 svg {
 	/*width: 900px;*/
 	/*height: 500px;*/
