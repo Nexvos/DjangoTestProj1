@@ -2,14 +2,11 @@
 var w= (document.getElementsByClassName('jumbotron')[0].clientWidth) * 0.42;
 var h= w *0.75;
 
-
-
-console.log(w);
-console.log(h);
-
 //Set outer and inner radius of the donut
-var outerRadius=Math.min(w, h) / 2;
-var innerRadius=outerRadius *0.78;
+var outerRadiusTeam=Math.min(w, h) / 2;
+var innerRadiusTeam=outerRadiusTeam *0.95;
+var innerRadius=outerRadiusTeam *0.78;
+var outerRadius=outerRadiusTeam *0.90;
 
 // //legend variables
 var legendRectSize=20;
@@ -86,6 +83,21 @@ function InitialPie(dataset, totalamount) {
 	//sort the data
 	dataset.sort(sort_by('team','name',{name:'amount',primer:parseInt,reverse:false}));
 
+
+	var team_dataset = [];
+
+	dataset.forEach(function (a) {
+    if (!this[a.team]) {
+        this[a.team] = { name: a.team, amount: '0', percent: '0', team:a.team };
+        team_dataset.push(this[a.team]);
+    }
+    this[a.team].amount = (+this[a.team].amount + +a['amount']);
+    this[a.team].percent = (+this[a.team].percent + +a['percent']);
+
+	}, Object.create(null));
+	console.log(team_dataset);
+
+
 	//Create the SVG with correct attributes and transformed g element
 	var svg=d3.select("#chart")
 			.append("svg")
@@ -99,33 +111,55 @@ function InitialPie(dataset, totalamount) {
 			});
 
 
-
 	//Create d3 arc - This sets up the creation of the
 	var arc=d3.svg.arc()
 			.outerRadius(outerRadius)
 			.innerRadius(innerRadius);
 
+
+
 	//Create pie
 	var pie=d3.layout.pie()
 			.value(function(d){return d.percent})
 			.sort(null)
-			.padAngle(0.02);
+			.padAngle(0);
+
+		//team pie
+	var gs = svg.append("g");
+	var gt = svg.append("g");
+
+	var arcTeam=d3.svg.arc()
+			.outerRadius(outerRadiusTeam)
+			.innerRadius(innerRadius);
+
+
 
 	// Creates the pie elements
-	var path=svg.selectAll('path')
+	var pathTeam=gs.selectAll('path')
+			.data(pie(team_dataset))
+			.enter()
+			.append('path')
+			.attr({
+				d:arcTeam,
+				fill: function(d,i){
+					return color(d.data.team);
+				}
+			});
+
+	// Creates the pie elements
+	var path=gt.selectAll('path')
 			.data(pie(dataset))
 			.enter()
 			.append('path')
 			.attr({
 				d:arc,
 				fill: function(d,i){
-					return color(d.data.team);
+					return color(d.data.name);
 				}
 			})
 			//tooltip mouseover animation
 			.on("mouseover", mouseover)
 			.on("mouseout", mouseout);
-
 
 	//tooltip creation
 	var div = d3.select("body").append("div")
@@ -240,6 +274,11 @@ function InitialPie(dataset, totalamount) {
 				  return 'translate(-35,' + 15 + ')';
 			  }
 		  })
+
+
+
+
+
 };
 
 
@@ -286,7 +325,6 @@ function change(asd, ads) {
     // 	.exit();
 
     $("#fadein").attr("id", "");
-
 
 
     path.data(pie(asd))
@@ -365,38 +403,38 @@ function change(asd, ads) {
 
 
 		//Creation of the legend
-	var legend=svg.selectAll('.legend')
-	  .data(color.domain())
-	  .enter()
-	  .append('g')
-	  .attr({
-		  class:'legend',
-		  transform:function(d,i){
-			  //Just a calculation for x and y position
-			  return 'translate('+ (outerRadius + 30) + ',' + ((i*legendHeight) - h/2 +100) + ')';
-		  }
-	  });
-
-	legend.append('rect')
-	  .attr({
-		  width:legendRectSize,
-		  height:legendRectSize,
-		  rx:20,
-		  ry:20
-	  })
-	  .style({
-		  fill:color,
-		  stroke:color
-	  });
-
-	legend.append('text')
-	  .attr({
-		  x:30,
-		  y:15
-	  })
-	  .text(function(d){
-		  return d;
-	  });
+	// var legend=svg.selectAll('.legend')
+	//   .data(color.domain())
+	//   .enter()
+	//   .append('g')
+	//   .attr({
+	// 	  class:'legend',
+	// 	  transform:function(d,i){
+	// 		  //Just a calculation for x and y position
+	// 		  return 'translate('+ (outerRadius + 30) + ',' + ((i*legendHeight) - h/2 +100) + ')';
+	// 	  }
+	//   });
+    //
+	// legend.append('rect')
+	//   .attr({
+	// 	  width:legendRectSize,
+	// 	  height:legendRectSize,
+	// 	  rx:20,
+	// 	  ry:20
+	//   })
+	//   .style({
+	// 	  fill:color,
+	// 	  stroke:color
+	//   });
+    //
+	// legend.append('text')
+	//   .attr({
+	// 	  x:30,
+	// 	  y:15
+	//   })
+	//   .text(function(d){
+	// 	  return d;
+	//   });
 
 
 	//adjust total
