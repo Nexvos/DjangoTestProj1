@@ -11,3 +11,7 @@
 .bg-light {
     background-color: #82afe0 !important;
 }
+label{
+    margin-bottom: 0px;
+    margin-top: .5rem;
+}

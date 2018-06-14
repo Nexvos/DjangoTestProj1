@@ -1,12 +1,22 @@
 from django.db import models
 from datetime import timedelta
 from django.contrib.auth.models import User
+from colorfield.fields import ColorField
+from django.utils import timezone
 
-
+availiable_games = (
+    ("CSGO","cs:go"),
+    ("SC2","starcraft"),
+    ("LOL","League of Legends"),
+    ("Dota","Dota 2")
+)
 # Create your models here.
+
 class Team(models.Model):
     team_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200, unique=True, null=False)
+    picture = models.ImageField(upload_to="teamLogos", null=True, blank=True)
+    colour = ColorField(null=False, blank=False, default="#D3D3D3")
 
     def __str__(self):
         return self.name
@@ -15,7 +25,12 @@ class Game(models.Model):
     game_id = models.AutoField(primary_key=True)
     team_a = models.ForeignKey(Team, on_delete=models.PROTECT, related_name='%(class)s_team_a')
     team_b = models.ForeignKey(Team, on_delete=models.PROTECT, related_name='%(class)s_team_b')
+    videogame = models.CharField(max_length=30,
+                              choices=availiable_games,
+                              default="cs:go")
     game_date = models.DateTimeField('Game start date')
+    winning_team = models.CharField(max_length=60, unique=False, null=True)
+    twitch_url =  models.URLField(max_length=200, unique=True, null=True)
     not_begun = "not_begun"
     starting = "starting"
     ongoing = "ongoing"
@@ -50,10 +65,15 @@ class Bet(models.Model):
     chosen_team = models.ForeignKey(Team, on_delete=models.PROTECT)
     amount = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 
-    # get first user (only user) associated with bet in case of deletion - Will this be needed or can I just make it so
-    # that if a user wishes to delete their account that they'll just lock themselves out?
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField()
 
-    # def get_original_user():
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.bet_id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        return super(User, self).save(*args, **kwargs)
 
 
     def __str__(self):

@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic.list import ListView
 from django.http import HttpResponseRedirect
 
+
 # Create your views here.
 
 User = get_user_model()
@@ -12,7 +13,7 @@ from .forms import ProfileForm
 def profile_view(request, username):
     user = get_object_or_404(User, username=username)
     profile, created = Profile.objects.get_or_create(user=user)
-
+    qs = user.bet_set.all().order_by('-created')[:5]
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = ProfileForm(request.POST, request.FILES)
@@ -37,6 +38,7 @@ def profile_view(request, username):
     context = {
         "profile":profile,
         "form":form,
+        "qs":qs,
     }
     return render(request, "profiles/profile_view.html", context)
 

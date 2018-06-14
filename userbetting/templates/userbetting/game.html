@@ -17,8 +17,30 @@
 	color: #000000;
     width: 100%;
 }
-jumbotron.container {
-    width: 100%;
+
+.fullWidth {
+   width: 100%;
+   margin-left: auto;
+   margin-right: auto;
+   max-width: initial;
+}
+img {
+    max-height: 50%;
+    max-width: 50%;
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: 0;
+    bottom: 50px;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+.col-md-3 h3 {
+    position: relative;
+    top: 72%;
+    transform: translateY(-50%);
+    text-align: center;
 }
 {% endblock %}
 </style>
@@ -33,24 +55,25 @@ jumbotron.container {
 
 {% block jumbotron %}
 <div class="jumbotron jumbotron-fluid" id="jumbo">
-    <div class="container">
-    <div class="row">
-        <div class="col-md-3" style="background-color: #a6e1ec;">
-
+    <div class="container fullWidth">
+    <div class="row fullWidth">
+        <div class="col-md-3">
+            <img src="{{ game.team_a.picture.url }}"">
+            <h3 id="team_a_info">test</h3>
         </div>
         <div class="col-md-6">
             <div class="widget">
                 <div id="chart" class="chart-container"></div>
             </div>
         </div>
-        <div class="col-md-3" style="background-color: #a6e1ec;">
-
+        <div class="col-md-3">
+            <img src="{{ game.team_b.picture.url }}"">
+            <h3 id="team_b_info">test</h3>
         </div>
 </div>
 </div>
 </div>
 <script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
 <script src="{% static 'userbetting/pie.js' %}"></script>
 
@@ -81,13 +104,28 @@ dataset.forEach(function (a) {
 
 }, Object.create(null));
 
+var team_dataset = [];
 
-console.log(dataset);
-console.log(grouped);
+	dataset.forEach(function (a) {
+    if (!this[a.team]) {
+        this[a.team] = { name: a.team, amount: '0', percent: '0', team:a.team };
+        team_dataset.push(this[a.team]);
+    }
+    this[a.team].amount = (+this[a.team].amount + +a['amount']);
+    this[a.team].percent = (+this[a.team].percent + +a['percent']);
+
+}, Object.create(null));
+console.log(team_dataset);
+
+var indexTeamA = _.where(team_dataset, {team:"{{ game.team_a }}"});
+var indexTeamB = _.where(team_dataset, {team:"{{ game.team_b }}"});
+
+$("#team_a_info").html(indexTeamA[0].percent.toFixed(2) + "%");
+$("#team_b_info").html(indexTeamB[0].percent.toFixed(2) + "%");
 
 var totalamount = {{ total_bet }};
 
-InitialPie(grouped,totalamount);
+InitialPie(grouped,totalamount,team_dataset);
 
 </script>
 

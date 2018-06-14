@@ -77,24 +77,13 @@ var sort_by;
     }
 }());
 
-function InitialPie(dataset, totalamount) {
+function InitialPie(dataset, totalamount, team_dataset) {
 
 	//sort the data
 	dataset.sort(sort_by('team','name',{name:'amount',primer:parseInt,reverse:false}));
 
 
-	var team_dataset = [];
 
-	dataset.forEach(function (a) {
-    if (!this[a.team]) {
-        this[a.team] = { name: a.team, amount: '0', percent: '0', team:a.team };
-        team_dataset.push(this[a.team]);
-    }
-    this[a.team].amount = (+this[a.team].amount + +a['amount']);
-    this[a.team].percent = (+this[a.team].percent + +a['percent']);
-
-	}, Object.create(null));
-	console.log(team_dataset);
 
 
 	//Create the SVG with correct attributes and transformed g element
@@ -106,7 +95,7 @@ function InitialPie(dataset, totalamount) {
 				class:'shadow'
 			}).append('g')
 			.attr({
-				transform:'translate('+h/2+','+h/2+')'
+				transform:'translate('+w/2+','+h/2+')'
 			});
 
 

@@ -30,7 +30,10 @@
           <dd class="col-sm-9">{{ profile.location }}</dd>
 
           <dt class="col-sm-3">Colour:</dt>
-          <dd class="col-sm-9">{{ profile.colour }}</dd>
+          <dd class="col-sm-9">
+              <div style="width:15px;height:15px;border:1px solid #000;display: inline-block;background-color: #{{ profile.colour }};"></div>
+              {{ profile.colour }}
+          </dd>
         <dl/>
 
     </div>
@@ -43,22 +46,64 @@
     <div class="row">
     <div class="col-md-6">
         {% if user == profile.user %}
-        <h1>
+        <h2>
             Update Details
-        </h1><br>
+        </h2><br>
         <form enctype="multipart/form-data" method='POST' action='{% url "profiles:profile" profile.user %}'>{% csrf_token %}
 
-          {{ form|crispy }}
+            <div id="div_id_location" class="control-group"> <label for="id_location" class="control-label requiredField">
+                Location<span class="asteriskField">*</span> </label>
+                <div class="controls">
+                    <input type="text" name="location" maxlength="120" class="input-xlarge form-control" required id="id_location" style="width: 90%;"/>
+                </div>
+            </div>
 
-          <button type="submit" class="btn btn-primary">Submit</button>
+            <div id="div_id_colour" class="control-group">
+                <label for="id_colour" class="control-label requiredField">
+                Colour
+                <span class="asteriskField">*</span>
+                </label>
+                <div class="controls">
+
+                <input type="text" name="colour" class="jscolor form-control" value="AB2567" maxlength="7" required id="id_colour" style="width: 90%;"/>
+                </div>
+            </div>
+
+            <div id="div_id_picture" class="control-group">
+                <label for="id_picture" class="control-label requiredField">
+                Picture
+                <span class="asteriskField">*</span>
+                </label>
+            <div class="custom-file" style="width: 90%;">
+              <input name="picture" type="file" class="custom-file-input clearable-file-input" id="id_picture">
+              <label class="custom-file-label" for="id_picture" style="margin-top: 0px;overflow: hidden;">Choose file</label>
+            </div>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary"> Make Changes</button>
         </form>
         {% endif %}
     </div>
     <div class="col-md-6">
-        <br><br><br><br>
+        <h2>
+            Recent Bets
+        </h2>
         <p>
-            Lorem Ipsum
+            {% for bet in qs %}
+                {{ bet.amount }} + {{ bet.game }} + {{ bet.chosen_team }}
+            {% endfor %}
         </p>
     </div>
     </div>
+
+    <script>$
+    // set color field to the current user color
+    ("#id_colour").attr("value","{{ profile.colour }}");
+
+    //update file input with filename once selected
+    $('.custom-file-input').on('change', function() {
+       let fileName = $(this).val().split('\\').pop();
+       $(this).next('.custom-file-label').addClass("selected").html(fileName);
+    });
+    </script>
 {% endblock %}
