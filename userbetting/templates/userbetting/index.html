@@ -32,7 +32,7 @@
     <div class="row">
     <div class="col-md-8 col-md-offset-1">
         <div class="widget">
-            <div class="h3">Testing</div>
+            <div class="h3">Match View</div>
             <div id="chart" class="chart-container"></div>
         </div>
     </div>
@@ -40,7 +40,7 @@
 </div>
 </div>
 </div>
-<button id="update">Update</button>
+
 <script src="http://d3js.org/d3.v3.min.js"></script>
 
 
@@ -48,15 +48,79 @@
 
 {% block content %}
     {% if latest_game_list %}
-        <ul>
-        {% for game in latest_game_list %}
-            <li><a href="{% url 'userBetting:detail' game.game_id %}">
-                {{ game.team_a }} vs {{ game.team_b }} <small>{{ game.game_date|date:"d-F Y H:i" }}</small></a>
-            </li>
-        {% endfor %}
-        </ul>
+        <div id="products" class="row grid-view">
+            {% for game in latest_game_list %}
+            <div class="item  col-xs-4 col-lg-4">
+                <div class="thumbnail">
+                    <img class="group list-group-image" src="http://placehold.it/400x250/000/fff" alt="" />
+                    <div class="caption">
+                        <h4 class="group inner list-group-item-heading" style="margin-top: 0.5rem;"><a href="{% url 'userBetting:detail' game.game_id %}">
+                            {{ game.team_a }} vs {{ game.team_b }}</a></h4>
+
+
+                            <p class="group inner list-group-item-text" style="margin-top: 5px">
+                        {{ game.game_date|date:"d-F Y H:i" }}
+                            </p>
+
+                        <div class="row">
+
+                            <div class="col-xs-12 col-md-6">
+                                <p class="lead" style="color:green;">
+                                    Bets open
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     {% else %}
         <p>No games are available at this time.</p>
-{% endif %}
+    {% endif %}
+
+<style>
+
+.thumbnail
+{
+    margin-bottom: 20px;
+    padding: 0px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+.thumbnail img{
+    max-width: 100%;
+}
+.item.list-group-item .list-group-image
+{
+    margin-right: 10px;
+}
+.item.list-group-item .thumbnail
+{
+    margin-bottom: 0px;
+}
+.item.list-group-item .caption
+{
+    padding: 9px 9px 0px 9px;
+}
+
+
+.item.list-group-item img
+{
+    float: left;
+}
+
+.list-group-item-text
+{
+    margin: 0 0 11px;
+}
+.caption{
+    padding: 8px;
+}
+
+</style>
 
 {% endblock %}

@@ -80,8 +80,8 @@ var sort_by;
 function InitialPie(dataset, totalamount, team_dataset) {
 
 	//sort the data
-	dataset.sort(sort_by('team','name',{name:'amount',primer:parseInt,reverse:false}));
-
+	dataset.sort(sort_by({name:'team',reverse:true},'name',{name:'amount',primer:parseInt,reverse:false}));
+	team_dataset.sort(sort_by({name:'team',reverse:true}));
 
 
 
@@ -283,26 +283,13 @@ function InitialPie(dataset, totalamount, team_dataset) {
 
 
 //button
-function change(asd, ads) {
+function change(asd, ads, team_dataset) {
 
 	//sort data by amount -> person -> team
 	// asd.sort(sort_by('amount',false,parseInt));
 	// asd.sort(sort_by('name',false,function(a){return a.toUpperCase()}));
 	// asd.sort(sort_by('team',false,function(a){return a.toUpperCase()}));
-	asd.sort(sort_by('team','name',{name:'amount',primer:parseInt,reverse:false}));
-
-	var team_dataset = [];
-
-	asd.forEach(function (a) {
-    if (!this[a.team]) {
-        this[a.team] = { name: a.team, amount: '0', percent: '0', team:a.team };
-        team_dataset.push(this[a.team]);
-    }
-    this[a.team].amount = (+this[a.team].amount + +a['amount']);
-    this[a.team].percent = (+this[a.team].percent + +a['percent']);
-
-	}, Object.create(null));
-	console.log(team_dataset);
+	asd.sort(sort_by({name:'team',reverse:true},'name',{name:'amount',primer:parseInt,reverse:false}));
 
 
     var svg = d3.select("#chart")

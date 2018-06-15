@@ -29,19 +29,22 @@ class Game(models.Model):
                               choices=availiable_games,
                               default="cs:go")
     game_date = models.DateTimeField('Game start date')
-    winning_team = models.CharField(max_length=60, unique=False, null=True)
-    twitch_url =  models.URLField(max_length=200, unique=True, null=True)
+    winning_team = models.CharField(max_length=60, unique=False, blank=True, null=True)
+    twitch_url =  models.URLField(max_length=200, unique=True, blank=True, null=True)
+    expected_duration = models.DurationField(default=timedelta(minutes=2))
+
     not_begun = "not_begun"
     starting = "starting"
     ongoing = "ongoing"
-    expected_duration = models.DurationField(default=timedelta(minutes=2))
     finished_not_confirmed = "finished_not_confirmed"
     finished_confirmed = "finished_confirmed"
+
     availiable_statuses = ((not_begun, "Not begun"),
                            (starting, "Starting"),
                            (ongoing, "Ongoing"),
                            (finished_not_confirmed, "Finished - Not yet confirmed"),
                            (finished_confirmed, "Finished - Confirmed"))
+
     status = models.CharField(max_length=30,
                               choices=availiable_statuses,
                               default=not_begun)
@@ -66,14 +69,14 @@ class Bet(models.Model):
     amount = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 
     created = models.DateTimeField(editable=False)
-    modified = models.DateTimeField()
+    modified = models.DateTimeField(editable=False)
 
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''
         if not self.bet_id:
             self.created = timezone.now()
         self.modified = timezone.now()
-        return super(User, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
 
     def __str__(self):

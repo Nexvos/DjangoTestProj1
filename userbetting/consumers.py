@@ -58,7 +58,7 @@ class DataConsumer(AsyncWebsocketConsumer):
         for bet in qs:
             total_bet += bet.amount
         for bet in qs:
-            data += '{"name": "'+ str(bet.user) + '", "amount": ' + str(bet.amount) + ', "percent": ' + str((bet.amount / total_bet)*100) + ', "team": "' + str(bet.chosen_team) +  '"}'
+            data += '{"name": "'+ str(bet.user) + '", "amount": ' + str(bet.amount) + ', "percent": ' + str((bet.amount / total_bet)*100) + ', "team": "' + str(bet.chosen_team) + ', "colour": ' + str(bet.user.profile.colour) + '"}'
             count += 1
             if count != qs.count():
                 data += ","

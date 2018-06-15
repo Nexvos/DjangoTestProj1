@@ -14,9 +14,7 @@
 
 
         {%  if profile.picture %}
-        <div style="text-align: center">
-            <img align="middle" src="{{ profile.picture.url }}" style="max-width: 300px; max-height: 600px"/>
-        </div>
+            <img src="{{ profile.picture.url }}"/>
         {% endif %}
 
     </div>
@@ -43,12 +41,13 @@
 {% endblock %}
 
 {% block content %}
+    {% if user == profile.user %}
     <div class="row">
-    <div class="col-md-6">
-        {% if user == profile.user %}
-        <h2>
+    <div class="col-md-4">
+
+        <h2 style="margin-bottom: 1.5rem;">
             Update Details
-        </h2><br>
+        </h2>
         <form enctype="multipart/form-data" method='POST' action='{% url "profiles:profile" profile.user %}'>{% csrf_token %}
 
             <div id="div_id_location" class="control-group"> <label for="id_location" class="control-label requiredField">
@@ -82,19 +81,44 @@
             <br>
             <button type="submit" class="btn btn-primary"> Make Changes</button>
         </form>
-        {% endif %}
+
     </div>
-    <div class="col-md-6">
-        <h2>
-            Recent Bets
+    <div class="col-md-8">
+        <h2 style="margin-bottom: 1.5rem;">
+            Active Bets
         </h2>
-        <p>
-            {% for bet in qs %}
-                {{ bet.amount }} + {{ bet.game }} + {{ bet.chosen_team }}
-            {% endfor %}
-        </p>
+    <div class="span3">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Bet for</th>
+              <th scope="col">Match</th>
+              <th scope="col">Match Start Date</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Match Status</th>
+            </tr>
+          </thead>
+          <tbody>
+          {%  for bet in qs %}
+
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{ bet.chosen_team }}</td>
+              <td><a href={% url 'userBetting:detail' bet.game.game_id %}>{{ bet.game.team_a }} vs {{ bet.game.team_b }}</a></td>
+              <td>{{ bet.game.game_date }}</td>
+              <td>{{ bet.amount }}</td>
+              <td>{{ bet.game.status }}</td>
+            </tr>
+
+          {% endfor %}
+          </tbody>
+        </table>
     </div>
     </div>
+    </div>
+
+    {% endif %}
 
     <script>$
     // set color field to the current user color
@@ -106,4 +130,18 @@
        $(this).next('.custom-file-label').addClass("selected").html(fileName);
     });
     </script>
+    <style>
+    img {
+        max-height: 98%;
+        max-width: 98%;
+        width: auto;
+        height: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+    </style>
 {% endblock %}

@@ -58,8 +58,8 @@ img {
     <div class="container fullWidth">
     <div class="row fullWidth">
         <div class="col-md-3">
-            <img src="{{ game.team_a.picture.url }}"">
-            <h3 id="team_a_info">test</h3>
+            <img src="{{ game.team_a.picture.url }}">
+            <h3 id="team_a_info">50%</h3>
         </div>
         <div class="col-md-6">
             <div class="widget">
@@ -67,8 +67,8 @@ img {
             </div>
         </div>
         <div class="col-md-3">
-            <img src="{{ game.team_b.picture.url }}"">
-            <h3 id="team_b_info">test</h3>
+            <img src="{{ game.team_b.picture.url }}">
+            <h3 id="team_b_info">50%</h3>
         </div>
 </div>
 </div>
@@ -82,21 +82,25 @@ img {
 var color = d3.scale.ordinal()
     .range(["#222222", "#404B69", "#FF7100", "#BE3030", "#F3ECC8"]);
 
+// Create bet data for this game
 var dataset = [
         {% for bet in game.bet_set.all %}
             {
             name:'{{ bet.user }}',
             amount:{{ bet.amount }},
             percent: {{ bet.amount|div:total_bet|mul:100 }},
-            team:'{{ bet.chosen_team }}'
+            team:'{{ bet.chosen_team }}',
+            colour:'{{ bet.user.profile.colour }}'
             },
         {% endfor %}
 ];
+
+// Group the bet data by user and team
 var grouped = [];
 
 dataset.forEach(function (a) {
     if (!this[a.name + a.team]) {
-        this[a.name + a.team] = { name: a.name, amount: '0', percent: '0', team:a.team };
+        this[a.name + a.team] = { name: a.name, amount: '0', percent: '0', team:a.team, colour:a.colour };
         grouped.push(this[a.name + a.team]);
     }
     this[a.name + a.team].amount = (+this[a.name + a.team].amount + +a['amount']);
@@ -104,18 +108,76 @@ dataset.forEach(function (a) {
 
 }, Object.create(null));
 
-var team_dataset = [];
 
-	dataset.forEach(function (a) {
-    if (!this[a.team]) {
-        this[a.team] = { name: a.team, amount: '0', percent: '0', team:a.team };
-        team_dataset.push(this[a.team]);
-    }
-    this[a.team].amount = (+this[a.team].amount + +a['amount']);
-    this[a.team].percent = (+this[a.team].percent + +a['percent']);
+// Create the team data
+var teamdata_a_amount = 0;
+var teamdata_b_amount = 0;
+var teamdata_a_percent = 0;
+var teamdata_b_percent = 0;
 
-}, Object.create(null));
+for (i in grouped){
+   if (grouped[i].team=='{{ game.team_a }}') {
+       teamdata_a_amount += grouped[i].amount;
+       teamdata_a_percent += grouped[i].percent;
+   }
+   else if(grouped[i].team=='{{ game.team_b }}'){
+       teamdata_b_amount += grouped[i].amount;
+       teamdata_b_percent += grouped[i].percent;
+   }
+
+};
+
+var team_dataset = [{
+            name:'{{ game.team_a }}',
+            amount:teamdata_a_amount,
+            percent: teamdata_a_percent,
+            team:'{{ game.team_a }}',
+            colour:'{{ game.team_a.colour }}'
+            },
+            {
+            name:'{{ game.team_b }}',
+            amount:teamdata_b_amount,
+            percent: teamdata_b_percent,
+            team:'{{ game.team_b }}',
+            colour:'{{ game.team_b.colour }}'
+            }];
+
 console.log(team_dataset);
+// Create some placeholder data in the event no one bets
+if (grouped === undefined || grouped.length == 0){
+    grouped.push(
+        {
+            name:'{{ user }}',
+            amount:0,
+            percent: 50,
+            team:'{{ game.team_a }}',
+            colour:'D3D3D3'
+            },
+            {
+            name:'{{ user }}',
+            amount:0,
+            percent: 50,
+            team:'{{ game.team_b }}',
+            colour:'D3D3D3'
+            }
+            );
+    team_dataset= [
+        {
+            name:'{{ game.team_b }}',
+            amount:0,
+            percent: 50,
+            team:'{{ game.team_b }}',
+            colour:'{{ game.team_b.colour }}'
+            },
+            {
+            name:'{{ game.team_a }}',
+            amount:0,
+            percent: 50,
+            team:'{{ game.team_a }}',
+            colour:'{{ game.team_a.colour }}'
+            }
+            ];
+};
 
 var indexTeamA = _.where(team_dataset, {team:"{{ game.team_a }}"});
 var indexTeamB = _.where(team_dataset, {team:"{{ game.team_b }}"});
@@ -147,7 +209,7 @@ function onMessage (evt) {
 
     message.forEach(function (a) {
     if (!this[a.name + a.team]) {
-        this[a.name + a.team] = { name: a.name, amount: '0', percent: '0', team:a.team };
+        this[a.name + a.team] = { name: a.name, amount: '0', percent: '0', team:a.team, colour:a.colour };
         message_grouped.push(this[a.name + a.team]);
     }
     this[a.name + a.team].amount = (+this[a.name + a.team].amount + +a['amount']);
@@ -155,12 +217,45 @@ function onMessage (evt) {
 
     }, Object.create(null));
 
-    console.log(message);
+    // Create the team data
+    var teamdata_a_amount = 0;
+    var teamdata_b_amount = 0;
+    var teamdata_a_percent = 0;
+    var teamdata_b_percent = 0;
+
+    for (i in message_grouped){
+       if (message_grouped[i].team=='{{ game.team_a }}') {
+           teamdata_a_amount += message_grouped[i].amount;
+           teamdata_a_percent += message_grouped[i].percent;
+       }
+       else if(message_grouped[i].team=='{{ game.team_b }}'){
+           teamdata_b_amount += message_grouped[i].amount;
+           teamdata_b_percent += message_grouped[i].percent;
+       }
+    };
+
+    var message_team_dataset = [{
+                name:'{{ game.team_a }}',
+                amount:teamdata_a_amount,
+                percent: teamdata_a_percent,
+                team:'{{ game.team_a }}',
+                colour:'{{ game.team_a.colour }}'
+                },
+                {
+                name:'{{ game.team_b }}',
+                amount:teamdata_b_amount,
+                percent: teamdata_b_percent,
+                team:'{{ game.team_b }}',
+                colour:'{{ game.team_b.colour }}'
+                }];
+
+
     console.log(message_grouped);
+    console.log(message_team_dataset);
 
     var total_bet = Number(data['total_bet']);
 
-    change(message_grouped,total_bet);
+    change(message_grouped,total_bet, message_team_dataset);
 };
 function onClose (evt) {
     console.log("Closed websocket!");

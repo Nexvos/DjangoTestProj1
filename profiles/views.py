@@ -13,7 +13,9 @@ from .forms import ProfileForm
 def profile_view(request, username):
     user = get_object_or_404(User, username=username)
     profile, created = Profile.objects.get_or_create(user=user)
-    qs = user.bet_set.all().order_by('-created')[:5]
+    qs = user.bet_set.all().order_by('-game__game_date')
+    qs = qs.exclude(game__status='finished_confirmed')
+
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = ProfileForm(request.POST, request.FILES)
