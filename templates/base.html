@@ -25,18 +25,24 @@
 
   <body>
   {% include 'navbar.html' %}
+<div class="container-fluid">
+    <div class="row">
+        {%  include 'sidebar.html' %}
+<main class="col-sm-11 offset-sm-1 col-md-11 offset-md-1" style="padding-left: 0; padding-right: 0;">
 
-{% block jumbotron %}
+    {% block jumbotron %}
 
 {% endblock %}
-    <div class="container">
 
+<div class="container">
 
         {% block content %}
 
             {% endblock %}
+</div>
+</main>
 
-
+</div>
     </div> <!-- /container -->
 
     {% include "javascript.html" %}

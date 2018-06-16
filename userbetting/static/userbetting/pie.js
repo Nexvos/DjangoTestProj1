@@ -91,8 +91,7 @@ function InitialPie(dataset, totalamount, team_dataset) {
 			.append("svg")
 			.attr({
 				width:w,
-				height:h,
-				class:'shadow'
+				height:h
 			}).append('g')
 			.attr({
 				transform:'translate('+w/2+','+h/2+')'
@@ -137,7 +136,8 @@ function InitialPie(dataset, totalamount, team_dataset) {
 				d:arcTeam,
 				fill: function(d,i){
 					return d.data.colour;
-				}
+				},
+				class:'shadow'
 			});
 
 	// Creates the pie elements
@@ -149,7 +149,8 @@ function InitialPie(dataset, totalamount, team_dataset) {
 				d:arc,
 				fill: function(d,i){
 					return d.data.colour;
-				}
+				},
+				class:'shadow'
 			})
 			//tooltip mouseover animation
 			.on("mouseover", mouseover)

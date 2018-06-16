@@ -57,16 +57,16 @@ img {
 <div class="jumbotron jumbotron-fluid" id="jumbo">
     <div class="container fullWidth">
     <div class="row fullWidth">
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-2 d-none d-sm-block">
             <img src="{{ game.team_a.picture.url }}">
             <h3 id="team_a_info">50%</h3>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 col-sm-8 col-xs-12">
             <div class="widget">
                 <div id="chart" class="chart-container"></div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-2 d-none d-sm-block">
             <img src="{{ game.team_b.picture.url }}">
             <h3 id="team_b_info">50%</h3>
         </div>
@@ -206,6 +206,7 @@ function onMessage (evt) {
     console.log(data);
     var message = JSON.parse(data['message']);
     var message_grouped =[];
+    console.log(message);
 
     message.forEach(function (a) {
     if (!this[a.name + a.team]) {
@@ -234,19 +235,20 @@ function onMessage (evt) {
        }
     };
 
-    var message_team_dataset = [{
-                name:'{{ game.team_a }}',
-                amount:teamdata_a_amount,
-                percent: teamdata_a_percent,
-                team:'{{ game.team_a }}',
-                colour:'#{{ game.team_a.colour }}'
-                },
+    var message_team_dataset = [
                 {
                 name:'{{ game.team_b }}',
                 amount:teamdata_b_amount,
                 percent: teamdata_b_percent,
                 team:'{{ game.team_b }}',
                 colour:'#{{ game.team_b.colour }}'
+                },
+                {
+                name:'{{ game.team_a }}',
+                amount:teamdata_a_amount,
+                percent: teamdata_a_percent,
+                team:'{{ game.team_a }}',
+                colour:'#{{ game.team_a.colour }}'
                 }];
 
 
