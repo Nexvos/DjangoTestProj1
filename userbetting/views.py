@@ -20,6 +20,8 @@ def testPage(request):
     return render(request, 'userbetting/test.html', context)
 
 def detail(request, game_id):
+    user = request.user
+    userbets = user.bet_set.all().filter(game__game_id=game_id)
     game = get_object_or_404(Game, pk=game_id)
     qs = game.bet_set.all()
     total_bet = 0
@@ -27,7 +29,8 @@ def detail(request, game_id):
         total_bet += bet.amount
     context = {
         'game': game,
-        'total_bet': total_bet
+        'total_bet': total_bet,
+        'userbets':userbets
                }
     return render(request, 'userbetting/game.html', context)
 

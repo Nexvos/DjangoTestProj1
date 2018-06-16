@@ -16,7 +16,7 @@ class Team(models.Model):
     team_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200, unique=True, null=False)
     picture = models.ImageField(upload_to="teamLogos", null=True, blank=True)
-    colour = ColorField(null=False, blank=False, default="#D3D3D3")
+    colour = models.CharField(max_length=7, null=False, blank=False, default="#D3D3D3")
 
     def __str__(self):
         return self.name

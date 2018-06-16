@@ -1,0 +1,80 @@
+// //svg size variables - also controls size of pie --- Trying to make the pie page size reactive
+var w= 348;
+var h= 150;
+
+//Set outer and inner radius of the donut
+var outerRadiusTeam=Math.min(w, h) / 2;
+var innerRadius=outerRadiusTeam *0.78;
+var outerRadius=outerRadiusTeam *0.90;
+
+
+
+function InitialPie(team_dataset, chartID) {
+
+	//Create the SVG with correct attributes and transformed g element
+	var svg=d3.select("#chart" + chartID)
+			.append("svg")
+			.attr({
+				width:w,
+				height:h,
+				class:'shadow'
+			}).append('g')
+			.attr({
+				transform:'translate('+w/2+','+h/2+')'
+			});
+
+
+	//Create pie
+	var pie=d3.layout.pie()
+			.value(function(d){return d.percent})
+			.sort(null)
+			.padAngle(0);
+
+		//team pie
+	var gs = svg.append("g")
+        .attr(
+            "id","gs"
+        );
+
+	var arcTeam=d3.svg.arc()
+			.outerRadius(outerRadiusTeam)
+			.innerRadius(innerRadius);
+
+
+
+	// Creates the pie elements
+	var pathTeam=gs.selectAll('path')
+			.data(pie(team_dataset))
+			.enter()
+			.append('path')
+			.attr({
+				d:arcTeam,
+				fill: function(d,i){
+					return d.data.colour;
+				}
+			});
+
+
+
+	//percentage text
+	var text=svg.selectAll('text')
+	  .data(pie(team_dataset))
+	  .enter()
+	  .append("text")
+	  .transition()
+	  .duration(1000)
+	  .attr("transform", function (d) {
+		  return "translate(" + arc.centroid(d) + ")";
+	  })
+	  .attr("dy", ".4em")
+	  .attr("text-anchor", "middle")
+	  .attr("class", "strokeme")
+	  .attr("id", "percentagetext")
+	  .text(function(d){ if (d.data.percent>2){
+		return d.data.percent.toFixed(2)+"%";
+	  }})
+	  ;
+
+
+};
+

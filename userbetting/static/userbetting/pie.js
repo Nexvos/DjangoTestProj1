@@ -136,7 +136,7 @@ function InitialPie(dataset, totalamount, team_dataset) {
 			.attr({
 				d:arcTeam,
 				fill: function(d,i){
-					return color(d.data.team);
+					return d.data.colour;
 				}
 			});
 
@@ -148,7 +148,7 @@ function InitialPie(dataset, totalamount, team_dataset) {
 			.attr({
 				d:arc,
 				fill: function(d,i){
-					return color(d.data.name);
+					return d.data.colour;
 				}
 			})
 			//tooltip mouseover animation
@@ -169,7 +169,7 @@ function InitialPie(dataset, totalamount, team_dataset) {
 		div.transition()
 			.duration(200)
 			.style("opacity", .85)
-			.style("background", color(d.data.name));
+			.style("background", d.data.colour);
 		div.html("Name: " + d.data.name + "<br>" + "£" + d.data.amount.toFixed(2)+ "<br>" + d.data.team)
 			.style("left", (d3.event.pageX) + "px")
 			.style("top", (d3.event.pageY - 28) + "px");
@@ -238,10 +238,10 @@ function InitialPie(dataset, totalamount, team_dataset) {
 	  })
 	  .style({
 		  fill:function(d){
-					return color(d.team);
+					return d.colour;
 				},
 		  stroke:function(d){
-					return color(d.team);
+					return d.colour;
 				}
 	  });
 
@@ -348,7 +348,7 @@ function change(asd, ads, team_dataset) {
 			.attr({
 				d:arcTeam,
 				fill: function(d,i){
-					return color(d.data.team);
+					return d.data.colour;
 				}
 			});
 
@@ -358,7 +358,7 @@ function change(asd, ads, team_dataset) {
         .attr({
             d: arc,
             fill: function (d, i) {
-                return color(d.data.team);
+                return d.data.colour;
             },
             "id": "fadein"
         })
@@ -378,7 +378,7 @@ function change(asd, ads, team_dataset) {
 		div.transition()
 			.duration(200)
 			.style("opacity", .85)
-			.style("background", color(d.data.name));
+			.style("background", d.data.colour);
 		div.html("Name: " + d.data.name + "<br>" + "£" + d.data.amount.toFixed(2))
 			.style("left", (d3.event.pageX) + "px")
 			.style("top", (d3.event.pageY - 28) + "px");

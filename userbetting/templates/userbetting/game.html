@@ -90,7 +90,7 @@ var dataset = [
             amount:{{ bet.amount }},
             percent: {{ bet.amount|div:total_bet|mul:100 }},
             team:'{{ bet.chosen_team }}',
-            colour:'{{ bet.user.profile.colour }}'
+            colour:'#{{ bet.user.profile.colour }}'
             },
         {% endfor %}
 ];
@@ -132,14 +132,14 @@ var team_dataset = [{
             amount:teamdata_a_amount,
             percent: teamdata_a_percent,
             team:'{{ game.team_a }}',
-            colour:'{{ game.team_a.colour }}'
+            colour:'#{{ game.team_a.colour }}'
             },
             {
             name:'{{ game.team_b }}',
             amount:teamdata_b_amount,
             percent: teamdata_b_percent,
             team:'{{ game.team_b }}',
-            colour:'{{ game.team_b.colour }}'
+            colour:'#{{ game.team_b.colour }}'
             }];
 
 console.log(team_dataset);
@@ -151,14 +151,14 @@ if (grouped === undefined || grouped.length == 0){
             amount:0,
             percent: 50,
             team:'{{ game.team_a }}',
-            colour:'D3D3D3'
+            colour:'#D3D3D3'
             },
             {
             name:'{{ user }}',
             amount:0,
             percent: 50,
             team:'{{ game.team_b }}',
-            colour:'D3D3D3'
+            colour:'#D3D3D3'
             }
             );
     team_dataset= [
@@ -167,14 +167,14 @@ if (grouped === undefined || grouped.length == 0){
             amount:0,
             percent: 50,
             team:'{{ game.team_b }}',
-            colour:'{{ game.team_b.colour }}'
+            colour:'#{{ game.team_b.colour }}'
             },
             {
             name:'{{ game.team_a }}',
             amount:0,
             percent: 50,
             team:'{{ game.team_a }}',
-            colour:'{{ game.team_a.colour }}'
+            colour:'#{{ game.team_a.colour }}'
             }
             ];
 };
@@ -203,7 +203,7 @@ function onOpen (evt) {
 };
 function onMessage (evt) {
     var data = JSON.parse(evt.data);
-
+    console.log(data);
     var message = JSON.parse(data['message']);
     var message_grouped =[];
 
@@ -239,14 +239,14 @@ function onMessage (evt) {
                 amount:teamdata_a_amount,
                 percent: teamdata_a_percent,
                 team:'{{ game.team_a }}',
-                colour:'{{ game.team_a.colour }}'
+                colour:'#{{ game.team_a.colour }}'
                 },
                 {
                 name:'{{ game.team_b }}',
                 amount:teamdata_b_amount,
                 percent: teamdata_b_percent,
                 team:'{{ game.team_b }}',
-                colour:'{{ game.team_b.colour }}'
+                colour:'#{{ game.team_b.colour }}'
                 }];
 
 
@@ -283,59 +283,89 @@ dataSocket.onclose = function (evt) { onClose(evt) };
 
     <h1>{{ game.team_a }} vs {{ game.team_b }} <small>{{ game.game_date|date:"d-F Y H:i" }}</small></h1>
 
-
-    <form>
-        <div class="form-group">
-            <label for="teamSelect">Team</label>
-            <select class="form-control" id="teamSelect">
-              <option>{{ game.team_a }}</option>
-              <option>{{ game.team_b }}</option>
-            </select>
+<div class="row" style="margin-top: 20px">
+        <div class="col-md-6">
+            <form>
+                <div class="form-group">
+                    <label for="teamSelect">Team</label>
+                    <select class="form-control" id="teamSelect" style="width: 95%">
+                      <option>{{ game.team_a }}</option>
+                      <option>{{ game.team_b }}</option>
+                    </select>
+                </div>
+                <div class="input-group mb-3" style="width: 95%">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">£</span>
+                  </div>
+                  <input type="number" class="form-control" aria-label="Amount (to the nearest pound)" min="0.01" step="0.01" max="2500" placeholder="5.00" id="amountBid">
+                  <div class="input-group-append">
+                    <span class="input-group-text">.00</span>
+                  </div>
+                </div>
+                <button type="button" id="update">Submit</button>
+            </form>
         </div>
-        <div class="input-group mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">£</span>
-          </div>
-          <input type="number" class="form-control" aria-label="Amount (to the nearest pound)" min="0.01" step="0.01" max="2500" placeholder="5.00" id="amountBid">
-          <div class="input-group-append">
-            <span class="input-group-text">.00</span>
-          </div>
+        <div class="col-md-6">
+            <div class="span3"><table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Bet for</th>
+                  <th scope="col">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+              {%  for bet in userbets %}
+                <tr id="transparentrow{{ forloop.counter }}">
+                  <th scope="row">{{ forloop.counter }}</th>
+                  <td>{{ bet.chosen_team }}</td>
+                  <td>{{ bet.amount }}</td>
+                </tr>
+
+              {% endfor %}
+              </tbody>
+            </table></div>
         </div>
-        <button type="button" id="update">Submit</button>
-    </form>
-
-    <br>
-    <br>
-    <br>
-        {{ total_bet }}
-
-    <ul>
-    {% for bet in game.bet_set.all %}
-        <li>{{ bet.user }} -- {{ bet.chosen_team }} for £{{ bet.amount }}</li>
-    {% endfor %}
-    </ul>
-
-    {% for bet in game.bet_set.all %}{ name:'{{ bet.user }}', amount:{{ bet.amount }}, percent: {{ bet.amount|div:total_bet|mul:100 }}, team:'{{ bet.chosen_team }}' },
-    {% endfor %}
+</div>
+<br>
+<script>
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+{#$(".transparentrow").css("background-color",hexToRgbNew(#{{ game.team_a.colour }}));#}
+ // "51";
 
 
-    <script>
+{% for bet in userbets %}
+    team_colour_rgb = hexToRgb("#{{ bet.chosen_team.colour }}");
 
-
-    $("#update").click(function (e) {
-        var teamInput = document.querySelector('#teamSelect');
-        var chosenTeam = teamInput.value;
-
-        var bidInput = document.querySelector('#amountBid');
-        var amountBid = bidInput.value;
-
-        dataSocket.send(JSON.stringify({
-            'chosenTeam': chosenTeam,
-            'amountBid': amountBid
-        }));
-
-        console.log(chosenTeam);
-        console.log(amountBid);
+    $("#transparentrow{{ forloop.counter }}").css("background-color", function(){
+        return "rgba(" + team_colour_rgb.r +"," + team_colour_rgb.g +"," + team_colour_rgb.b +","+"0.35)"
     });
-    </script>
+{% endfor %}
+
+
+
+console.log("working")
+$("#update").click(function (e) {
+    var teamInput = document.querySelector('#teamSelect');
+    var chosenTeam = teamInput.value;
+
+    var bidInput = document.querySelector('#amountBid');
+    var amountBid = bidInput.value;
+
+    dataSocket.send(JSON.stringify({
+        'chosenTeam': chosenTeam,
+        'amountBid': amountBid
+    }));
+
+    console.log(chosenTeam);
+    console.log(amountBid);
+});
+</script>
 {% endblock %}

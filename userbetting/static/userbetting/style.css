@@ -1,8 +1,3 @@
-body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  position: relative;
-}
-
 #gt {
     stroke: black;
     stroke-width: 1px;
@@ -67,18 +62,11 @@ div.tooltip {
     1px 1px 0 #000;
 }
 
-.strokeme
-{
-    color: white;
-    text-shadow:
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000;
-}
-
 g text.total {
     fill: black;
 	font-size: 22px;
     text-align: center;
+}
+.transparentrow {
+    background-color: rgba(255,255,255,1);
 }
