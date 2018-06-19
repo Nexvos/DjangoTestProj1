@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'mathfilters',
     'channels',
     'celery',
+    'django_celery_beat',
 
     # My apps
     'polls.apps.PollsConfig',
@@ -160,3 +161,5 @@ BROKER_URL = 'redis://localhost:6379/0'  # our redis address
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CELERYBEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
