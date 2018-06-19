@@ -24,11 +24,11 @@ try:
 except ImportError:  # pragma: no cover
     raise ImproperlyConfigured(
         'The database result backend requires SQLAlchemy to be installed.'
-        'See https://pypi.python.org/pypi/SQLAlchemy')
+        'See https://pypi.org/project/SQLAlchemy/')
 
 logger = logging.getLogger(__name__)
 
-__all__ = ['DatabaseBackend']
+__all__ = ('DatabaseBackend',)
 
 
 @contextmanager
@@ -182,7 +182,7 @@ class DatabaseBackend(BaseBackend):
 
     def __reduce__(self, args=(), kwargs={}):
         kwargs.update(
-            dict(dburi=self.url,
-                 expires=self.expires,
-                 engine_options=self.engine_options))
+            {'dburi': self.url,
+             'expires': self.expires,
+             'engine_options': self.engine_options})
         return super(DatabaseBackend, self).__reduce__(args, kwargs)

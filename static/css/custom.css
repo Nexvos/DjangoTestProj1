@@ -5,7 +5,9 @@ body {
 .text-align-center {
 	text-align: center;
 }
-
+.thumbnail .widget {
+    background-color: #fff7ec;
+}
 .navbar
         {
             border-bottom:1px solid #000;

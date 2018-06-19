@@ -16,8 +16,7 @@ function InitialPie(team_dataset, chartID) {
 			.append("svg")
 			.attr({
 				width:w,
-				height:h,
-				class:'shadow'
+				height:h
 			}).append('g')
 			.attr({
 				transform:'translate('+w/2+','+h/2+')'
@@ -56,24 +55,6 @@ function InitialPie(team_dataset, chartID) {
 
 
 
-	//percentage text
-	var text=svg.selectAll('text')
-	  .data(pie(team_dataset))
-	  .enter()
-	  .append("text")
-	  .transition()
-	  .duration(1000)
-	  .attr("transform", function (d) {
-		  return "translate(" + arc.centroid(d) + ")";
-	  })
-	  .attr("dy", ".4em")
-	  .attr("text-anchor", "middle")
-	  .attr("class", "strokeme")
-	  .attr("id", "percentagetext")
-	  .text(function(d){ if (d.data.percent>2){
-		return d.data.percent.toFixed(2)+"%";
-	  }})
-	  ;
 
 
 };

@@ -113,20 +113,21 @@
             var teamdata_a_percent = (teamdata_a_amount / total_ab_amount) * 100;
             var teamdata_b_percent = (teamdata_b_amount / total_ab_amount) * 100;
 
-            var team_dataset = [{
-                name:'{{ game.team_a }}',
-                amount:teamdata_a_amount,
-                percent: teamdata_a_percent,
-                team:'{{ game.team_a }}',
-                colour:'#{{ game.team_a.colour }}'
-                },
+            var team_dataset = [
                 {
                 name:'{{ game.team_b }}',
                 amount:teamdata_b_amount,
                 percent: teamdata_b_percent,
                 team:'{{ game.team_b }}',
                 colour:'#{{ game.team_b.colour }}'
-            }];
+            },
+            {
+                name:'{{ game.team_a }}',
+                amount:teamdata_a_amount,
+                percent: teamdata_a_percent,
+                team:'{{ game.team_a }}',
+                colour:'#{{ game.team_a.colour }}'
+                }];
 
             InitialPie(team_dataset, {{ forloop.counter }});
 
