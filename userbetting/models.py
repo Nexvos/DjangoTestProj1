@@ -29,21 +29,37 @@ class Game(models.Model):
                               choices=availiable_games,
                               default="cs:go")
     game_date = models.DateTimeField('Game start date')
-    winning_team = models.CharField(max_length=60, unique=False, blank=True, null=True)
+
+    team_a_winner = "Team A is the winner"
+    team_b_winner = "Team B is the winner"
+    not_decided = "Not Decided"
+    teams = ((not_decided, "Not Decided"),
+             (team_a_winner, "Team A is the winner"),
+             (team_b_winner, "Team B is the winner"))
+
+    winning_team = models.CharField(max_length=60,
+                                    choices=teams,
+                                    default= not_decided,
+                                    unique=False,
+                                    blank=True,
+                                    null=True)
+
     twitch_url =  models.URLField(max_length=200, unique=True, blank=True, null=True)
     expected_duration = models.DurationField(default=timedelta(minutes=2))
 
-    not_begun = "not_begun"
-    starting = "starting"
-    ongoing = "ongoing"
-    finished_not_confirmed = "finished_not_confirmed"
-    finished_confirmed = "finished_confirmed"
+    not_begun = "Not begun"
+    starting = "Starting"
+    ongoing = "Ongoing"
+    finished_not_confirmed = "Finished - Not yet confirmed"
+    finished_confirmed = "Finished - Confirmed"
+    finished_paid = "Finished - All bets paid"
 
     availiable_statuses = ((not_begun, "Not begun"),
                            (starting, "Starting"),
                            (ongoing, "Ongoing"),
                            (finished_not_confirmed, "Finished - Not yet confirmed"),
-                           (finished_confirmed, "Finished - Confirmed"))
+                           (finished_confirmed, "Finished - Confirmed"),
+                           (finished_paid, "Finished - All bets paid"))
 
     status = models.CharField(max_length=30,
                               choices=availiable_statuses,
@@ -67,6 +83,18 @@ class Bet(models.Model):
     game = models.ForeignKey(Game, on_delete=models.PROTECT)
     chosen_team = models.ForeignKey(Team, on_delete=models.PROTECT)
     amount = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+
+    open = "Open"
+    lost = "Lost"
+    paid = "Paid"
+
+    availiable_statuses = ((open, "Open"),
+                           (lost, "Lost"),
+                           (paid, "Paid"))
+
+    status = models.CharField(max_length=30,
+                              choices=availiable_statuses,
+                              default=open)
 
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(editable=False)

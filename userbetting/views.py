@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404
 
 from .models import Game
 
+
 # Create your views here.
 def index(request):
     latest_game_list = Game.objects.order_by('game_date')
@@ -14,7 +15,14 @@ def index(request):
     return render(request, 'userbetting/index.html', context)
 
 def testPage(request):
+    games = Game.objects.all()
+    for game in games:
+        if game.status == game.not_begun:
+            game.status = "testing"
+            game.save()
+
     context = {
+        'games':games
 
     }
     return render(request, 'userbetting/test.html', context)
