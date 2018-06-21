@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import Game, Bet, Team
 from django.shortcuts import get_object_or_404
 import json
+from .forms import BetForm
 
 class DataConsumer(AsyncWebsocketConsumer):
 
@@ -27,26 +28,34 @@ class DataConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        print(text_data_json)
-        chosenTeam = text_data_json['chosenTeam']
-        amountBid = text_data_json['amountBid']
-        print(chosenTeam)
-        print(amountBid)
+        chosenTeamJson = text_data_json['chosenTeam']
+        amountBidJson = text_data_json['amountBid']
 
-        newBet = Bet(user= self.user, game= get_object_or_404(Game, pk=self.game_id),chosen_team=get_object_or_404(Team, name=chosenTeam), amount= amountBid)
-        newBet.save()
-        message = "nothing"
+        form_data = {
+            "chosen_team": chosenTeamJson,
+            "amount": amountBidJson
+                     }
+        form = BetForm(form_data)
+        if form.is_valid():
+            chosenTeam = form.cleaned_data['chosen_team']
+            amountBid = form.cleaned_data['amount']
 
-        # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'send_update',
-                'message': message
-            }
-        )
+            game = get_object_or_404(Game, pk=self.game_id)
+            team = get_object_or_404(Team, name=chosenTeam)
+            print("team is a team")
+            if game.team_a == team or game.team_b == team:
+                newBet = Bet(user= self.user, game= game,chosen_team=team, amount= amountBid)
+                newBet.save()
+                message = "nothing"
 
-        print("recieved")
+                # Send message to room group
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'send_update',
+                        'message': message
+                    }
+                )
 
     async def send_update(self, event):
         message = event['message']

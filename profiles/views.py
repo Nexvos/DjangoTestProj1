@@ -19,6 +19,7 @@ def profile_view(request, username):
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = ProfileForm(request.POST, request.FILES)
+        print(request.POST, request.FILES)
         # check whether it's valid:
         if form.is_valid():
             location = form.cleaned_data['location']

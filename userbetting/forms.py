@@ -3,8 +3,9 @@ from django.forms import ModelForm
 from django.forms.widgets import TextInput
 from .models import Team
 
-# class BetForm(forms.Form):
-#     chosen_team = forms.charfield()
+class BetForm(forms.Form):
+    chosen_team = forms.CharField(max_length=200)
+    amount = forms.DecimalField(max_digits=7, decimal_places=2)
 
 
 class TeamForm(ModelForm):
