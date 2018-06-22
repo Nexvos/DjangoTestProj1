@@ -16,7 +16,23 @@ class Team(models.Model):
     team_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200, unique=True, null=False)
     picture = models.ImageField(upload_to="teamLogos", null=True, blank=True)
-    colour = models.CharField(max_length=7, null=False, blank=False, default="#D3D3D3")
+    colour = models.CharField(max_length=7, null=False, blank=False, default="D3D3D3")
+
+    @property
+    def colour_rgb(self):
+        rgb_str = str((tuple(int(self.colour[i:i+2], 16) for i in (0, 2 ,4))))
+        rgb_str = rgb_str.rstrip(")")
+        rgb_str = rgb_str.lstrip("(")
+        return rgb_str
+
+    @property
+    def colour_rgb_whitened(self):
+        rgb_str = (tuple(int(self.colour[i:i + 2], 16) for i in (0, 2, 4)))
+        white = (255,255,255)
+        whitened_value = str(((rgb_str[0]+white[0])/2,(rgb_str[1]+white[1])/2,(rgb_str[2]+white[2])/2))
+        whitened_value = whitened_value.rstrip(")")
+        whitened_value = whitened_value.lstrip("(")
+        return whitened_value
 
     def __str__(self):
         return self.name

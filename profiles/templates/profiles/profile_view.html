@@ -22,7 +22,7 @@
         <h1 class="display-1">{{ profile.user }}</h1><br><br>
         <dl class="row">
           <dt class="col-sm-3">Bank:</dt>
-          <dd class="col-sm-9">£{{ profile.bank }}</dd>
+          <dd class="col-sm-9"><a href="#" data-toggle="tooltip" data-placement="right" title="(£{{ profile.withdrawable_bank }} withdrawable) - (£{{ profile.non_withdrawable_bank }} not withdrawable)">£{{ profile.bank }}</a> </dd>
 
           <dt class="col-sm-3">Location:</dt>
           <dd class="col-sm-9">{{ profile.location }}</dd>
@@ -129,6 +129,12 @@
        let fileName = $(this).val().split('\\').pop();
        $(this).next('.custom-file-label').addClass("selected").html(fileName);
     });
+
+
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
     </script>
     <style>
     img {

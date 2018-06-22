@@ -4,6 +4,7 @@ from .models import Game, Bet, Team
 from django.shortcuts import get_object_or_404
 import json
 from .forms import BetForm
+from django import forms
 
 class DataConsumer(AsyncWebsocketConsumer):
 
@@ -43,19 +44,37 @@ class DataConsumer(AsyncWebsocketConsumer):
             game = get_object_or_404(Game, pk=self.game_id)
             team = get_object_or_404(Team, name=chosenTeam)
             print("team is a team")
+            print(self.user.profile.bank)
             if game.team_a == team or game.team_b == team:
-                newBet = Bet(user= self.user, game= game,chosen_team=team, amount= amountBid)
-                newBet.save()
-                message = "nothing"
+                if amountBid <= self.user.profile.bank:
+                    if self.user.profile.non_withdrawable_bank >= amountBid:
+                        self.user.profile.non_withdrawable_bank = self.user.profile.non_withdrawable_bank - amountBid
+                        self.user.profile.save()
+                    else:
+                        amountBid = amountBid - self.user.profile.non_withdrawable_bank
+                        self.user.profile.non_withdrawable_bank = 0
+                        self.user.profile.withdrawable_bank = self.user.profile.withdrawable_bank - amountBid
+                        self.user.profile.save()
 
-                # Send message to room group
-                await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type': 'send_update',
-                        'message': message
-                    }
-                )
+                    newBet = Bet(user= self.user, game= game,chosen_team=team, amount= amountBid)
+                    newBet.save()
+
+                    message = "nothing"
+
+                    # Send message to room group
+                    await self.channel_layer.group_send(
+                        self.room_group_name,
+                        {
+                            'type': 'send_update',
+                            'message': message
+                        }
+                    )
+                else:
+                    raise forms.ValidationError("User does not have the money to make this bet")
+            else:
+                raise forms.ValidationError("Amount Bid or Team Value is not valid")
+        else:
+            raise forms.ValidationError("Form is not valid")
 
     async def send_update(self, event):
         message = event['message']

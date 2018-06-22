@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from decimal import Decimal
 
 
 # Create your models here.
@@ -16,8 +17,12 @@ class Profile(models.Model):
     location = models.CharField(max_length=120, null=True, blank=True)
     picture = models.ImageField(upload_to=upload_location,null=True,blank=True)
     colour = models.CharField(max_length=7, null=False, blank=False, default="D3D3D3")
-    bank = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    withdrawable_bank = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    non_withdrawable_bank = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 
+    @property
+    def bank(self):
+        return self.withdrawable_bank + self.non_withdrawable_bank
 
     def __str__(self):
         return self.user.username

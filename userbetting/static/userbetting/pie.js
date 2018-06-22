@@ -150,7 +150,8 @@ function InitialPie(dataset, totalamount, team_dataset) {
 				fill: function(d,i){
 					return d.data.colour;
 				},
-				class:'shadow'
+				class:'shadow',
+				opacity: 0.95
 			})
 			//tooltip mouseover animation
 			.on("mouseover", mouseover)
@@ -170,6 +171,7 @@ function InitialPie(dataset, totalamount, team_dataset) {
 		div.transition()
 			.duration(200)
 			.style("opacity", .85)
+			.style("height", 60 + "px")
 			.style("background", d.data.colour);
 		div.html("Name: " + d.data.name + "<br>" + "£" + d.data.amount.toFixed(2)+ "<br>" + d.data.team)
 			.style("left", (d3.event.pageX) + "px")
@@ -217,43 +219,43 @@ function InitialPie(dataset, totalamount, team_dataset) {
 
 
 	//Creation of the legend
-	var legend=svg.selectAll('.legend')
-	  .data(team_dataset)
-	  .enter()
-	  .append('g')
-	  .attr({
-		  class:'legend',
-		  transform:function(d,i){
-			  //Just a calculation for x and y position
-			  return 'translate('+ (outerRadius + 30) + ',' + ((i*legendHeight) - h/2 +100) + ')';
-		  }
-	  });
-
-
-	legend.append('rect')
-	  .attr({
-		  width:legendRectSize,
-		  height:legendRectSize,
-		  rx:20,
-		  ry:20
-	  })
-	  .style({
-		  fill:function(d){
-					return d.colour;
-				},
-		  stroke:function(d){
-					return d.colour;
-				}
-	  });
-
-	legend.append('text')
-	  .attr({
-		  x:30,
-		  y:15
-	  })
-	  .text(function(d){
-		  return d.team;
-	  });
+	// var legend=svg.selectAll('.legend')
+	//   .data(team_dataset)
+	//   .enter()
+	//   .append('g')
+	//   .attr({
+	// 	  class:'legend',
+	// 	  transform:function(d,i){
+	// 		  //Just a calculation for x and y position
+	// 		  return 'translate('+ (outerRadius + 30) + ',' + ((i*legendHeight) - h/2 +100) + ')';
+	// 	  }
+	//   });
+    //
+    //
+	// legend.append('rect')
+	//   .attr({
+	// 	  width:legendRectSize,
+	// 	  height:legendRectSize,
+	// 	  rx:20,
+	// 	  ry:20
+	//   })
+	//   .style({
+	// 	  fill:function(d){
+	// 				return d.colour;
+	// 			},
+	// 	  stroke:function(d){
+	// 				return d.colour;
+	// 			}
+	//   });
+    //
+	// legend.append('text')
+	//   .attr({
+	// 	  x:30,
+	// 	  y:15
+	//   })
+	//   .text(function(d){
+	// 	  return d.team;
+	//   });
 
 	//total
 	var totalLabel = svg.append("text")
@@ -361,7 +363,8 @@ function change(asd, ads, team_dataset) {
             fill: function (d, i) {
                 return d.data.colour;
             },
-            "id": "fadein"
+            "id": "fadein",
+			opacity: 0.95
         })
         //tooltip mouseover animation
         .on("mouseover", mouseover)

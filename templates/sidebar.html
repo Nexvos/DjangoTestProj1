@@ -28,5 +28,23 @@
               <a class="nav-link" href="#">About</a>
             </li>
           </ul>
+     {% if request.user.is_authenticated %}
+     <ul class="nav nav-pills flex-column mt-2 mt-md-0" style="position: absolute; bottom: 0; width: 100%; text-align: center;">
+        <li class="sidenav-divider">
+        </li>
+        <li class="nav-item">
+            <p class="nav-link" style="margin-bottom: 0; padding-bottom: 0;" >  Current bank: </p>
+            <p class="nav-link" style="font-size: 20px; padding-top: 0;font-weight: 500;margin-bottom: 0;">£{{ user.profile.bank }}</p>
+        </li>
+        <li class="sidenav-divider" style="margin-bottom: 5px;" >
+        </li>
+         <div class="form-row text-center">
+            <div class="col-12">
+                <button type="submit" class="btn btn-dark" style="width: 90%;">Add funds</button>
+            </div>
+         </div>
+     </ul>
+
+     {%  endif %}
         </nav>
 

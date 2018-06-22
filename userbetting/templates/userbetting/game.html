@@ -13,9 +13,10 @@
 	margin-bottom: 0px !important;
 }
 .jumbotron {
-	background-color:#e7e7e7;
+	background: linear-gradient(to right, rgb({{ game.team_a.colour_rgb_whitened }}),#e7e7e7,#e7e7e7,#e7e7e7,rgb({{ game.team_b.colour_rgb_whitened }}));
 	color: #000000;
     width: 100%;
+    border-bottom: 1px solid #909090;
 }
 
 .fullWidth {
@@ -301,7 +302,6 @@ dataSocket.onclose = function (evt) { onClose(evt) };
                   </div>
                   <input type="number" class="form-control" aria-label="Amount (to the nearest pound)" min="0.01" step="0.01" max="2500" placeholder="5.00" id="amountBid">
                   <div class="input-group-append">
-                    <span class="input-group-text">.00</span>
                   </div>
                 </div>
                 <button type="button" id="update">Submit</button>
@@ -331,29 +331,20 @@ dataSocket.onclose = function (evt) { onClose(evt) };
 </div>
 <br>
 <script>
-function hexToRgb(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : null;
-}
+
 {#$(".transparentrow").css("background-color",hexToRgbNew(#{{ game.team_a.colour }}));#}
  // "51";
 
 
 {% for bet in userbets %}
-    team_colour_rgb = hexToRgb("#{{ bet.chosen_team.colour }}");
 
     $("#transparentrow{{ forloop.counter }}").css("background-color", function(){
-        return "rgba(" + team_colour_rgb.r +"," + team_colour_rgb.g +"," + team_colour_rgb.b +","+"0.35)"
+        return "rgba(" + "{{ bet.chosen_team.colour_rgb }}" +","+"0.35)"
     });
+
 {% endfor %}
 
-
-
-console.log("working")
+console.log("working");
 $("#update").click(function (e) {
     var teamInput = document.querySelector('#teamSelect');
     var chosenTeam = teamInput.value;

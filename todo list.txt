@@ -1,0 +1,32 @@
+-- Major Features --
+• REST API - Maybe change the pie to update on Rest API update?
+     - Read updates from Rest API instead of hitting the database
+• Read external APIs to get results for matches
+• Pay money into bank
+• Search for games
+• Filter by game
+• Dashboard for User (home page?)
+• History page?
+• Explain withdrawable and non-withdrawable funds
+
+
+
+-- Small improvements/ Bug fixes --
+• Ensure team_a and team_b are in alphabetical order always
+• Fix update of pie with new betting user
+• active tab at the top
+• Shadow behind the pie or from first pie onto second pie
+(https://stackoverflow.com/questions/6088409/svg-drop-shadow-using-css3)
+• Correct eror handling in django messages
+    - Need to be sent back to the user somehow
+    - Maybe on the front end only? Store errors made on the back end so they can be reviewed by an admin later?
+        -Maybe save the bet through AJAX but use Django Channels to update pie?
+• Warn user if they try to make a bet without the funds (related to point above?)
+• Tidy up code in game.html
+• Tidy up dumb css stuff (style= etc)
+• Add twitter/ social media icons (font awesome?)
+• Play about with fonts
+
+-- Complete --
+• take money from bank when betting -22/06/2018
+• Fix the opacity values for background jumbo

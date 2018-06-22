@@ -81,15 +81,18 @@ label{
   border-radius: 0;
 }
 .sidenav-divider {
-    background-color: darkgray;
+    background-color: #cecdcd;
     height: 1px;
     margin-left: 10px;
     margin-right: 10px;
 }
 .bg-faded{
-    background-color: #ececec;
-    border-right: 1px solid #909090;
+    background-color: #5f5d5d;
+    border-right: 1px solid #505050;
 }
 a {
     color:black;
+}
+.nav-item .nav-link {
+    color: white;
 }
