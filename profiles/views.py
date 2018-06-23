@@ -10,8 +10,8 @@ User = get_user_model()
 from .models import Profile
 from .forms import ProfileForm
 
-def profile_view(request, username):
-    user = get_object_or_404(User, username=username)
+def profile_view(request):
+    user = get_object_or_404(User, username=request.user)
     profile, created = Profile.objects.get_or_create(user=user)
     qs = user.bet_set.all().order_by('-game__game_date')
     qs = qs.exclude(game__status='finished_confirmed')
@@ -45,9 +45,28 @@ def profile_view(request, username):
     }
     return render(request, "profiles/profile_view.html", context)
 
+def profile_public(request, username):
+    user = get_object_or_404(User, username=username)
+    profile, created = Profile.objects.get_or_create(user=user)
+    qs = user.bet_set.all().order_by('-game__game_date')
+    qs = qs.exclude(game__status='finished_confirmed')
+
+    context = {
+        "profile":profile,
+        "qs":qs,
+    }
+    return render(request, "profiles/profile_public.html", context)
+
 def profile_list_view(request):
+    model = User.objects.all()
+    context = {
+        "model": model,
+    }
+    return render(request, "profiles/profile_list.html", context)
+
+def profile_add_funds(request):
     model = User.objects.all()
     context = {
         "model":model
     }
-    return render(request, "profiles/profile_list.html", context)
+    return render(request, "profiles/profile_add_funds.html", context)

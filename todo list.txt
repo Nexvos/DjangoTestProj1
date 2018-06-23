@@ -4,17 +4,18 @@
 • Read external APIs to get results for matches
 • Pay money into bank
 • Search for games
-• Filter by game
 • Dashboard for User (home page?)
 • History page?
 • Explain withdrawable and non-withdrawable funds
 
 
+-- Major non-MVP Features --
+• Add stats for the game - Workers killed - Headshots etc - Would be pulled from external APIs
+
 
 -- Small improvements/ Bug fixes --
 • Ensure team_a and team_b are in alphabetical order always
 • Fix update of pie with new betting user
-• active tab at the top
 • Shadow behind the pie or from first pie onto second pie
 (https://stackoverflow.com/questions/6088409/svg-drop-shadow-using-css3)
 • Correct eror handling in django messages
@@ -24,9 +25,12 @@
 • Warn user if they try to make a bet without the funds (related to point above?)
 • Tidy up code in game.html
 • Tidy up dumb css stuff (style= etc)
-• Add twitter/ social media icons (font awesome?)
 • Play about with fonts
+
 
 -- Complete --
 • take money from bank when betting -22/06/2018
 • Fix the opacity values for background jumbo -22/06/2018
+• Add twitter/ social media icons (font awesome?) - 23/06/2018
+• active tab at the top - 23/06/2018
+• Filter by game - 23/06/2018

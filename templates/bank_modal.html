@@ -1,0 +1,34 @@
+{% load static %}
+
+<!-- The Modal -->
+<div class="modal" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Bank Details</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <p>
+            Total Bank: {{ user.profile.bank }} <br>
+            Withdrawable Bank: {{ user.profile.withdrawable_bank }} <br>
+            <bold>Non-Withdrawable Bank: </bold> {{ user.profile.non_withdrawable_bank }} <br><br><br>
+            Non-Withdrawable Bank is bank gained through promotions or offers. This bank cannot be withdrawn but may
+            be used to make bets. Any winnings made by betting with Non-Withdrawable Bank will be added to your
+            withdrawble bank which can then be withdrawn through the profile page.
+
+        </p>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>

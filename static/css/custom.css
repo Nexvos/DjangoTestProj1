@@ -90,9 +90,7 @@ label{
     background-color: #5f5d5d;
     border-right: 1px solid #505050;
 }
-a {
-    color:black;
-}
-.nav-item .nav-link {
+
+.nav-link {
     color: white;
 }

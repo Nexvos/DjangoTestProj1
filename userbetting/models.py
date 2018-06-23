@@ -8,7 +8,8 @@ availiable_games = (
     ("CSGO","cs:go"),
     ("SC2","starcraft"),
     ("LOL","League of Legends"),
-    ("Dota","Dota 2")
+    ("Dota","Dota 2"),
+    ("Overwatch","Overwatch")
 )
 # Create your models here.
 

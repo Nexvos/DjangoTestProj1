@@ -1,26 +1,27 @@
 {% load static %}
+{% url 'userBetting:index' as index %}
 
  <nav class="col-sm-1 col-md-1 d-none d-sm-block bg-faded sidebar">
           <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-              <a class="nav-link active" href="#">All Games<span class="sr-only">(current)</span></a>
+              <a class="nav-link{% ifequal query 'Betting Page'%} active {% endifequal %}" href="{% url 'userBetting:index' %}">All Games<span class="sr-only">(current)</span></a>
             </li>
             <li class="sidenav-divider">
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Starcraft 2</a>
+              <a class="nav-link {% ifequal query 'SC2'%} active {%  endifequal %}" href="{% url 'userBetting:index' %}?q=SC2">Starcraft 2</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">CS:GO</a>
+              <a class="nav-link {% ifequal query 'CSGO'%} active {%  endifequal %}" href="{% url 'userBetting:index' %}?q=CSGO">CS:GO</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Dota 2</a>
+              <a class="nav-link {% ifequal query 'Dota'%} active {%  endifequal %}" href="{% url 'userBetting:index' %}?q=Dota">Dota 2</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Lol</a>
+              <a class="nav-link {% ifequal query 'LOL'%} active {%  endifequal %}" href="{% url 'userBetting:index' %}?q=LOL">Lol</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Overwatch</a>
+              <a class="nav-link {% ifequal query 'Overwatch'%} active {%  endifequal %}" href="{% url 'userBetting:index' %}?q=Overwatch">Overwatch</a>
             </li>
             <li class="sidenav-divider">
             </li>
@@ -34,7 +35,17 @@
         </li>
         <li class="nav-item">
             <p class="nav-link" style="margin-bottom: 0; padding-bottom: 0;" >  Current bank: </p>
-            <p class="nav-link" style="font-size: 20px; padding-top: 0;font-weight: 500;margin-bottom: 0;">£{{ user.profile.bank }}</p>
+            <p class="nav-link" style="color:white; font-size: 20px; padding-top: 0;font-weight: 500;margin-bottom: 0;">
+                <a href="#"
+                   class="nav-link"
+                   style="padding: 0;"
+                   data-toggle="modal"
+                   data-target="#myModal"
+                   data-toggle="tooltip"
+                   data-placement="right"
+                   title="Click for further Breakdown">£{{ user.profile.bank }}
+                </a>
+            </p>
         </li>
         <li class="sidenav-divider" style="margin-bottom: 5px;" >
         </li>

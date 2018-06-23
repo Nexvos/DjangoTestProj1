@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block head_title %}Profile | {{ block.super }}{% endblock %}
+
+
+
+{% block jumbotron %}
+<div class="jumbotron jumbotron-fluid" id="jumbo">
+    <div class="container">
+    <div class="row">
+    <div class="col-md-6" style="background-color: #e4e5e6;">
+
+
+        {%  if profile.picture %}
+            <img src="{{ profile.picture.url }}"/>
+        {% endif %}
+
+    </div>
+    <div class="col-md-6">
+        <h1 class="display-1">{{ profile.user }}</h1><br><br>
+        <dl class="row">
+          <dt class="col-sm-3">Bank:</dt>
+          <dd class="col-sm-9">
+              <a href="#"
+                  data-toggle="modal"
+                  data-target="#myModal"
+                  data-toggle="tooltip"
+                  data-placement="right"
+                  title="Click for further Breakdown">
+                    £{{ profile.bank }}
+              </a>
+          </dd>
+
+          <dt class="col-sm-3">Location:</dt>
+          <dd class="col-sm-9">{{ profile.location }}</dd>
+
+          <dt class="col-sm-3">Colour:</dt>
+          <dd class="col-sm-9">
+              <div style="width:15px;height:15px;border:1px solid #000;display: inline-block;background-color: #{{ profile.colour }};"></div>
+              {{ profile.colour }}
+          </dd>
+        <dl/>
+
+    </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+    <script>$
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    </script>
+    <style>
+    img {
+        max-height: 98%;
+        max-width: 98%;
+        width: auto;
+        height: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+    </style>
+{% endblock %}

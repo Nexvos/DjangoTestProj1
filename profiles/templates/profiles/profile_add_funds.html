@@ -10,24 +10,24 @@
 <div class="jumbotron jumbotron-fluid" id="jumbo">
     <div class="container">
     <div class="row">
-    <div class="col-md-12">
-        <h1>Profiles List</h1>
+    <div class="col-md-6" style="background-color: #e4e5e6;">
 
 
+        {%  if profile.picture %}
+            <img src="{{ profile.picture.url }}"/>
+        {% endif %}
+
     </div>
-    </div>
+    <div class="col-md-6">
+
     </div>
 </div>
 {% endblock %}
 
 {% block content %}
+    {% if user == profile.user %}
 
-<div class="list-group">
-{% for profile in model %}
-    <a href="{% url 'profiles:profile-public' profile.username %}" class="list-group-item list-group-item-action">
-        {{ profile.username }}
-    <a/>
-{% endfor %}
-</div>
+
+    {% endif %}
 
 {% endblock %}
