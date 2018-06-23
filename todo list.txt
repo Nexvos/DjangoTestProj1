@@ -29,4 +29,4 @@
 
 -- Complete --
 • take money from bank when betting -22/06/2018
-• Fix the opacity values for background jumbo
+• Fix the opacity values for background jumbo -22/06/2018
