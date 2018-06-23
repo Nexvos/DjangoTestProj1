@@ -18,7 +18,7 @@
 • Fix update of pie with new betting user
 • Shadow behind the pie or from first pie onto second pie
 (https://stackoverflow.com/questions/6088409/svg-drop-shadow-using-css3)
-• Correct eror handling in django messages
+• Correct error handling in django messages
     - Need to be sent back to the user somehow
     - Maybe on the front end only? Store errors made on the back end so they can be reviewed by an admin later?
         -Maybe save the bet through AJAX but use Django Channels to update pie?
