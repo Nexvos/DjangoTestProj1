@@ -9,11 +9,8 @@ from .models import Game
 # Create your views here.
 def index(request):
     latest_game_list = Game.objects.order_by('game_date')
-    print(request)
     query = request.GET.get('q')
-    print(query)
     if query:
-        print("working")
         latest_game_list = latest_game_list.filter(videogame__exact=query)
     else:
         query = "Betting Page"

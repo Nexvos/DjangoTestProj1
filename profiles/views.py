@@ -15,7 +15,7 @@ from django.db.models import Q
 def profile_view(request):
     user = get_object_or_404(User, username=request.user)
     profile, created = Profile.objects.get_or_create(user=user)
-    qs = user.bet_set.all().order_by('-game__game_date')
+    qs = user.bet_set.all().order_by('game__game_date')
     qs_active = qs.filter(Q(game__status=Game.not_begun)|Q(game__status=Game.starting)|Q(game__status=Game.ongoing))
     qs_awaiting_validation = qs.filter(Q(game__status=Game.finished_not_confirmed) | Q(game__status=Game.finished_confirmed), Q(status=Bet.open))
     qs_settled = qs.filter(Q(status=Bet.lost) | Q(status=Bet.paid))
@@ -58,7 +58,7 @@ def profile_view(request):
 def profile_public(request, username):
     user = get_object_or_404(User, username=username)
     profile, created = Profile.objects.get_or_create(user=user)
-    qs = user.bet_set.all().order_by('-game__game_date')
+    qs = user.bet_set.all().order_by('game__game_date')
     qs = qs.exclude(game__status='finished_confirmed')
 
     context = {

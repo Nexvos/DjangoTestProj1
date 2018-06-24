@@ -8,40 +8,62 @@
 
 {% block jumbotron %}
 <div class="jumbotron jumbotron-fluid" id="jumbo">
+{#    <div class="container" style="border-bottom-color: rgb(222, 226, 230);#}
+{#    border-bottom-style: solid;#}
+{#    border-bottom-width: 2px;#}
+{#    border-top-color: rgb(222, 226, 230);#}
+{#    border-top-style: solid;#}
+{#    border-top-width: 2px;#}
+{#    margin-bottom: 20px;">#}
+{#        <div class="row">#}
+{##}
+{#            <h1 class="display-1">{{ profile.user }}</h1><br><br>#}
+{#        </div>#}
+{#    </div>#}
     <div class="container">
     <div class="row">
-    <div class="col-md-6" style="background-color: #e4e5e6;">
+        <div class="col-md-4" style="background-color: #e4e5e6;">
 
+            {%  if profile.picture %}
+                <img src="{{ profile.picture.url }}"/>
+            {% endif %}
 
-        {%  if profile.picture %}
-            <img src="{{ profile.picture.url }}"/>
-        {% endif %}
+        </div>
 
-    </div>
-    <div class="col-md-6">
-        <h1 class="display-1">{{ profile.user }}</h1><br><br>
-        <dl class="row">
-          <dt class="col-sm-3">Bank:</dt>
-          <dd class="col-sm-9">
-              <a href="#"
-                  data-toggle="modal"
-                  data-target="#myModal"
-                  data-toggle="tooltip"
-                  data-placement="right"
-                  title="Click for further Breakdown">
-                    £{{ profile.bank }}
-              </a>
-          </dd>
+        <div class="col-md-4">
+            <br>
+            <p style="margin-bottom: 0;"><small style="font-weight: 600;">Current bank:</small></p>
+            <h1 class="display-4" >£{{ profile.bank }}</h1><br>
+            <small style="margin-bottom: 0"><span style="font-weight: 600;"> Withdrawable: </span> £{{ profile.withdrawable_bank }}</small><br>
+            <small><span style="font-weight: 600;">Non-withdrawable: </span>£{{ profile.non_withdrawable_bank }} <i class="fas fa-question-circle"></i></small>
+        </div>
 
-          <dt class="col-sm-3">Location:</dt>
-          <dd class="col-sm-9">{{ profile.location }}</dd>
+        <div class="col-md-4">
 
-          <dt class="col-sm-3">Colour:</dt>
-          <dd class="col-sm-9">
-              <div style="width:15px;height:15px;border:1px solid #000;display: inline-block;background-color: #{{ profile.colour }};"></div>
-              {{ profile.colour }}
-          </dd>
-        <dl/>
+            <dl class="row" style="position: absolute;bottom: 0;margin-bottom: 0;">
+              <dt class="col-sm-3">Bank:</dt>
+              <dd class="col-sm-9">
+                  <a href="#"
+                      data-toggle="modal"
+                      data-target="#myModal"
+                      data-toggle="tooltip"
+                      data-placement="right"
+                      title="Click for further Breakdown">
+                        £{{ profile.bank }}
+                  </a>
+              </dd>
+
+              <dt class="col-sm-3">Location:</dt>
+              <dd class="col-sm-9">{{ profile.location }}</dd>
+
+              <dt class="col-sm-3">Colour:</dt>
+              <dd class="col-sm-9">
+                  <div style="width:15px;height:15px;border:1px solid #000;display: inline-block;background-color: #{{ profile.colour }};"></div>
+                  {{ profile.colour }}
+              </dd>
+            <dl/>
+
+        </div>
 
     </div>
     </div>
@@ -83,12 +105,20 @@
 {#            Update Details#}
 {#        </h2>#}
 <br>
+<div class="row">
+
+    <div class="col-md-6">
+        <div style="width: 65%;border-bottom-color:rgb(222, 226, 230);border-bottom-style:solid;border-bottom-width:2px;">
+            <p class="lead" style="font-weight: 600;">Update Details</p>
+        </div>
+
+
 <form enctype="multipart/form-data" method='POST' action='{% url "profiles:profile" %}'>{% csrf_token %}
 
     <div id="div_id_location" class="control-group"> <label for="id_location" class="control-label requiredField">
         Location<span class="asteriskField">*</span> </label>
         <div class="controls">
-            <input type="text" name="location" maxlength="120" class="input-xlarge form-control" required id="id_location" style="width: 70%;"/>
+            <input type="text" name="location" maxlength="120" class="input-xlarge form-control" required id="id_location" style="width: 90%;"/>
         </div>
     </div>
 
@@ -99,7 +129,7 @@
         </label>
         <div class="controls">
 
-        <input type="text" name="colour" class="jscolor form-control" value="AB2567" maxlength="7" required id="id_colour" style="width: 70%;"/>
+        <input type="text" name="colour" class="jscolor form-control" value="AB2567" maxlength="7" required id="id_colour" style="width: 90%;"/>
         </div>
     </div>
 
@@ -109,7 +139,7 @@
         <span class="asteriskField">*</span>
         </label>
         <br>
-    <div class="custom-file" style="width: 70%;">
+    <div class="custom-file" style="width: 90%;">
       <input name="picture" type="file" class="custom-file-input clearable-file-input" id="id_picture">
       <label class="custom-file-label" for="id_picture" style="margin-top: 0px;overflow: hidden;">Choose file</label>
     </div>
@@ -117,6 +147,38 @@
     <br>
     <button type="submit" class="btn btn-primary"> Make Changes</button>
 </form>
+        </div>
+    <div class="col-md-6"><div style="width: 65%;border-bottom-color:rgb(222, 226, 230);border-bottom-style:solid;border-bottom-width:2px;">
+        <p class="lead" style="font-weight: 600;">Current Details</p>
+    </div>
+        <br>
+            <dl class="row">
+
+              <dt class="col-sm-3">Bank:</dt>
+              <dd class="col-sm-9">
+                  <a href="#"
+                      data-toggle="modal"
+                      data-target="#myModal"
+                      data-toggle="tooltip"
+                      data-placement="right"
+                      title="Click for further Breakdown">
+                        £{{ profile.bank }}
+                  </a>
+              </dd>
+
+              <dt class="col-sm-3">Location:</dt>
+              <dd class="col-sm-9">{{ profile.location }}</dd>
+
+              <dt class="col-sm-3">Colour:</dt>
+              <dd class="col-sm-9">
+                  <div style="width:15px;height:15px;border:1px solid #000;display: inline-block;background-color: #{{ profile.colour }};"></div>
+                  {{ profile.colour }}
+              </dd>
+            <dl/>
+
+        </div>
+
+</div>
 <br>
 <br>
 </div>
