@@ -8,14 +8,22 @@ from django.http import HttpResponseRedirect
 
 User = get_user_model()
 from .models import Profile
+from userbetting.models import Bet, Game
 from .forms import ProfileForm
+from django.db.models import Q
 
 def profile_view(request):
     user = get_object_or_404(User, username=request.user)
     profile, created = Profile.objects.get_or_create(user=user)
     qs = user.bet_set.all().order_by('-game__game_date')
-    qs = qs.exclude(game__status='finished_confirmed')
+    qs_active = qs.filter(Q(game__status=Game.not_begun)|Q(game__status=Game.starting)|Q(game__status=Game.ongoing))
+    qs_awaiting_validation = qs.filter(Q(game__status=Game.finished_not_confirmed) | Q(game__status=Game.finished_confirmed), Q(status=Bet.open))
+    qs_settled = qs.filter(Q(status=Bet.lost) | Q(status=Bet.paid))
 
+
+    # 1 Queryset for active bets - I.e. Bets for games that have a status of "not_begun", "starting", "ongoing"
+    # 2 Queryset for bets awaiting validation - I.e. Bts for games that have a status of "finished_not_confirmed" or "finished_confirmed" and bet status = "open"
+    # 3 Queryset for settled bets - I.e. bets with a status of paid or "paid" or "lost"
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = ProfileForm(request.POST, request.FILES)
@@ -41,7 +49,9 @@ def profile_view(request):
     context = {
         "profile":profile,
         "form":form,
-        "qs":qs,
+        "qs_active":qs_active,
+        "qs_awaiting_validation": qs_awaiting_validation,
+        "qs_settled":qs_settled,
     }
     return render(request, "profiles/profile_view.html", context)
 

@@ -321,7 +321,7 @@ dataSocket.onclose = function (evt) { onClose(evt) };
                 <tr id="transparentrow{{ forloop.counter }}">
                   <td style="width: 15%;font-weight: 700;">{{ forloop.counter }}</td>
                   <td style="width: 60%;">{{ bet.chosen_team }}</td>
-                  <td style="width: 25%;">{{ bet.amount }}</td>
+                  <td style="width: 25%;">£{{ bet.amount }}</td>
                 </tr>
 
               {% endfor %}

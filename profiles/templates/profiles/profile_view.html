@@ -62,14 +62,21 @@
 </nav>
 <div class="tab-content" id="nav-tabContent">
     <div class="tab-pane fade show active" id="nav-funds" role="tabpanel" aria-labelledby="nav-funds-tab">
+        <br>
         <div class="row">
-          <div class="col-md-8">
 
-          </div>
           <div class="col-md-4">
-
+              <p style="margin-bottom: 0;"><small style="font-weight: 600;">Current bank:</small></p>
+              <h1 class="display-3" >£{{ profile.bank }}</h1><br>
+              <small style="margin-bottom: 0"><span style="font-weight: 600;"> Withdrawable: </span> £{{ profile.withdrawable_bank }}</small><br>
+              <small><span style="font-weight: 600;">Non-withdrawable: </span>£{{ profile.non_withdrawable_bank }} <i class="fas fa-question-circle"></i></small>
+          </div>
+          <div class="col-md-8">
+            <button type="submit" class="btn btn-dark" style="width: 90%;">Add funds</button>
           </div>
         </div>
+        <br>
+        <br>
     </div>
 <div class="tab-pane fade" id="nav-update" role="tabpanel" aria-labelledby="nav-update-tab">
 {#        <h2 style="margin-bottom: 1.5rem;">#}
@@ -110,6 +117,8 @@
     <br>
     <button type="submit" class="btn btn-primary"> Make Changes</button>
 </form>
+<br>
+<br>
 </div>
 <div class="tab-pane fade" id="nav-bets-active" role="tabpanel" aria-labelledby="nav-bets-active-tab">
 {#      <h2 style="margin-bottom: 1.5rem;">#}
@@ -127,14 +136,14 @@
     </tr>
   </thead>
   <tbody>
-  {%  for bet in qs %}
+  {%  for bet in qs_active %}
 
     <tr>
       <td style="width: 5%;font-weight: 700;">{{ forloop.counter }}</td>
       <td style="width: 20%;">{{ bet.chosen_team }}</td>
       <td style="width: 20%;"><a href={% url 'userBetting:detail' bet.game.game_id %}>{{ bet.game.team_a }} vs {{ bet.game.team_b }}</a></td>
       <td style="width: 21%;">{{ bet.game.game_date }}</td>
-      <td style="width: 12%;">{{ bet.amount }}</td>
+      <td style="width: 12%;">£{{ bet.amount }}</td>
       <td style="width: 21%;">{{ bet.game.status }}</td>
     </tr>
 
@@ -158,14 +167,14 @@
     </tr>
   </thead>
   <tbody>
-  {%  for bet in qs %}
+  {%  for bet in qs_awaiting_validation %}
 
     <tr>
       <td style="width: 5%;font-weight: 700;">{{ forloop.counter }}</td>
       <td style="width: 20%;">{{ bet.chosen_team }}</td>
       <td style="width: 20%;"><a href={% url 'userBetting:detail' bet.game.game_id %}>{{ bet.game.team_a }} vs {{ bet.game.team_b }}</a></td>
       <td style="width: 21%;">{{ bet.game.game_date }}</td>
-      <td style="width: 12%;">{{ bet.amount }}</td>
+      <td style="width: 12%;">£{{ bet.amount }}</td>
       <td style="width: 21%;">{{ bet.game.status }}</td>
     </tr>
 
@@ -189,20 +198,21 @@
     </tr>
   </thead>
   <tbody>
-  {%  for bet in qs %}
+  {%  for bet in qs_settled %}
 
-    <tr>
+    <tr style="background-color: {% ifequal bet.status bet.paid %}rgba(0,255,0,0.1){% else %}rgba(255,0,0,0.1) {% endifequal %}">
       <td style="width: 5%;font-weight: 700;">{{ forloop.counter }}</td>
       <td style="width: 20%;">{{ bet.chosen_team }}</td>
       <td style="width: 20%;"><a href={% url 'userBetting:detail' bet.game.game_id %}>{{ bet.game.team_a }} vs {{ bet.game.team_b }}</a></td>
       <td style="width: 21%;">{{ bet.game.game_date }}</td>
-      <td style="width: 12%;">{{ bet.amount }}</td>
+      <td style="width: 12%;">£{{ bet.amount }}</td>
       <td style="width: 21%;">{{ bet.game.status }}</td>
     </tr>
 
   {% endfor %}
   </tbody>
 </table>
+
 </div>
 
 </div>
