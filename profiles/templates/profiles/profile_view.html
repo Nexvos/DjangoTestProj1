@@ -50,82 +50,163 @@
 {% endblock %}
 
 {% block content %}
-    {% if user == profile.user %}
-    <div class="row">
-    <div class="col-md-4">
+{% if user == profile.user %}
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+      <a class="nav-item nav-link active" id="nav-funds-tab" data-toggle="tab" href="#nav-funds" role="tab" aria-controls="nav-funds" aria-selected="true">Add funds</a>
+      <a class="nav-item nav-link" id="nav-update-tab" data-toggle="tab" href="#nav-update" role="tab" aria-controls="nav-update" aria-selected="false">Update Details</a>
+      <a class="nav-item nav-link" id="nav-bets-active-tab" data-toggle="tab" href="#nav-bets-active" role="tab" aria-controls="nav-bets-active" aria-selected="false">Bets: Active</a>
+      <a class="nav-item nav-link" id="nav-bets-validating-tab" data-toggle="tab" href="#nav-bets-validating" role="tab" aria-controls="nav-bets-validating" aria-selected="false">Bets: Awaiting Validation</a>
+      <a class="nav-item nav-link" id="nav-bets-settled-tab" data-toggle="tab" href="#nav-bets-settled" role="tab" aria-controls="nav-bets-settled" aria-selected="false">Bets: Settled</a>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-funds" role="tabpanel" aria-labelledby="nav-funds-tab">
+        <div class="row">
+          <div class="col-md-8">
 
-        <h2 style="margin-bottom: 1.5rem;">
-            Update Details
-        </h2>
-        <form enctype="multipart/form-data" method='POST' action='{% url "profiles:profile" %}'>{% csrf_token %}
+          </div>
+          <div class="col-md-4">
 
-            <div id="div_id_location" class="control-group"> <label for="id_location" class="control-label requiredField">
-                Location<span class="asteriskField">*</span> </label>
-                <div class="controls">
-                    <input type="text" name="location" maxlength="120" class="input-xlarge form-control" required id="id_location" style="width: 90%;"/>
-                </div>
-            </div>
-
-            <div id="div_id_colour" class="control-group">
-                <label for="id_colour" class="control-label requiredField">
-                Colour
-                <span class="asteriskField">*</span>
-                </label>
-                <div class="controls">
-
-                <input type="text" name="colour" class="jscolor form-control" value="AB2567" maxlength="7" required id="id_colour" style="width: 90%;"/>
-                </div>
-            </div>
-
-            <div id="div_id_picture" class="control-group">
-                <label for="id_picture" class="control-label requiredField">
-                Picture
-                <span class="asteriskField">*</span>
-                </label>
-            <div class="custom-file" style="width: 90%;">
-              <input name="picture" type="file" class="custom-file-input clearable-file-input" id="id_picture">
-              <label class="custom-file-label" for="id_picture" style="margin-top: 0px;overflow: hidden;">Choose file</label>
-            </div>
-            </div>
-            <br>
-            <button type="submit" class="btn btn-primary"> Make Changes</button>
-        </form>
-
+          </div>
+        </div>
     </div>
-    <div class="col-md-8">
-        <h2 style="margin-bottom: 1.5rem;">
-            Active Bets
-        </h2>
-    <div class="span3">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Bet for</th>
-              <th scope="col">Match</th>
-              <th scope="col">Match Start Date</th>
-              <th scope="col">Amount</th>
-              <th scope="col">Match Status</th>
-            </tr>
-          </thead>
-          <tbody>
-          {%  for bet in qs %}
+<div class="tab-pane fade" id="nav-update" role="tabpanel" aria-labelledby="nav-update-tab">
+{#        <h2 style="margin-bottom: 1.5rem;">#}
+{#            Update Details#}
+{#        </h2>#}
+<br>
+<form enctype="multipart/form-data" method='POST' action='{% url "profiles:profile" %}'>{% csrf_token %}
 
-            <tr>
-              <th scope="row">{{ forloop.counter }}</th>
-              <td>{{ bet.chosen_team }}</td>
-              <td><a href={% url 'userBetting:detail' bet.game.game_id %}>{{ bet.game.team_a }} vs {{ bet.game.team_b }}</a></td>
-              <td>{{ bet.game.game_date }}</td>
-              <td>{{ bet.amount }}</td>
-              <td>{{ bet.game.status }}</td>
-            </tr>
+    <div id="div_id_location" class="control-group"> <label for="id_location" class="control-label requiredField">
+        Location<span class="asteriskField">*</span> </label>
+        <div class="controls">
+            <input type="text" name="location" maxlength="120" class="input-xlarge form-control" required id="id_location" style="width: 70%;"/>
+        </div>
+    </div>
 
-          {% endfor %}
-          </tbody>
-        </table>
+    <div id="div_id_colour" class="control-group">
+        <label for="id_colour" class="control-label requiredField">
+        Colour
+        <span class="asteriskField">*</span>
+        </label>
+        <div class="controls">
+
+        <input type="text" name="colour" class="jscolor form-control" value="AB2567" maxlength="7" required id="id_colour" style="width: 70%;"/>
+        </div>
+    </div>
+
+    <div id="div_id_picture" class="control-group">
+        <label for="id_picture" class="control-label requiredField">
+        Picture
+        <span class="asteriskField">*</span>
+        </label>
+        <br>
+    <div class="custom-file" style="width: 70%;">
+      <input name="picture" type="file" class="custom-file-input clearable-file-input" id="id_picture">
+      <label class="custom-file-label" for="id_picture" style="margin-top: 0px;overflow: hidden;">Choose file</label>
     </div>
     </div>
-    </div>
+    <br>
+    <button type="submit" class="btn btn-primary"> Make Changes</button>
+</form>
+</div>
+<div class="tab-pane fade" id="nav-bets-active" role="tabpanel" aria-labelledby="nav-bets-active-tab">
+{#      <h2 style="margin-bottom: 1.5rem;">#}
+{#            Active Bets#}
+{#        </h2>#}
+<table class="table table-striped header-fixed">
+  <thead>
+    <tr>
+      <th scope="col" style="width: 5%;border-top: 0;">#</th>
+      <th scope="col" style="width: 20%;border-top: 0;">Bet for</th>
+      <th scope="col" style="width: 19.5%;border-top: 0;">Match</th>
+      <th scope="col" style="width: 20%;border-top: 0;">Match Start Date</th>
+      <th scope="col" style="width: 12%;border-top: 0;">Amount</th>
+      <th scope="col" style="width: 21%;border-top: 0;">Match Status</th>
+    </tr>
+  </thead>
+  <tbody>
+  {%  for bet in qs %}
+
+    <tr>
+      <td style="width: 5%;font-weight: 700;">{{ forloop.counter }}</td>
+      <td style="width: 20%;">{{ bet.chosen_team }}</td>
+      <td style="width: 20%;"><a href={% url 'userBetting:detail' bet.game.game_id %}>{{ bet.game.team_a }} vs {{ bet.game.team_b }}</a></td>
+      <td style="width: 21%;">{{ bet.game.game_date }}</td>
+      <td style="width: 12%;">{{ bet.amount }}</td>
+      <td style="width: 21%;">{{ bet.game.status }}</td>
+    </tr>
+
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<div class="tab-pane fade" id="nav-bets-validating" role="tabpanel" aria-labelledby="nav-bets-validating-tab">
+{#      <h2 style="margin-bottom: 1.5rem;">#}
+{#            Active Bets#}
+{#        </h2>#}
+<table class="table table-striped header-fixed">
+  <thead>
+    <tr>
+      <th scope="col" style="width: 5%;border-top: 0;">#</th>
+      <th scope="col" style="width: 20%;border-top: 0;">Bet for</th>
+      <th scope="col" style="width: 19.5%;border-top: 0;">Match</th>
+      <th scope="col" style="width: 20%;border-top: 0;">Match Start Date</th>
+      <th scope="col" style="width: 12%;border-top: 0;">Amount</th>
+      <th scope="col" style="width: 21%;border-top: 0;">Match Status</th>
+    </tr>
+  </thead>
+  <tbody>
+  {%  for bet in qs %}
+
+    <tr>
+      <td style="width: 5%;font-weight: 700;">{{ forloop.counter }}</td>
+      <td style="width: 20%;">{{ bet.chosen_team }}</td>
+      <td style="width: 20%;"><a href={% url 'userBetting:detail' bet.game.game_id %}>{{ bet.game.team_a }} vs {{ bet.game.team_b }}</a></td>
+      <td style="width: 21%;">{{ bet.game.game_date }}</td>
+      <td style="width: 12%;">{{ bet.amount }}</td>
+      <td style="width: 21%;">{{ bet.game.status }}</td>
+    </tr>
+
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<div class="tab-pane fade" id="nav-bets-settled" role="tabpanel" aria-labelledby="nav-bets-settled-tab">
+{#      <h2 style="margin-bottom: 1.5rem;">#}
+{#            Active Bets#}
+{#        </h2>#}
+<table class="table table-striped header-fixed">
+  <thead>
+    <tr>
+      <th scope="col" style="width: 5%;border-top: 0;">#</th>
+      <th scope="col" style="width: 20%;border-top: 0;">Bet for</th>
+      <th scope="col" style="width: 19.5%;border-top: 0;">Match</th>
+      <th scope="col" style="width: 20%;border-top: 0;">Match Start Date</th>
+      <th scope="col" style="width: 12%;border-top: 0;">Amount</th>
+      <th scope="col" style="width: 21%;border-top: 0;">Match Status</th>
+    </tr>
+  </thead>
+  <tbody>
+  {%  for bet in qs %}
+
+    <tr>
+      <td style="width: 5%;font-weight: 700;">{{ forloop.counter }}</td>
+      <td style="width: 20%;">{{ bet.chosen_team }}</td>
+      <td style="width: 20%;"><a href={% url 'userBetting:detail' bet.game.game_id %}>{{ bet.game.team_a }} vs {{ bet.game.team_b }}</a></td>
+      <td style="width: 21%;">{{ bet.game.game_date }}</td>
+      <td style="width: 12%;">{{ bet.amount }}</td>
+      <td style="width: 21%;">{{ bet.game.status }}</td>
+    </tr>
+
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+</div>
+
 
     {% endif %}
 

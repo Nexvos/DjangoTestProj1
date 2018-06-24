@@ -308,20 +308,20 @@ dataSocket.onclose = function (evt) { onClose(evt) };
             </form>
         </div>
         <div class="col-md-6">
-            <div class="span3"><table class="table table-hover">
+            <div class="span3"><table class="table table-hover header-fixed">
               <thead>
                 <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Bet for</th>
-                  <th scope="col">Amount</th>
+                  <th scope="col" style="width: 15%;">#</th>
+                  <th scope="col" style="width: 40%;">Bet for</th>
+                  <th scope="col" style="width: 45%;">Amount</th>
                 </tr>
               </thead>
               <tbody>
               {%  for bet in userbets %}
                 <tr id="transparentrow{{ forloop.counter }}">
-                  <th scope="row">{{ forloop.counter }}</th>
-                  <td>{{ bet.chosen_team }}</td>
-                  <td>{{ bet.amount }}</td>
+                  <td style="width: 15%;font-weight: 700;">{{ forloop.counter }}</td>
+                  <td style="width: 60%;">{{ bet.chosen_team }}</td>
+                  <td style="width: 25%;">{{ bet.amount }}</td>
                 </tr>
 
               {% endfor %}

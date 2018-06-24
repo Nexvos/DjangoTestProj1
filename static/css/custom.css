@@ -1,3 +1,6 @@
+.jumbotron {
+    margin-bottom: 0;
+}
 body {
   padding-top: 57px;
 }
@@ -6,7 +9,7 @@ body {
 	text-align: center;
 }
 .thumbnail .widget {
-    background-color: #fff7ec;
+    background-color: #e9ecef;
 }
 .navbar
         {
@@ -19,10 +22,40 @@ label{
     margin-bottom: 0px;
     margin-top: .5rem;
 }
-.span3 {
-    height: 300px !important;
-    overflow: auto;
+
+/*Scrollable Table CSS*/
+.header-fixed {
+    width: 100%
 }
+
+.header-fixed > thead,
+.header-fixed > tbody,
+.header-fixed > thead > tr,
+.header-fixed > tbody > tr,
+.header-fixed > thead > tr > th,
+.header-fixed > tbody > tr > td {
+    display: block;
+}
+
+.header-fixed > tbody > tr:after,
+.header-fixed > thead > tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+.header-fixed > tbody {
+    overflow-y: auto;
+    height: 280px;
+}
+
+.header-fixed > tbody > tr > td,
+.header-fixed > thead > tr > th {
+    float: left;
+}
+/*End of Scrollable table CSS*/
+
 .strokeme
 {
     color: white !important;
@@ -91,6 +124,9 @@ label{
     border-right: 1px solid #505050;
 }
 
-.nav-link {
+.nav-pills .nav-item .nav-link {
     color: white;
+}
+.nav-tabs .nav-item {
+    color: black;
 }
