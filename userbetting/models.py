@@ -38,13 +38,45 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
+
+
+class Tournament(models.Model):
+    tournament_id = models.AutoField(primary_key=True)
+    tournament_name = models.CharField(max_length=120, null=False, blank=False, unique=True)
+    videogame = models.CharField(max_length=30,
+                              choices=availiable_games,
+                              default="cs:go")
+
+    tournament_start_date = models.DateTimeField('Tournament start date')
+    tournament_send_date = models.DateTimeField('Tournament end date')
+
+
+    main_twitch_url =  models.URLField(max_length=200, unique=True, blank=True, null=True)
+
+    not_begun = "Not begun"
+    ongoing = "Ongoing"
+    finished = "Finished"
+
+
+    availiable_statuses = ((not_begun, "Not begun"),
+                           (ongoing, "Ongoing"),
+                           (finished, "Finished"))
+
+    status = models.CharField(max_length=30,
+                              choices=availiable_statuses,
+                              default=not_begun)
+
+    def __str__(self):
+        return self.tournament_name
+
 class Game(models.Model):
     game_id = models.AutoField(primary_key=True)
     team_a = models.ForeignKey(Team, on_delete=models.PROTECT, related_name='%(class)s_team_a')
     team_b = models.ForeignKey(Team, on_delete=models.PROTECT, related_name='%(class)s_team_b')
     videogame = models.CharField(max_length=30,
-                              choices=availiable_games,
-                              default="cs:go")
+                                 choices=availiable_games,
+                                 blank=True, null=True,)
+    tournament = models.ForeignKey(Tournament, blank=True, null=True, on_delete=models.PROTECT)
     game_date = models.DateTimeField('Game start date')
 
     team_a_winner = "Team A is the winner"
@@ -112,6 +144,8 @@ class Bet(models.Model):
     status = models.CharField(max_length=30,
                               choices=availiable_statuses,
                               default=open)
+
+    winnings = models.DecimalField(max_digits=7, decimal_places=2, default=0)
 
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField(editable=False)

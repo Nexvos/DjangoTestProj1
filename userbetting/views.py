@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from .tasks import *
+from profiles.tasks import *
 
 from .models import Game
 
@@ -22,10 +24,11 @@ def index(request):
 
 def testPage(request):
     games = Game.objects.all()
-    for game in games:
-        if game.status == game.not_begun:
-            game.status = "testing"
-            game.save()
+    # pay out bets function
+    # pay_bets()
+
+    # Rank users function
+    rank_users_winnings()
 
     context = {
         'games':games

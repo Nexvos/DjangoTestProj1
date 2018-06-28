@@ -1,8 +1,19 @@
+.carousel-caption{
+    width: 100%;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    height: 150px;
+    padding-bottom: 40px;
+    padding-left: 40px;
+    padding-right: 40px;
+    background-color: rgba(0,0,0,0.25);
+}
 .jumbotron {
     margin-bottom: 0;
 }
 body {
-  padding-top: 57px;
+    padding-top: 57px;
 }
 
 .text-align-center {
@@ -18,6 +29,7 @@ body {
 /*.bg-light {*/
     /*background-color: #5b728a !important;*/
 /*}*/
+
 label{
     margin-bottom: 0px;
     margin-top: .5rem;

@@ -40,35 +40,18 @@
 
         <div class="col-md-4">
 
-            <dl class="row" style="position: absolute;bottom: 0;margin-bottom: 0;">
-              <dt class="col-sm-3">Bank:</dt>
-              <dd class="col-sm-9">
-                  <a href="#"
-                      data-toggle="modal"
-                      data-target="#myModal"
-                      data-toggle="tooltip"
-                      data-placement="right"
-                      title="Click for further Breakdown">
-                        £{{ profile.bank }}
-                  </a>
-              </dd>
-
-              <dt class="col-sm-3">Location:</dt>
-              <dd class="col-sm-9">{{ profile.location }}</dd>
-
-              <dt class="col-sm-3">Colour:</dt>
-              <dd class="col-sm-9">
-                  <div style="width:15px;height:15px;border:1px solid #000;display: inline-block;background-color: #{{ profile.colour }};"></div>
-                  {{ profile.colour }}
-              </dd>
-            <dl/>
+           <br>
+            <br>
+            <small style="font-weight: 600;">Current rank:</small>
+            <h1 class="display-4" >{{ profile.ranking }}</h1>
+            <small style="margin-bottom: 0">out of {{ profile.total_number_users }} users</small><br>
+            <small><span style="font-weight: 600;">Total winnings: </span>£{{ profile.lifetime_winnings }} </small>
 
         </div>
 
     </div>
     </div>
     </div>
-</div>
 {% endblock %}
 
 {% block content %}
@@ -94,7 +77,20 @@
               <small><span style="font-weight: 600;">Non-withdrawable: </span>£{{ profile.non_withdrawable_bank }} <i class="fas fa-question-circle"></i></small>
           </div>
           <div class="col-md-8">
-            <button type="submit" class="btn btn-dark" style="width: 90%;">Add funds</button>
+
+            <form method='POST' action='{% url "profiles:profile" %}'>{% csrf_token %}
+                  <div class="input-group mb-3" style="width: 95%">
+                      <div class="input-group-prepend">
+                          <span class="input-group-text">£</span>
+                      </div>
+                          <input type="number" class="form-control"  min="0.01" step="0.01" max="2500" placeholder="5.00" id="deposit_amount" name="amount">
+                      <div class="input-group-append">
+                        </div>
+                  </div>
+                  <button type="submit" class="btn btn-dark" name="add_funds"> Make Changes</button>
+
+            </form>
+
           </div>
         </div>
         <br>
@@ -145,7 +141,7 @@
     </div>
     </div>
     <br>
-    <button type="submit" class="btn btn-primary"> Make Changes</button>
+    <button type="submit" class="btn btn-primary" name="update_details"> Make Changes</button>
 </form>
         </div>
     <div class="col-md-6"><div style="width: 65%;border-bottom-color:rgb(222, 226, 230);border-bottom-style:solid;border-bottom-width:2px;">

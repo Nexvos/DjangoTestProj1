@@ -3,6 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Field
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 from django.urls import reverse
+from decimal import Decimal
 
 class ProfileForm(forms.Form):
     location = forms.CharField(max_length=120)
@@ -30,3 +31,9 @@ class ProfileForm(forms.Form):
                 Submit('save_changes', 'Save changes', css_class="btn btn-primary"),
             )
         )
+
+
+
+
+class AddFundsForm(forms.Form):
+    amount = forms.DecimalField(max_digits=7, decimal_places=2, min_value=Decimal('0.01'))
