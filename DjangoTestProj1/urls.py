@@ -19,6 +19,10 @@ from django.conf.urls import url
 from DjangoTestProj1.views import home
 from django.conf import settings
 from django.conf.urls.static import static
+from DjangoTestProj1.api import router
+
+
+
 
 urlpatterns = [
     path('polls/', include('polls.urls')),
@@ -26,5 +30,7 @@ urlpatterns = [
     path('profiles/', include('profiles.urls')),
     path('admin/', admin.site.urls),
     url(r'^accounts/', include('registration.backends.default.urls')),
+    url(r'^api-auth/', include('rest_framework.urls')),
+    url(r'^api-test/', include(router.urls)),
     url(r'^$', home, name='home'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
