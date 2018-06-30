@@ -4,54 +4,58 @@
 
 {% block head_title %}Profile | {{ block.super }}{% endblock %}
 
-
+<style>
+{% block style %}
+.jumbotron {
+	padding-top: 32px !important;
+}
+{% endblock %}
+</style>
 
 {% block jumbotron %}
 <div class="jumbotron jumbotron-fluid" id="jumbo">
-{#    <div class="container" style="border-bottom-color: rgb(222, 226, 230);#}
-{#    border-bottom-style: solid;#}
-{#    border-bottom-width: 2px;#}
-{#    border-top-color: rgb(222, 226, 230);#}
-{#    border-top-style: solid;#}
-{#    border-top-width: 2px;#}
-{#    margin-bottom: 20px;">#}
-{#        <div class="row">#}
-{##}
-{#            <h1 class="display-1">{{ profile.user }}</h1><br><br>#}
-{#        </div>#}
-{#    </div>#}
-    <div class="container">
-    <div class="row">
-        <div class="col-md-4" style="background-color: #e4e5e6;">
-
-            {%  if profile.picture %}
-                <img src="{{ profile.picture.url }}"/>
-            {% endif %}
-
+    <div class="container home-wide">
+        <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">
+            <div class="col-md-12">
+                <p class='display-4 text-align-left' style="margin-bottom: 0;">Dashboard </p>
+            </div>
         </div>
-
-        <div class="col-md-4">
-            <br>
-            <p style="margin-bottom: 0;"><small style="font-weight: 600;">Current bank:</small></p>
-            <h1 class="display-4" >£{{ profile.bank }}</h1><br>
-            <small style="margin-bottom: 0"><span style="font-weight: 600;"> Withdrawable: </span> £{{ profile.withdrawable_bank }}</small><br>
-            <small><span style="font-weight: 600;">Non-withdrawable: </span>£{{ profile.non_withdrawable_bank }} <i class="fas fa-question-circle"></i></small>
+        <div class="row">
+            <div class="col-md-4" style="background-color: #e4e5e6;">
+                {%  if profile.picture %}
+                    <img src="{{ profile.picture.url }}"/>
+                {% endif %}
+            </div>
+            <div class="col-md-4" style="padding-left: 4%;">
+                <br>
+                <p style="margin-bottom: 0;">
+                    <small style="font-weight: 600;">Current bank:</small>
+                </p>
+                <h1 class="display-4" >£{{ profile.bank }}</h1>
+                <br>
+                <small style="margin-bottom: 0">
+                    <span style="font-weight: 600;"> Withdrawable: </span> £{{ profile.withdrawable_bank }}
+                </small>
+                <br>
+                <small>
+                    <span style="font-weight: 600;">Non-withdrawable: </span>£{{ profile.non_withdrawable_bank }}
+                    <i class="fas fa-question-circle"></i>
+                </small>
+            </div>
+            <div class="col-md-4">
+                <br>
+                <br>
+                <small style="font-weight: 600;">Current rank:</small>
+                <h1 class="display-4" >{{ profile.ranking }}</h1>
+                <small style="margin-bottom: 0">out of {{ profile.total_number_users }} users</small>
+                <br>
+                <small>
+                    <span style="font-weight: 600;">Total winnings: </span>£{{ profile.lifetime_winnings }}
+                </small>
+            </div>
         </div>
-
-        <div class="col-md-4">
-
-           <br>
-            <br>
-            <small style="font-weight: 600;">Current rank:</small>
-            <h1 class="display-4" >{{ profile.ranking }}</h1>
-            <small style="margin-bottom: 0">out of {{ profile.total_number_users }} users</small><br>
-            <small><span style="font-weight: 600;">Total winnings: </span>£{{ profile.lifetime_winnings }} </small>
-
-        </div>
-
     </div>
-    </div>
-    </div>
+</div>
 {% endblock %}
 
 {% block content %}
@@ -70,208 +74,241 @@
         <br>
         <div class="row">
 
-          <div class="col-md-4">
-              <p style="margin-bottom: 0;"><small style="font-weight: 600;">Current bank:</small></p>
-              <h1 class="display-3" >£{{ profile.bank }}</h1><br>
-              <small style="margin-bottom: 0"><span style="font-weight: 600;"> Withdrawable: </span> £{{ profile.withdrawable_bank }}</small><br>
-              <small><span style="font-weight: 600;">Non-withdrawable: </span>£{{ profile.non_withdrawable_bank }} <i class="fas fa-question-circle"></i></small>
+          <div class="col-md-2">
+              <br>
+              <div>
+                <img src="{% static 'img/visa-logo.jpg' %}" style="position: relative; width: 60%; left: 20%;">
+              </div>
+              <br>
+              <br>
+              <div>
+                <img src="{% static 'img/mastercard-logo.png' %}" style="position: relative; width: 60%; left: 20%;">
+              </div>
           </div>
-          <div class="col-md-8">
+          <div class="col-md-5">
+              <h3>Billing address</h3>
+             <div class="form-group">
+                <label for="inputAddress">Address</label>
+                <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="inputCity">City</label>
+                  <input type="text" class="form-control" id="inputCity">
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="inputState">State</label>
+                  <select id="inputState" class="form-control">
+                    <option selected>Choose...</option>
+                    <option>...</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-2">
+                  <label for="inputZip">Zip</label>
+                  <input type="text" class="form-control" id="inputZip">
+                </div>
+              </div>
 
-            <form method='POST' action='{% url "profiles:profile" %}'>{% csrf_token %}
-                  <div class="input-group mb-3" style="width: 95%">
-                      <div class="input-group-prepend">
-                          <span class="input-group-text">£</span>
-                      </div>
-                          <input type="number" class="form-control"  min="0.01" step="0.01" max="2500" placeholder="5.00" id="deposit_amount" name="amount">
-                      <div class="input-group-append">
-                        </div>
+          </div>
+            <div class="col-md-5">
+                <h3>Card details</h3>
+                <div class="form-row">
+                    <div class="form-group col-md-10">
+                      <label for="cardNumber">Card number</label>
+                      <input type="text" class="form-control" id="cardNumber">
+                    </div>
+                    <div class="form-group col-md-2">
+                      <label for="cvc">cvc</label>
+                      <input type="text" class="form-control" id="cvc">
+                    </div>
                   </div>
-                  <button type="submit" class="btn btn-dark" name="add_funds"> Make Changes</button>
+                <form method='POST' action='{% url "profiles:profile" %}'>{% csrf_token %}
+                    <div class="form-group">
+                        <label for="deposit_amount">Deposit amount</label>
+                      <div class="input-group mb-3">
 
-            </form>
-
-          </div>
+                          <div class="input-group-prepend">
+                              <span class="input-group-text">£</span>
+                          </div>
+                              <input type="number" class="form-control"  min="0.01" step="0.01" max="2500" placeholder="5.00" id="deposit_amount" name="amount">
+                          <div class="input-group-append">
+                            </div>
+                      </div>
+                    </div>
+                      <button type="submit" class="btn btn-dark" name="add_funds"> Make Changes</button>
+                </form>
+            </div>
         </div>
         <br>
         <br>
     </div>
-<div class="tab-pane fade" id="nav-update" role="tabpanel" aria-labelledby="nav-update-tab">
-{#        <h2 style="margin-bottom: 1.5rem;">#}
-{#            Update Details#}
-{#        </h2>#}
-<br>
-<div class="row">
-
-    <div class="col-md-6">
-        <div style="width: 65%;border-bottom-color:rgb(222, 226, 230);border-bottom-style:solid;border-bottom-width:2px;">
-            <p class="lead" style="font-weight: 600;">Update Details</p>
-        </div>
-
-
-<form enctype="multipart/form-data" method='POST' action='{% url "profiles:profile" %}'>{% csrf_token %}
-
-    <div id="div_id_location" class="control-group"> <label for="id_location" class="control-label requiredField">
-        Location<span class="asteriskField">*</span> </label>
-        <div class="controls">
-            <input type="text" name="location" maxlength="120" class="input-xlarge form-control" required id="id_location" style="width: 90%;"/>
-        </div>
-    </div>
-
-    <div id="div_id_colour" class="control-group">
-        <label for="id_colour" class="control-label requiredField">
-        Colour
-        <span class="asteriskField">*</span>
-        </label>
-        <div class="controls">
-
-        <input type="text" name="colour" class="jscolor form-control" value="AB2567" maxlength="7" required id="id_colour" style="width: 90%;"/>
-        </div>
-    </div>
-
-    <div id="div_id_picture" class="control-group">
-        <label for="id_picture" class="control-label requiredField">
-        Picture
-        <span class="asteriskField">*</span>
-        </label>
+    <div class="tab-pane fade" id="nav-update" role="tabpanel" aria-labelledby="nav-update-tab">
         <br>
-    <div class="custom-file" style="width: 90%;">
-      <input name="picture" type="file" class="custom-file-input clearable-file-input" id="id_picture">
-      <label class="custom-file-label" for="id_picture" style="margin-top: 0px;overflow: hidden;">Choose file</label>
-    </div>
-    </div>
+        <div class="row">
+
+            <div class="col-md-6">
+                <div style="width: 65%;border-bottom-color:rgb(222, 226, 230);border-bottom-style:solid;border-bottom-width:2px;">
+                    <p class="lead" style="font-weight: 600;">Update Details</p>
+                </div>
+                <form enctype="multipart/form-data" method='POST' action='{% url "profiles:profile" %}'>{% csrf_token %}
+
+                    <div id="div_id_location" class="control-group">
+                        <label for="id_location" class="control-label requiredField">
+                            Location
+                            <span class="asteriskField">*</span>
+                        </label>
+                        <div class="controls">
+                            <input type="text" name="location" maxlength="120" class="input-xlarge form-control" required id="id_location" style="width: 90%;"/>
+                        </div>
+                    </div>
+
+                    <div id="div_id_colour" class="control-group">
+                        <label for="id_colour" class="control-label requiredField">
+                            Colour
+                            <span class="asteriskField">*</span>
+                        </label>
+
+                        <div class="controls">
+                            <input type="text" name="colour" class="jscolor form-control" value="AB2567" maxlength="7" required id="id_colour" style="width: 90%;"/>
+                        </div>
+                    </div>
+
+                    <div id="div_id_picture" class="control-group">
+                        <label for="id_picture" class="control-label requiredField">
+                            Picture
+                            <span class="asteriskField">*</span>
+                        </label>
+                        <br>
+                        <div class="custom-file" style="width: 90%;">
+                          <input name="picture" type="file" class="custom-file-input clearable-file-input" id="id_picture">
+                          <label class="custom-file-label" for="id_picture" style="margin-top: 0px;overflow: hidden;">Choose file</label>
+                        </div>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary" name="update_details"> Make Changes</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <div style="width: 65%;border-bottom-color:rgb(222, 226, 230);border-bottom-style:solid;border-bottom-width:2px;">
+                    <p class="lead" style="font-weight: 600;">Current Details</p>
+                </div>
+                <br>
+                <dl class="row">
+
+                  <dt class="col-sm-3">Bank:</dt>
+                  <dd class="col-sm-9">
+                      <a href="#"
+                          data-toggle="modal"
+                          data-target="#myModal"
+                          data-toggle="tooltip"
+                          data-placement="right"
+                          title="Click for further Breakdown">
+                            £{{ profile.bank }}
+                      </a>
+                  </dd>
+
+                  <dt class="col-sm-3">Location:</dt>
+                  <dd class="col-sm-9">{{ profile.location }}</dd>
+
+                  <dt class="col-sm-3">Colour:</dt>
+                  <dd class="col-sm-9">
+                      <div style="width:15px;height:15px;border:1px solid #000;display: inline-block;background-color: #{{ profile.colour }};"></div>
+                      {{ profile.colour }}
+                  </dd>
+                </dl>
+
+            </div>
+
+        </div>
     <br>
-    <button type="submit" class="btn btn-primary" name="update_details"> Make Changes</button>
-</form>
-        </div>
-    <div class="col-md-6"><div style="width: 65%;border-bottom-color:rgb(222, 226, 230);border-bottom-style:solid;border-bottom-width:2px;">
-        <p class="lead" style="font-weight: 600;">Current Details</p>
+    <br>
     </div>
-        <br>
-            <dl class="row">
+    <div class="tab-pane fade" id="nav-bets-active" role="tabpanel" aria-labelledby="nav-bets-active-tab">
+        <table class="table table-striped header-fixed">
+          <thead>
+            <tr>
+              <th scope="col" style="width: 5%;border-top: 0;">#</th>
+              <th scope="col" style="width: 20%;border-top: 0;">Bet for</th>
+              <th scope="col" style="width: 19.5%;border-top: 0;">Match</th>
+              <th scope="col" style="width: 20%;border-top: 0;">Match Start Date</th>
+              <th scope="col" style="width: 12%;border-top: 0;">Amount</th>
+              <th scope="col" style="width: 21%;border-top: 0;">Match Status</th>
+            </tr>
+          </thead>
+          <tbody>
+          {%  for bet in qs_active %}
 
-              <dt class="col-sm-3">Bank:</dt>
-              <dd class="col-sm-9">
-                  <a href="#"
-                      data-toggle="modal"
-                      data-target="#myModal"
-                      data-toggle="tooltip"
-                      data-placement="right"
-                      title="Click for further Breakdown">
-                        £{{ profile.bank }}
-                  </a>
-              </dd>
+            <tr>
+              <td style="width: 5%;font-weight: 700;">{{ forloop.counter }}</td>
+              <td style="width: 20%;">{{ bet.chosen_team }}</td>
+              <td style="width: 20%;"><a href={% url 'userBetting:detail' bet.game.game_id %}>{{ bet.game.team_a }} vs {{ bet.game.team_b }}</a></td>
+              <td style="width: 21%;">{{ bet.game.game_date }}</td>
+              <td style="width: 12%;">£{{ bet.amount }}</td>
+              <td style="width: 21%;">{{ bet.game.status }}</td>
+            </tr>
 
-              <dt class="col-sm-3">Location:</dt>
-              <dd class="col-sm-9">{{ profile.location }}</dd>
+          {% endfor %}
+          </tbody>
+        </table>
+    </div>
 
-              <dt class="col-sm-3">Colour:</dt>
-              <dd class="col-sm-9">
-                  <div style="width:15px;height:15px;border:1px solid #000;display: inline-block;background-color: #{{ profile.colour }};"></div>
-                  {{ profile.colour }}
-              </dd>
-            <dl/>
+    <div class="tab-pane fade" id="nav-bets-validating" role="tabpanel" aria-labelledby="nav-bets-validating-tab">
+        <table class="table table-striped header-fixed">
+          <thead>
+            <tr>
+              <th scope="col" style="width: 5%;border-top: 0;">#</th>
+              <th scope="col" style="width: 20%;border-top: 0;">Bet for</th>
+              <th scope="col" style="width: 19.5%;border-top: 0;">Match</th>
+              <th scope="col" style="width: 20%;border-top: 0;">Match Start Date</th>
+              <th scope="col" style="width: 12%;border-top: 0;">Amount</th>
+              <th scope="col" style="width: 21%;border-top: 0;">Match Status</th>
+            </tr>
+          </thead>
+          <tbody>
+          {%  for bet in qs_awaiting_validation %}
 
-        </div>
+            <tr>
+              <td style="width: 5%;font-weight: 700;">{{ forloop.counter }}</td>
+              <td style="width: 20%;">{{ bet.chosen_team }}</td>
+              <td style="width: 20%;"><a href={% url 'userBetting:detail' bet.game.game_id %}>{{ bet.game.team_a }} vs {{ bet.game.team_b }}</a></td>
+              <td style="width: 21%;">{{ bet.game.game_date }}</td>
+              <td style="width: 12%;">£{{ bet.amount }}</td>
+              <td style="width: 21%;">{{ bet.game.status }}</td>
+            </tr>
 
-</div>
-<br>
-<br>
-</div>
-<div class="tab-pane fade" id="nav-bets-active" role="tabpanel" aria-labelledby="nav-bets-active-tab">
-{#      <h2 style="margin-bottom: 1.5rem;">#}
-{#            Active Bets#}
-{#        </h2>#}
-<table class="table table-striped header-fixed">
-  <thead>
-    <tr>
-      <th scope="col" style="width: 5%;border-top: 0;">#</th>
-      <th scope="col" style="width: 20%;border-top: 0;">Bet for</th>
-      <th scope="col" style="width: 19.5%;border-top: 0;">Match</th>
-      <th scope="col" style="width: 20%;border-top: 0;">Match Start Date</th>
-      <th scope="col" style="width: 12%;border-top: 0;">Amount</th>
-      <th scope="col" style="width: 21%;border-top: 0;">Match Status</th>
-    </tr>
-  </thead>
-  <tbody>
-  {%  for bet in qs_active %}
+          {% endfor %}
+          </tbody>
+        </table>
+    </div>
 
-    <tr>
-      <td style="width: 5%;font-weight: 700;">{{ forloop.counter }}</td>
-      <td style="width: 20%;">{{ bet.chosen_team }}</td>
-      <td style="width: 20%;"><a href={% url 'userBetting:detail' bet.game.game_id %}>{{ bet.game.team_a }} vs {{ bet.game.team_b }}</a></td>
-      <td style="width: 21%;">{{ bet.game.game_date }}</td>
-      <td style="width: 12%;">£{{ bet.amount }}</td>
-      <td style="width: 21%;">{{ bet.game.status }}</td>
-    </tr>
+    <div class="tab-pane fade" id="nav-bets-settled" role="tabpanel" aria-labelledby="nav-bets-settled-tab">
+        <table class="table table-striped header-fixed">
+              <thead>
+                <tr>
+                  <th scope="col" style="width: 5%;border-top: 0;">#</th>
+                  <th scope="col" style="width: 20%;border-top: 0;">Bet for</th>
+                  <th scope="col" style="width: 19.5%;border-top: 0;">Match</th>
+                  <th scope="col" style="width: 20%;border-top: 0;">Match Start Date</th>
+                  <th scope="col" style="width: 12%;border-top: 0;">Amount</th>
+                  <th scope="col" style="width: 21%;border-top: 0;">Match Status</th>
+                </tr>
+              </thead>
+              <tbody>
+              {%  for bet in qs_settled %}
 
-  {% endfor %}
-  </tbody>
-</table>
-</div>
-<div class="tab-pane fade" id="nav-bets-validating" role="tabpanel" aria-labelledby="nav-bets-validating-tab">
-{#      <h2 style="margin-bottom: 1.5rem;">#}
-{#            Active Bets#}
-{#        </h2>#}
-<table class="table table-striped header-fixed">
-  <thead>
-    <tr>
-      <th scope="col" style="width: 5%;border-top: 0;">#</th>
-      <th scope="col" style="width: 20%;border-top: 0;">Bet for</th>
-      <th scope="col" style="width: 19.5%;border-top: 0;">Match</th>
-      <th scope="col" style="width: 20%;border-top: 0;">Match Start Date</th>
-      <th scope="col" style="width: 12%;border-top: 0;">Amount</th>
-      <th scope="col" style="width: 21%;border-top: 0;">Match Status</th>
-    </tr>
-  </thead>
-  <tbody>
-  {%  for bet in qs_awaiting_validation %}
+                <tr style="background-color: {% ifequal bet.status bet.paid %}rgba(0,255,0,0.1){% else %}rgba(255,0,0,0.1) {% endifequal %}">
+                  <td style="width: 5%;font-weight: 700;">{{ forloop.counter }}</td>
+                  <td style="width: 20%;">{{ bet.chosen_team }}</td>
+                  <td style="width: 20%;"><a href={% url 'userBetting:detail' bet.game.game_id %}>{{ bet.game.team_a }} vs {{ bet.game.team_b }}</a></td>
+                  <td style="width: 21%;">{{ bet.game.game_date }}</td>
+                  <td style="width: 12%;">£{{ bet.amount }}</td>
+                  <td style="width: 21%;">{{ bet.game.status }}</td>
+                </tr>
 
-    <tr>
-      <td style="width: 5%;font-weight: 700;">{{ forloop.counter }}</td>
-      <td style="width: 20%;">{{ bet.chosen_team }}</td>
-      <td style="width: 20%;"><a href={% url 'userBetting:detail' bet.game.game_id %}>{{ bet.game.team_a }} vs {{ bet.game.team_b }}</a></td>
-      <td style="width: 21%;">{{ bet.game.game_date }}</td>
-      <td style="width: 12%;">£{{ bet.amount }}</td>
-      <td style="width: 21%;">{{ bet.game.status }}</td>
-    </tr>
-
-  {% endfor %}
-  </tbody>
-</table>
-</div>
-<div class="tab-pane fade" id="nav-bets-settled" role="tabpanel" aria-labelledby="nav-bets-settled-tab">
-{#      <h2 style="margin-bottom: 1.5rem;">#}
-{#            Active Bets#}
-{#        </h2>#}
-<table class="table table-striped header-fixed">
-  <thead>
-    <tr>
-      <th scope="col" style="width: 5%;border-top: 0;">#</th>
-      <th scope="col" style="width: 20%;border-top: 0;">Bet for</th>
-      <th scope="col" style="width: 19.5%;border-top: 0;">Match</th>
-      <th scope="col" style="width: 20%;border-top: 0;">Match Start Date</th>
-      <th scope="col" style="width: 12%;border-top: 0;">Amount</th>
-      <th scope="col" style="width: 21%;border-top: 0;">Match Status</th>
-    </tr>
-  </thead>
-  <tbody>
-  {%  for bet in qs_settled %}
-
-    <tr style="background-color: {% ifequal bet.status bet.paid %}rgba(0,255,0,0.1){% else %}rgba(255,0,0,0.1) {% endifequal %}">
-      <td style="width: 5%;font-weight: 700;">{{ forloop.counter }}</td>
-      <td style="width: 20%;">{{ bet.chosen_team }}</td>
-      <td style="width: 20%;"><a href={% url 'userBetting:detail' bet.game.game_id %}>{{ bet.game.team_a }} vs {{ bet.game.team_b }}</a></td>
-      <td style="width: 21%;">{{ bet.game.game_date }}</td>
-      <td style="width: 12%;">£{{ bet.amount }}</td>
-      <td style="width: 21%;">{{ bet.game.status }}</td>
-    </tr>
-
-  {% endfor %}
-  </tbody>
-</table>
-
-</div>
+              {% endfor %}
+              </tbody>
+        </table>
+    </div>
 
 </div>
 

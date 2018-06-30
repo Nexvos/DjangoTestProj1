@@ -11,13 +11,11 @@ def rank_users_winnings():
     for profile in profiles:
         list.append((profile.user, profile.lifetime_winnings))
     list = sorted(list, key=itemgetter(1), reverse=True)
-    ranking = 1
+    ranking = 0
     for item in list:
         user = item[0]
-        user.profile.ranking = ranking
         ranking += 1
-    for item in list:
-        user = item[0]
-        ranking = ranking - 1
-        user.profile.total_number_users = ranking
+        user.profile.ranking = ranking
+        user.profile.total_number_users = len(list)
+
         user.profile.save()

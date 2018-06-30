@@ -9,6 +9,9 @@
     padding-right: 40px;
     background-color: rgba(0,0,0,0.25);
 }
+.home-wide {
+	max-width: 1400px;
+}
 .jumbotron {
     margin-bottom: 0;
 }

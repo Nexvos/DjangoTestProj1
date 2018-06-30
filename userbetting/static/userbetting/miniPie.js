@@ -1,5 +1,5 @@
 // //svg size variables - also controls size of pie --- Trying to make the pie page size reactive
-var w= 348;
+var w= 150;
 var h= 150;
 
 //Set outer and inner radius of the donut
@@ -15,8 +15,8 @@ function InitialPie(team_dataset, chartID) {
 	var svg=d3.select("#chart" + chartID)
 			.append("svg")
 			.attr({
-				width:w,
-				height:h
+				width:w + "px",
+				height:h + "px"
 			}).append('g')
 			.attr({
 				transform:'translate('+w/2+','+h/2+')'

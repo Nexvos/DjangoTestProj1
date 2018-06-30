@@ -10,9 +10,6 @@
 .navbar-static-top {
 	margin-bottom: 0px !important;
 }
-.home-wide {
-	max-width: 1400px;
-}
 tbody {
     background-color: white;
 }
@@ -121,13 +118,13 @@ tbody {
         <p class='lead text-align-center'>Join Now!</p>
         <form method='POST' action='{% url "registration_register" %}'>{% csrf_token %}
             <div class="row">
-                <div class="form-group col-sm-6" style="margin-bottom: 0;">
+                <div class="form-group col-sm-6" style="margin-bottom: 10px;">
                     <label for="exampleInputUsername">Username<span class="asteriskField">*</span></label>
                     <input type="text" class="form-control" id="exampleInputUsername" aria-describedby="usernameHelp" name='username' placeholder="Enter username">
 {#                    <small id="usernameHelp" class="form-text text-muted">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</small>#}
                 </div>
 
-                <div class="form-group col-sm-6">
+                <div class="form-group col-sm-6" style="margin-bottom: 10px;">
                     <label for="exampleInputEmail1">Email address<span class="asteriskField">*</span></label>
                     <input type="email" class="form-control" name="email" id="exampleInputEmail1" placeholder="Enter email">
                 </div>
