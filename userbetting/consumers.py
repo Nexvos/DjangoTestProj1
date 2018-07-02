@@ -80,7 +80,7 @@ class DataConsumer(AsyncWebsocketConsumer):
         message = event['message']
         self.game = get_object_or_404(Game, pk=self.game_id)
         data = '['
-        qs = self.game.bet_set.all()
+        qs = self.game.game_bets.all()
         total_bet = 0
         count = 0
         for bet in qs:

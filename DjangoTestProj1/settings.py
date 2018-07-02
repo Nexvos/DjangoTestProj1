@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'polls.apps.PollsConfig',
     'userbetting.apps.UserbettingConfig',
     'profiles.apps.ProfilesConfig',
+    'BettingAdmin.apps.BettingadminConfig'
 ]
 #Registration Settings
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.

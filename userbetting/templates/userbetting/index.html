@@ -76,7 +76,7 @@ svg {
             <script>
             // Create the team data
             var dataset = [
-            {% for bet in game.bet_set.all %}
+            {% for bet in game.game_bets.all %}
                 {
                 name:'{{ bet.user }}',
                 amount:{{ bet.amount }},

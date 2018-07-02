@@ -29,7 +29,7 @@ class Profile(models.Model):
 
     @property
     def lifetime_winnings(self):
-        bets = self.user.bet_set.all()
+        bets = self.user.user_bets.all()
         lifetime_winnings = 0
         for bet in bets:
             if bet.status == bet.paid:

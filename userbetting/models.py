@@ -76,7 +76,7 @@ class Game(models.Model):
     videogame = models.CharField(max_length=30,
                                  choices=availiable_games,
                                  blank=True, null=True,)
-    tournament = models.ForeignKey(Tournament, blank=True, null=True, on_delete=models.PROTECT)
+    tournament = models.ForeignKey(Tournament, related_name='games', blank=True, null=True, on_delete=models.PROTECT)
     game_date = models.DateTimeField('Game start date')
 
     team_a_winner = "Team A is the winner"
@@ -128,8 +128,8 @@ class Game(models.Model):
 
 class Bet(models.Model):
     bet_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
-    game = models.ForeignKey(Game, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, related_name='user_bets', on_delete=models.PROTECT)
+    game = models.ForeignKey(Game, related_name='game_bets', on_delete=models.PROTECT)
     chosen_team = models.ForeignKey(Team, on_delete=models.PROTECT)
     amount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
 

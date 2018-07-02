@@ -28,6 +28,7 @@ urlpatterns = [
     path('polls/', include('polls.urls')),
     path('betting/', include('userbetting.urls')),
     path('profiles/', include('profiles.urls')),
+    path('bettingadmin/', include('BettingAdmin.urls')),
     path('admin/', admin.site.urls),
     url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^api-auth/', include('rest_framework.urls')),

@@ -1,0 +1,7 @@
+I want to enter a API endpoint for a tournament and have that tournament be created in the database
+I want games from that tournament to be created automatically when I first point the application at the API endpoint
+I want games from that tournament to be created automatically as they are added
+I want the teams for each game to be added with team images
+I want the teams for each game to be added with a team colour
+I want to game status changing on the API to change the status of the game in DJango
+I do not want any changes to the API to be able to delete models in Django

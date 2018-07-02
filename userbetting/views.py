@@ -38,9 +38,9 @@ def testPage(request):
 
 def detail(request, game_id):
     user = request.user
-    userbets = user.bet_set.all().filter(game__game_id=game_id)
+    userbets = user.user_bets.all().filter(game__game_id=game_id)
     game = get_object_or_404(Game, pk=game_id)
-    qs = game.bet_set.all()
+    qs = game.game_bets.all()
     total_bet = 0
     for bet in qs:
         total_bet += bet.amount

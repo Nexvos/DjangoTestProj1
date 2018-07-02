@@ -12,7 +12,7 @@ def pay_bets():
         if(game.status == game.finished_confirmed):
             game_total = Decimal(0.00)
             game_winning_bet_total = Decimal(0.00)
-            bets = game.bet_set.all()
+            bets = game.game_bets.all()
             if bets:
                 for bet in bets:
                     game_total += bet.amount

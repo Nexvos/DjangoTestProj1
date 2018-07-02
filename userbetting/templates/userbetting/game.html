@@ -88,7 +88,7 @@ var color = d3.scale.ordinal()
 
 // Create bet data for this game
 var dataset = [
-        {% for bet in game.bet_set.all %}
+        {% for bet in game.game_bets.all %}
             {
             name:'{{ bet.user }}',
             amount:{{ bet.amount }},
