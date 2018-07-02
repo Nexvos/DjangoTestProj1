@@ -65,8 +65,8 @@ def get_future_match_data():
                                 "match_name": b["name"],
                                 "match_url": matches_data_url(),
                                 "match_status": b["status"],
-                                "match_start_datetime": b["begin_at"]
-                                "match_modified_datetime": b["modified_at"]
+                                "match_start_datetime": b["begin_at"],
+                                "match_modified_datetime": b["modified_at"],
                                 "winner": b["winner"],
                                 "team_a": b["opponents"][0]["opponent"]["name"],
                                 "team_b": b["opponents"][1]["opponent"]["name"],
