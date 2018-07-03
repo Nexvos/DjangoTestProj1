@@ -15,8 +15,10 @@ availiable_games = (
 
 class Team(models.Model):
     team_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=200, unique=True, null=False)
+    api_team_id = models.IntegerField(unique=True, null=True, blank=True)
+    name = models.CharField(max_length=200, null=False)
     picture = models.ImageField(upload_to="teamLogos", null=True, blank=True)
+    picture_url = models.URLField()
     colour = models.CharField(max_length=7, null=False, blank=False, default="D3D3D3")
 
     @property
@@ -42,7 +44,10 @@ class Team(models.Model):
 
 class Tournament(models.Model):
     tournament_id = models.AutoField(primary_key=True)
-    tournament_name = models.CharField(max_length=120, null=False, blank=False, unique=True)
+    api_tournament_id = models.IntegerField(unique=True, null=True, blank=True)
+    api_modified_at = models.DateTimeField('api_modified_at')
+    tournament_name = models.CharField(max_length=120, null=False, blank=False)
+
     videogame = models.CharField(max_length=30,
                               choices=availiable_games,
                               default="cs:go")
@@ -71,6 +76,8 @@ class Tournament(models.Model):
 
 class Game(models.Model):
     game_id = models.AutoField(primary_key=True)
+    api_match_id = models.IntegerField(unique=True,blank=True,null=True)
+    api_modified_at = models.DateTimeField('api_modified_at')
     team_a = models.ForeignKey(Team, on_delete=models.PROTECT, related_name='%(class)s_team_a')
     team_b = models.ForeignKey(Team, on_delete=models.PROTECT, related_name='%(class)s_team_b')
     videogame = models.CharField(max_length=30,
@@ -78,6 +85,7 @@ class Game(models.Model):
                                  blank=True, null=True,)
     tournament = models.ForeignKey(Tournament, related_name='games', blank=True, null=True, on_delete=models.PROTECT)
     game_date = models.DateTimeField('Game start date')
+
 
     team_a_winner = "Team A is the winner"
     team_b_winner = "Team B is the winner"

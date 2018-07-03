@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime
-
+from DjangoTestProj1.api_keys import getApiKey
 
 # Account for pagination (read docs)
 
@@ -10,7 +10,7 @@ def get_future_match_data():
     tournaments_endpoint = "series/%s/tournaments.json?"
     matches_endpoint = "/tournaments/%s/matches.json?"
     optional_filter = "filter[name]=Overwatch&"
-    api_key = "token=7HNKtu8m8q0haBoJfP1N-S1xGFi4Po9Xm16JQYxWcdMqtnr7IQE"
+    api_key = "token=" + getApiKey()
 
     series_data_url = lambda: url_base + series_endpoint + api_key
     tournaments_data_url = lambda: url_base + tournaments_endpoint + api_key
@@ -51,6 +51,9 @@ def get_future_match_data():
                         "tournament_url": tournaments_data_url(),
                         "tournament_start_datetime": a["begin_at"],
                         "tournament_end_datetime": a["end_at"],
+                        "modified_at": a["modified_at"],
+                        "series_videogame": i["videogame"]["name"],
+                        "tournament_videogame": a["videogame"]["name"],
                         "matches": []
                     }
                     if tournament_dict["series_name"] == "":
