@@ -33,7 +33,7 @@ svg {
     <div class="container home-wide">
         <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">
             <div class="col-md-12">
-                <p class='display-3 text-align-left' style="margin-bottom: 0;">{{ query }} </p>
+                <p class='display-3 text-align-left' style="margin-bottom: 0;">{{ tournament.tournament_name }} </p>
             </div>
         </div>
     </div>
@@ -42,61 +42,34 @@ svg {
 {#airplane#}
 <script src="{% static 'js/d3.js' %}"></script>
 
-
+    
 {#<script src="http://d3js.org/d3.v3.min.js"></script>#}
 
 
 {% endblock %}
 
 {% block content %}
-    <h4 class="display-4" style="font-size: 3rem;font-weight: 500;">Tournaments</h4>
-    <div class="row">
-        <div class="col-sm-4">
-            <h5 class="display-4" style="font-size: 1.6rem; font-weight: 500;">Upcoming</h5>
-
-            {% if upcoming_tournaments %}
-            <ul class="list-group">
-                {% for tournament in upcoming_tournaments %}
-                    <a href="{% url 'userBetting:tournament_view' tournament.tournament_id %}">
-                        <li class="list-group-item">{{ tournament.tournament_name }}</li>
-                    </a>
-                {% endfor %}
-            </ul>
-            {% else %}
-                <p> no upcoming tournaments </p>
-            {% endif %}
-
-        </div>
-        <div class="col-sm-4">
-            <h5 class="display-4" style="font-size: 1.6rem; font-weight: 500;">Ongoing</h5>
-
-            <ul class="list-group">
-                {% for tournament in ongoing_tournamnts %}
-                    <a href="{% url 'userBetting:tournament_view' tournament.tournament_id %}">
-                        <li class="list-group-item">{{ tournament.tournament_name }}</li>
-                    </a>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="col-sm-4">
-            <h5 class="display-4" style="font-size: 1.6rem; font-weight: 500;">Completed</h5>
-
-            <ul class="list-group">
-                {% for tournament in completed_tournaments %}
-                    <a href="{% url 'userBetting:tournament_view' tournament.tournament_id %}">
-                        <li class="list-group-item">{{ tournament.tournament_name }}</li>
-                    </a>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-
-
-    <h4 class="display-4" style="font-size: 3rem;font-weight: 500;">Latest Games</h4>
+    <h4 class="display-4">Tournament Details</h4>
     <br>
-    {% if latest_game_list %}
+
+    <dl class="row">
+        <dt class="col-sm-2">Tournament Start Date:</dt>
+        <dd class="col-sm-10">{{ tournament.tournament_start_date }}</dd>
+
+        <dt class="col-sm-2">Tournament End Date:</dt>
+        <dd class="col-sm-10">{{ tournament.tournament_end_date }}</dd>
+
+        <dt class="col-sm-2">Main Twitch URL:</dt>
+        <dd class="col-sm-10">{{ tournament.main_twitch_url }}</dd>
+
+        <dt class="col-sm-2">Status:</dt>
+        <dd class="col-sm-10">{{ tournament.status }}</dd>
+    </dl>
+    {% if games_qs %}
+        <h4 class="display-4">Tournament Games</h4>
+        <br>
         <div id="products" class="row grid-view">
-            {% for game in latest_game_list %}
+            {% for game in games_qs %}
             <div class="item col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
                 <div class="thumbnail">
                     <div class="widget" style="padding-top: 10px; padding-bottom: 10px;">

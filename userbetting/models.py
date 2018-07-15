@@ -7,7 +7,7 @@ from django.utils import timezone
 availiable_games = (
     ("CSGO","cs:go"),
     ("SC2","starcraft"),
-    ("LOL","League of Legends"),
+    ("LoL","League of Legends"),
     ("Dota","Dota 2"),
     ("Overwatch","Overwatch")
 )
@@ -18,7 +18,7 @@ class Team(models.Model):
     api_team_id = models.IntegerField(unique=True, null=True, blank=True)
     name = models.CharField(max_length=200, null=False)
     picture = models.ImageField(upload_to="teamLogos", null=True, blank=True)
-    picture_url = models.URLField()
+    picture_url = models.URLField(null=True,blank=True)
     colour = models.CharField(max_length=7, null=False, blank=False, default="D3D3D3")
 
     @property
@@ -45,7 +45,7 @@ class Team(models.Model):
 class Tournament(models.Model):
     tournament_id = models.AutoField(primary_key=True)
     api_tournament_id = models.IntegerField(unique=True, null=True, blank=True)
-    api_modified_at = models.DateTimeField('api_modified_at')
+    api_modified_at = models.DateTimeField('api_modified_at',null=True, blank=True)
     tournament_name = models.CharField(max_length=120, null=False, blank=False)
 
     videogame = models.CharField(max_length=30,
@@ -53,7 +53,7 @@ class Tournament(models.Model):
                               default="cs:go")
 
     tournament_start_date = models.DateTimeField('Tournament start date')
-    tournament_send_date = models.DateTimeField('Tournament end date')
+    tournament_end_date = models.DateTimeField('Tournament end date')
 
 
     main_twitch_url =  models.URLField(max_length=200, unique=True, blank=True, null=True)
@@ -77,7 +77,7 @@ class Tournament(models.Model):
 class Game(models.Model):
     game_id = models.AutoField(primary_key=True)
     api_match_id = models.IntegerField(unique=True,blank=True,null=True)
-    api_modified_at = models.DateTimeField('api_modified_at')
+    api_modified_at = models.DateTimeField('api_modified_at',null=True, blank=True)
     team_a = models.ForeignKey(Team, on_delete=models.PROTECT, related_name='%(class)s_team_a')
     team_b = models.ForeignKey(Team, on_delete=models.PROTECT, related_name='%(class)s_team_b')
     videogame = models.CharField(max_length=30,

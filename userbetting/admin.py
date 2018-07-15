@@ -3,8 +3,9 @@ from .forms import TeamForm
 
 
 # Register your models here.
-from .models import Game, Bet, Team
+from .models import Game, Bet, Team, Tournament
 
+admin.site.register(Tournament)
 admin.site.register(Game)
 admin.site.register(Bet)
 admin.site.register(Team)

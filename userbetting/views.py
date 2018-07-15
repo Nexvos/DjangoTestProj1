@@ -4,34 +4,80 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from .tasks import *
 from profiles.tasks import *
-
-from .models import Game
-
+from BettingAdmin.adminBettingFunctions import get_colors, mark_tournaments_complete
+from .models import Game, Team, Tournament
+from django.conf import settings
+from django.db.models import Q
+from datetime import datetime
+from datetime import timedelta
+import os
 
 # Create your views here.
 def index(request):
     latest_game_list = Game.objects.order_by('game_date')
+    tournament_list = Tournament.objects.all()
+    # Nd to create separate qurysets for different tournament statuses and only display active tournaments
+    # & tournaments not yet begun
     query = request.GET.get('q')
+    current_datetime = datetime.now()
+    three_months = timedelta(days=90)
     if query:
-        latest_game_list = latest_game_list.filter(videogame__exact=query)
+        latest_game_list = latest_game_list.filter(videogame__iexact=query)
+        tournament_list = tournament_list.filter(videogame__iexact=query)
     else:
         query = "Betting Page"
+
+    upcoming_tournaments = tournament_list.filter(
+            Q(tournament_start_date__gt=datetime.now()),
+            Q(tournament_start_date__lt=datetime.now() + three_months)
+        ).order_by('tournament_start_date')
+
+    ongoing_tournamnts = tournament_list.filter(
+            Q(tournament_start_date__lt=datetime.now()),
+            Q(tournament_end_date__gt=datetime.now())
+        ).order_by('tournament_start_date')
+
+    completed_tournaments = tournament_list.filter(
+            Q(tournament_start_date__lt=datetime.now()),
+            Q(tournament_end_date__lt=datetime.now()),
+            Q(tournament_end_date__gt=datetime.now() - three_months)
+        ).order_by('tournament_start_date')
+
     context = {
         'latest_game_list': latest_game_list,
+        'upcoming_tournaments': upcoming_tournaments,
+        'ongoing_tournamnts': ongoing_tournamnts,
+        'completed_tournaments': completed_tournaments,
         'query': query
     }
     return render(request, 'userbetting/index.html', context)
 
-def testPage(request):
-    games = Game.objects.all()
-    # pay out bets function
-    # pay_bets()
+def tournament_view(request, tournament_id):
+    tournament = get_object_or_404(Tournament, pk=tournament_id)
+    tournament_games = tournament.games.all().order_by('game_date')
 
-    # Rank users function
-    rank_users_winnings()
 
     context = {
-        'games':games
+        "tournament": tournament,
+        "games_qs": tournament_games
+    }
+    return render(request, 'userbetting/tournament_view.html', context)
+
+def testPage(request):
+    teams = Team.objects.all()
+    # pay out bets function
+    # pay_bets()
+    mark_tournaments_complete()
+    # print(os.path.join(settings.MEDIA_ROOT, str(teams[8].picture)))
+    # print(get_colors(os.path.join(settings.MEDIA_ROOT, str(teams[8].picture))))
+    # for team in teams:
+    #     team.colour = get_colors(os.path.join(settings.MEDIA_ROOT, str(team.picture)))
+    #     team.save()
+    # Rank users function
+    # rank_users_winnings()
+
+    context = {
+        'games':teams
 
     }
     return render(request, 'userbetting/test.html', context)
@@ -41,6 +87,7 @@ def detail(request, game_id):
     userbets = user.user_bets.all().filter(game__game_id=game_id)
     game = get_object_or_404(Game, pk=game_id)
     qs = game.game_bets.all()
+
     total_bet = 0
     for bet in qs:
         total_bet += bet.amount
