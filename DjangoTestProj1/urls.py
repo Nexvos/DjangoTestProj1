@@ -25,7 +25,6 @@ from DjangoTestProj1.api import router
 
 
 urlpatterns = [
-    path('polls/', include('polls.urls')),
     path('betting/', include('userbetting.urls')),
     path('profiles/', include('profiles.urls')),
     path('bettingadmin/', include('BettingAdmin.urls')),

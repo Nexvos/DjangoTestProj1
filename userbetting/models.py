@@ -44,6 +44,7 @@ class Team(models.Model):
 
 class Tournament(models.Model):
     tournament_id = models.AutoField(primary_key=True)
+    api_series_id = models.IntegerField(unique=True, null=True, blank=True)
     api_tournament_id = models.IntegerField(unique=True, null=True, blank=True)
     api_modified_at = models.DateTimeField('api_modified_at',null=True, blank=True)
     tournament_name = models.CharField(max_length=120, null=False, blank=False)

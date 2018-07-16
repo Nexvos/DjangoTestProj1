@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from .tasks import *
 from profiles.tasks import *
-from BettingAdmin.adminBettingFunctions import get_colors, mark_tournaments_complete
+from BettingAdmin.adminBettingFunctions import get_colors, mark_tournaments_complete, update_existing_tournaments, get_match_data_by_tournament_id, get_tournament_data_by_series_id
 from .models import Game, Team, Tournament
 from django.conf import settings
 from django.db.models import Q
@@ -26,6 +26,7 @@ def index(request):
         tournament_list = tournament_list.filter(videogame__iexact=query)
     else:
         query = "Betting Page"
+
 
     upcoming_tournaments = tournament_list.filter(
             Q(tournament_start_date__gt=datetime.now()),
@@ -67,7 +68,7 @@ def testPage(request):
     teams = Team.objects.all()
     # pay out bets function
     # pay_bets()
-    mark_tournaments_complete()
+    print(get_tournament_data_by_series_id(1441))
     # print(os.path.join(settings.MEDIA_ROOT, str(teams[8].picture)))
     # print(get_colors(os.path.join(settings.MEDIA_ROOT, str(teams[8].picture))))
     # for team in teams:

@@ -69,38 +69,42 @@ tbody {
                 </div>
             </div>
             <div class="col-md-4">
-                <table class="table">
-                  <thead class="thead-dark">
-                    <tr>
-                      <th scope="col">Game</th>
-                      <th scope="col">Tournament</th>
-                      <th scope="col">Start date</th>
-                      <th scope="col">End date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>LOL</td>
-                      <td>Otto</td>
-                      <td>16/06/18</td>
-                      <td>21/06/18</td>
-                    </tr>
-                    <tr>
-                      <td>SC2</td>
-                      <td>HomeStory Cup XVII</td>
-                      <td>15/06/18</td>
-                      <td>18/06/18</td>
-                    </tr>
-                    <tr>
-                      <td>Dota 2</td>
-                      <td>the Bird</td>
-                      <td>15/06/18</td>
-                      <td>20/06/18</td>
-                    </tr>
-                  </tbody>
-                </table>
 
+
+                    {% if ongoing_tournamnts %}
+                  <table class="table">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th scope="col">Game</th>
+                          <th scope="col">Tournament</th>
+                          <th scope="col">Start date</th>
+                          <th scope="col">End date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+                        {% for tournament in ongoing_tournamnts %}
+                                <tr>
+
+                                    <td>{{ tournament.game }}</td>
+                                    <td>{{ tournament.tournament_name }}</td>
+                                    <td>{{ tournament.tournament_start_date }}</td>
+                                    <td>{{ tournament.tournament_end_date }}</td>
+                                </tr>
+
+                        {% endfor %}
+
+
+
+                  </tbody>
+
+                </table>
+                {% else %}
+
+                        <p> no ongoing tournaments </p>
+                {% endif %}
             </div>
+        </div>
         </div>
     </div>
 </div>

@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # My apps
-    'polls.apps.PollsConfig',
     'userbetting.apps.UserbettingConfig',
     'profiles.apps.ProfilesConfig',
     'BettingAdmin.apps.BettingadminConfig'

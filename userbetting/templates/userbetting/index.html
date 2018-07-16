@@ -69,7 +69,7 @@ svg {
         </div>
         <div class="col-sm-4">
             <h5 class="display-4" style="font-size: 1.6rem; font-weight: 500;">Ongoing</h5>
-
+            {% if ongoing_tournamnts %}
             <ul class="list-group">
                 {% for tournament in ongoing_tournamnts %}
                     <a href="{% url 'userBetting:tournament_view' tournament.tournament_id %}">
@@ -77,10 +77,13 @@ svg {
                     </a>
                 {% endfor %}
             </ul>
+            {% else %}
+                <p> no ongoing tournaments </p>
+            {% endif %}
         </div>
         <div class="col-sm-4">
             <h5 class="display-4" style="font-size: 1.6rem; font-weight: 500;">Completed</h5>
-
+            {% if completed_tournaments %}
             <ul class="list-group">
                 {% for tournament in completed_tournaments %}
                     <a href="{% url 'userBetting:tournament_view' tournament.tournament_id %}">
@@ -88,6 +91,9 @@ svg {
                     </a>
                 {% endfor %}
             </ul>
+            {% else %}
+                <p> no tournaments completed in the last 3 months</p>
+            {% endif %}
         </div>
     </div>
 
