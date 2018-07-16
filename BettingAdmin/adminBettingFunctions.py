@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw
 import scipy
 import scipy.misc
 import scipy.cluster
-from userbetting.models import Game, Tournament, Team
+from userbetting.models import Game, Tournament, Team, Stage
 from urllib import request as urllib_request
 from django.core.files import File
 import os
@@ -17,7 +17,7 @@ from django.conf import settings
 
 def get_new_API_data_by_videogame(game_id):
     url_base = "https://api.pandascore.co/"
-    series_endpoint = "videogames/" + game_id + "/series.json?"
+    series_endpoint = "videogames/" + str(game_id) + "/series.json?"
     tournaments_endpoint = "series/%s/tournaments.json?"
     matches_endpoint = "/tournaments/%s/matches.json?"
     optional_filter = "filter[name]=Overwatch&"
@@ -43,32 +43,43 @@ def get_new_API_data_by_videogame(game_id):
     # return data if there is data availiable for team_a and team_b OR if the match ID is already stored in the database
     # -- Update if ID exists in database or create if it does not - update eneeds to search based on id for eaach match (no
 
-    tournaments = []
-
+    series = []
     for i in series_data():
-        try:
-            datetime_object = datetime.strptime(i["end_at"], '%Y-%m-%dT%H:%M:%SZ')
-            if datetime_object >= datetime.now():
-                tournaments_endpoint = tournaments_endpoint % i["id"]
-                for a in tournaments_data():
+
+        print("this is i: ", i)
+        if i["name"] == None or i["name"] == "":
+            series_name = i["slug"]
+        else:
+            series_name = i["name"]
+
+        tournaments_endpoint = tournaments_endpoint % i["id"]
+        series_dict = {
+            "series_id": i["id"],
+            "series_name": series_name,
+            "series_url": series_data_url(),
+            "series_start_datetime": i["begin_at"],
+            "series_end_datetime": i["end_at"],
+            "series_videogame": i["videogame"]["name"],
+            "modified_at": i["modified_at"],
+            "tournaments": []
+        }
+        tournament_dicts = []
+        for a in tournaments_data():
+            try:
+                datetime_object = datetime.strptime(a["end_at"], '%Y-%m-%dT%H:%M:%SZ')
+                if datetime_object >= datetime.now():
+                    print("found")
                     tournament_dict = {
-                        "series_id": i["id"],
-                        "series_name": i["name"],
-                        "series_url": series_data_url(),
-                        "series_start_datetime": i["begin_at"],
-                        "series_end_datetime": i["end_at"],
                         "tournament_id": a["id"],
                         "tournament_name": a["name"],
                         "tournament_url": tournaments_data_url(),
                         "tournament_start_datetime": a["begin_at"],
                         "tournament_end_datetime": a["end_at"],
-                        "modified_at": a["modified_at"],
-                        "series_videogame": i["videogame"]["name"],
                         "tournament_videogame": a["videogame"]["name"],
                         "matches": []
                     }
-                    if tournament_dict["series_name"] == "":
-                        tournament_dict["series_name"] = i["slug"]
+                    if tournament_dict["tournament_name"] == "":
+                        tournament_dict["tournament_name"] = i["slug"]
 
                     match_dicts = []
                     matches_endpoint = matches_endpoint % a["id"]
@@ -106,12 +117,18 @@ def get_new_API_data_by_videogame(game_id):
                     matches_endpoint = "/tournaments/%s/matches.json?"
                     if match_dicts != []:
                         tournament_dict["matches"] = match_dicts
-                        tournaments.append(tournament_dict)
-                tournaments_endpoint = "series/%s/tournaments.json?"
-        except:
-            pass
+                    print("tournament dict")
+                    print(tournament_dict)
+                    tournament_dicts.append(tournament_dict)
+            except:
+                pass
+        if tournament_dicts != []:
+            series_dict["tournaments"] = tournament_dicts
+            series.append(series_dict)
 
-    return (tournaments)
+        tournaments_endpoint = "series/%s/tournaments.json?"
+
+    return (series)
 
 def get_tournament_data_by_series_id(series_id):
     url_base = "https://api.pandascore.co/"
@@ -273,102 +290,131 @@ def get_colors(file_location):
 
 def Add_new_tournament(game_id):
     data = get_new_API_data_by_videogame(game_id)
-
+    print(data)
     for tournament in data:
+        print(tournament)
+        #handle the possibility that the tournament end date is None / not defined
+        if tournament["series_end_datetime"] == None or "":
+            tournament["series_end_datetime"] = "2020-01-01T12:00:00Z"
+        if tournament["modified_at"] == None or "":
+            api_modified_at = datetime.now()
+        else:
+            api_modified_at = datetime.strptime(
+                tournament["series_end_datetime"],
+                '%Y-%m-%dT%H:%M:%SZ'
+            )
         t1, created = Tournament.objects.get_or_create(
-            api_tournament_id=tournament["tournament_id"],
             api_series_id=tournament["series_id"],
             defaults={
-                "tournament_name": tournament["series_name"] + " - " + tournament["tournament_name"],
+                "tournament_name": tournament["series_name"],
                 "tournament_start_date": datetime.strptime(
-                    tournament["tournament_start_datetime"],
+                    tournament["series_start_datetime"],
                     '%Y-%m-%dT%H:%M:%SZ'
                 ),
                 "tournament_end_date": datetime.strptime(
-                    tournament["tournament_end_datetime"],
+                    tournament["series_end_datetime"],
                     '%Y-%m-%dT%H:%M:%SZ'
                 ),
-                "api_modified_at": datetime.strptime(
-                    tournament["modified_at"],
-                    '%Y-%m-%dT%H:%M:%SZ'
-                ),
-                "videogame": tournament["tournament_videogame"]
+                "api_modified_at": api_modified_at,
+                "videogame": tournament["series_videogame"]
             }
         )
+        for stage in tournament["tournaments"]:
 
-        for match in tournament["matches"]:
-            team_a, team_a_created = Team.objects.get_or_create(
-                api_team_id=match["team_a_id"],
+            s1 , stage_created = Stage.objects.get_or_create(
+                api_tournament_id=stage["tournament_id"],
+                api_series_id=tournament["series_id"],
                 defaults={
-                    "name": match["team_a"],
-                    "picture_url": match["team_a_img_url"]
+                    "stage_name": stage["tournament_name"],
+                    "stage_start_date": datetime.strptime(
+                        stage["tournament_start_datetime"],
+                        '%Y-%m-%dT%H:%M:%SZ'
+                    ),
+                    "stage_end_date": datetime.strptime(
+                        stage["tournament_end_datetime"],
+                        '%Y-%m-%dT%H:%M:%SZ'
+                    ),
+                    "tournament": t1
                 }
             )
 
-            if team_a_created:
-                try:
-                    result = urllib_request.urlretrieve(team_a.picture_url)
-                    team_a.picture.save(
-                        os.path.basename(team_a.picture_url),
-                        File(open(result[0], "rb"))
-                    )
-                    team_a.save()
-                except:
-                    pass
-                try:
-                    team_a.colour = get_colors(os.path.join(settings.MEDIA_ROOT, str(team_a.picture)))
-                    team_a.save()
-                except:
-                    pass
-            else:
-                # update image if image doesn't exist or image has been updated?
-                pass
-            team_b, team_b_created = Team.objects.get_or_create(
-                api_team_id=match["team_b_id"],
-                defaults={
-                    "name": match["team_b"],
-                    "picture_url": match["team_b_img_url"]
-                }
-            )
+            for match in stage["matches"]:
+                team_a, team_a_created = Team.objects.get_or_create(
+                    api_team_id=match["team_a_id"],
+                    defaults={
+                        "name": match["team_a"],
+                        "picture_url": match["team_a_img_url"]
+                    }
+                )
 
-            if team_b_created:
-                try:
-                    result = urllib_request.urlretrieve(team_b.picture_url)
-                    team_b.picture.save(
-                        os.path.basename(team_b.picture_url),
-                        File(open(result[0], "rb"))
-                    )
-                    team_b.save()
-                except:
+                if team_a_created:
+                    try:
+                        result = urllib_request.urlretrieve(team_a.picture_url)
+                        team_a.picture.save(
+                            os.path.basename(team_a.picture_url),
+                            File(open(result[0], "rb"))
+                        )
+                        team_a.save()
+                    except:
+                        pass
+                    try:
+                        team_a.colour = get_colors(os.path.join(settings.MEDIA_ROOT, str(team_a.picture)))
+                        team_a.save()
+                    except:
+                        pass
+                else:
+                    # update image if image doesn't exist or image has been updated?
                     pass
-                try:
-                    team_b.colour = get_colors(os.path.join(settings.MEDIA_ROOT, str(team_b.picture)))
-                    team_b.save()
-                except:
-                    pass
-            else:
-                # update image if image doesn't exist or image has been updated?
-                pass
+                team_b, team_b_created = Team.objects.get_or_create(
+                    api_team_id=match["team_b_id"],
+                    defaults={
+                        "name": match["team_b"],
+                        "picture_url": match["team_b_img_url"]
+                    }
+                )
 
-            m1, match_created = Game.objects.get_or_create(
-                api_match_id=match["match_id"],
-                defaults={
-                    "api_modified_at": datetime.strptime(
+                if team_b_created:
+                    try:
+                        result = urllib_request.urlretrieve(team_b.picture_url)
+                        team_b.picture.save(
+                            os.path.basename(team_b.picture_url),
+                            File(open(result[0], "rb"))
+                        )
+                        team_b.save()
+                    except:
+                        pass
+                    try:
+                        team_b.colour = get_colors(os.path.join(settings.MEDIA_ROOT, str(team_b.picture)))
+                        team_b.save()
+                    except:
+                        pass
+                else:
+                    # update image if image doesn't exist or image has been updated?
+                    pass
+                if match["match_modified_datetime"] == None or "":
+                    match_modified_at = datetime.now()
+                else:
+                    match_modified_at = datetime.strptime(
                         match["match_modified_datetime"],
                         '%Y-%m-%dT%H:%M:%SZ'
-                    ),
-                    "team_a": team_a,
-                    "team_b": team_b,
-                    "videogame": tournament["tournament_videogame"],
-                    "tournament": t1,
-                    "game_date": datetime.strptime(
-                        match["match_start_datetime"],
-                        '%Y-%m-%dT%H:%M:%SZ'
-                    ),
-                    "status": match["match_status"],
-                    "winning_team": match["winner"]
-                }
-            )
+                    )
+                m1, match_created = Game.objects.get_or_create(
+                    api_match_id=match["match_id"],
+                    defaults={
+                        "api_modified_at": match_modified_at,
+                        "team_a": team_a,
+                        "team_b": team_b,
+                        "videogame": tournament["series_videogame"],
+                        "tournament": t1,
+                        "stage": s1,
+                        "game_date": datetime.strptime(
+                            match["match_start_datetime"],
+                            '%Y-%m-%dT%H:%M:%SZ'
+                        ),
+                        "status": match["match_status"],
+                        "winning_team": match["winner"]
+                    }
+                )
 
 def mark_tournaments_complete():
     tournaments = Tournament.objects.all()

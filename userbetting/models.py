@@ -43,9 +43,9 @@ class Team(models.Model):
 
 
 class Tournament(models.Model):
+    # series on the API
     tournament_id = models.AutoField(primary_key=True)
-    api_series_id = models.IntegerField(unique=True, null=True, blank=True)
-    api_tournament_id = models.IntegerField(unique=True, null=True, blank=True)
+    api_series_id = models.IntegerField(unique=False, null=True, blank=True)
     api_modified_at = models.DateTimeField('api_modified_at',null=True, blank=True)
     tournament_name = models.CharField(max_length=120, null=False, blank=False)
 
@@ -75,7 +75,35 @@ class Tournament(models.Model):
     def __str__(self):
         return self.tournament_name
 
+class Stage(models.Model):
+    #tournament on the api
+    stage_id = models.AutoField(primary_key=True)
+    api_series_id = models.IntegerField(unique=False, null=True, blank=True)
+    api_tournament_id = models.IntegerField(unique=True, null=True, blank=True)
+    api_modified_at = models.DateTimeField('api_modified_at',null=True, blank=True)
+    stage_name = models.CharField(max_length=120, null=False, blank=False)
+    tournament = models.ForeignKey(Tournament, related_name='tournament_stages', blank=True, null=True, on_delete=models.PROTECT)
+    stage_start_date = models.DateTimeField('Tournament start date')
+    stage_end_date = models.DateTimeField('Tournament end date')
+
+    not_begun = "Not begun"
+    ongoing = "Ongoing"
+    finished = "Finished"
+
+
+    availiable_statuses = ((not_begun, "Not begun"),
+                           (ongoing, "Ongoing"),
+                           (finished, "Finished"))
+
+    status = models.CharField(max_length=30,
+                              choices=availiable_statuses,
+                              default=not_begun)
+
+    def __str__(self):
+        return self.stage_name
+
 class Game(models.Model):
+    # Match on the API
     game_id = models.AutoField(primary_key=True)
     api_match_id = models.IntegerField(unique=True,blank=True,null=True)
     api_modified_at = models.DateTimeField('api_modified_at',null=True, blank=True)
@@ -84,6 +112,7 @@ class Game(models.Model):
     videogame = models.CharField(max_length=30,
                                  choices=availiable_games,
                                  blank=True, null=True,)
+    stage = models.ForeignKey(Stage, related_name='stage_games', blank=True, null=True, on_delete=models.PROTECT)
     tournament = models.ForeignKey(Tournament, related_name='games', blank=True, null=True, on_delete=models.PROTECT)
     game_date = models.DateTimeField('Game start date')
 
