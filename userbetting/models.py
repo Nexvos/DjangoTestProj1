@@ -54,7 +54,7 @@ class Tournament(models.Model):
                               default="cs:go")
 
     tournament_start_date = models.DateTimeField('Tournament start date')
-    tournament_end_date = models.DateTimeField('Tournament end date')
+    tournament_end_date = models.DateTimeField('Tournament end date', blank=True, null=True)
 
 
     main_twitch_url =  models.URLField(max_length=200, unique=True, blank=True, null=True)
@@ -84,7 +84,7 @@ class Stage(models.Model):
     stage_name = models.CharField(max_length=120, null=False, blank=False)
     tournament = models.ForeignKey(Tournament, related_name='tournament_stages', blank=True, null=True, on_delete=models.PROTECT)
     stage_start_date = models.DateTimeField('Tournament start date')
-    stage_end_date = models.DateTimeField('Tournament end date')
+    stage_end_date = models.DateTimeField('Tournament end date', blank=True, null=True)
 
     not_begun = "Not begun"
     ongoing = "Ongoing"
