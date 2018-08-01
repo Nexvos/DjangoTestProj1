@@ -11,4 +11,6 @@ urlpatterns = [
     path('<int:game_id>/', views.detail, name='detail'),
     # ex: /betting/5/
     path('tournament/<int:tournament_id>/', views.tournament_view, name='tournament_view'),
+    path('lazy_load_games/', views.lazy_load_games, name='lazy_load_posts'),
+    path('tournament-list/', views.tournament_list_view, name='tournament_list_view'),
 ]

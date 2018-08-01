@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block head_title %}Profile | {{ block.super }}{% endblock %}
+
+
+
+{% block jumbotron %}
+<div class="jumbotron jumbotron-fluid" id="jumbo" style="padding-bottom: 30px;">
+    <div class="container home-wide">
+        <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">
+            <div class="col-md-12">
+                <p class='display-4 text-align-left' style="margin-bottom: 0;">Tournament List </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+  <div id="accordion">
+    <div class="card">
+      <div class="card-header">
+        <a class="card-link" data-toggle="collapse" href="#collapseOne">
+          Upcoming Tournaments
+        </a>
+      </div>
+      <div id="collapseOne" class="collapse show" data-parent="#accordion">
+        <div class="card-body">
+          {% for tournament in upcoming_tournaments %}
+
+            <a
+                    class="list-group-item list-group-item-action list-group-item-dark"
+                    href="{% url 'userBetting:tournament_view' tournament.tournament_id %}"
+                    style="background-color:#{{ tournament.videogame.colour }};"
+                    onmouseover="this.style.backgroundColor='#{{ tournament.videogame.alt_colour }}'"
+                    onmouseout="this.style.backgroundColor='#{{ tournament.videogame.colour }}'"
+            >
+                <img src="{{ tournament.videogame.picture.url }}" style="height: 100%"> &nbsp; {{ tournament.tournament_name }}
+            </a>
+
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo">
+        Ongoing tournaments
+      </a>
+      </div>
+      <div id="collapseTwo" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+            {% for tournament in ongoing_tournaments %}
+
+            <a
+                    class="list-group-item list-group-item-action list-group-item-dark"
+                    href="{% url 'userBetting:tournament_view' tournament.tournament_id %}"
+                    style="background-color:#{{ tournament.videogame.colour }};"
+                    onmouseover="this.style.backgroundColor='#{{ tournament.videogame.alt_colour }}'"
+                    onmouseout="this.style.backgroundColor='#{{ tournament.videogame.colour }}'"
+            >
+                <img src="{{ tournament.videogame.picture.url }}" style="height: 100%"> &nbsp; {{ tournament.tournament_name }}
+            </a>
+
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <a class="collapsed card-link" data-toggle="collapse" href="#collapseThree">
+          Completed tournaments
+        </a>
+      </div>
+      <div id="collapseThree" class="collapse" data-parent="#accordion">
+        <div class="card-body">
+            {% for tournament in completed_tournaments %}
+
+            <a
+                    class="list-group-item list-group-item-action list-group-item-dark"
+                    href="{% url 'userBetting:tournament_view' tournament.tournament_id %}"
+                    style="background-color:#{{ tournament.videogame.colour }};"
+                    onmouseover="this.style.backgroundColor='#{{ tournament.videogame.alt_colour }}'"
+                    onmouseout="this.style.backgroundColor='#{{ tournament.videogame.colour }}'"
+            >
+                <img src="{{ tournament.videogame.picture.url }}" style="height: 100%"> &nbsp; {{ tournament.tournament_name }}
+            </a>
+
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{##}
+{#<div class="list-group">#}
+{#{% for profile in model %}#}
+{#    <a href="{% url 'profiles:profile-public' profile.username %}" class="list-group-item list-group-item-action">#}
+{#        {{ profile.username }}#}
+{#    </a>#}
+{#{% endfor %}#}
+{#</div>#}
+
+{% endblock %}

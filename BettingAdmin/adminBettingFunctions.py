@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw
 import scipy
 import scipy.misc
 import scipy.cluster
-from userbetting.models import Game, Tournament, Team, Stage
+from userbetting.models import Game, Tournament, Team, Stage, Videogame
 from urllib import request as urllib_request
 from django.core.files import File
 import os
@@ -258,6 +258,8 @@ def get_new_API_data_by_videogame(game_id):
                 # the api doesn't always have the name field populated - this function uses the slug field if that's the case
                 if i["name"] == None or i["name"] == "":
                     series_name = i["slug"]
+                    if i["slug"][:18] == "league-of-legends-":
+                        series_name = i["slug"][18:]
                 else:
                     series_name = i["name"]
 
@@ -338,6 +340,7 @@ def get_all_API_data_by_videogame(game_id):
                 # the api doesn't always have the name field populated - this function uses the slug field if that's the case
                 if i["name"] == None or i["name"] == "":
                     series_name = i["slug"]
+
                 else:
                     series_name = i["name"]
 
@@ -411,6 +414,16 @@ def Add_new_tournament(game_id):
     print("working")
     for tournament in data:
 
+        if tournament["series_videogame"] == None or tournament["series_videogame"] == "":
+            videogame = None
+        else:
+            videogame, vcreated = Videogame.objects.get_or_create(
+                videogame_name=(tournament["series_videogame"]).lower(),
+                defaults={
+                    "api_videogame_id": game_id
+                }
+            )
+
         t1, created = Tournament.objects.get_or_create(
             api_series_id=tournament["series_id"],
             defaults={
@@ -418,7 +431,7 @@ def Add_new_tournament(game_id):
                 "tournament_start_date": tournament["series_start_datetime"],
                 "tournament_end_date": tournament["series_end_datetime"],
                 "api_modified_at": tournament["series_modified_datetime"],
-                "videogame": tournament["series_videogame"]
+                "videogame": videogame
             }
         )
         for stage in tournament["tournaments"]:
@@ -494,7 +507,7 @@ def Add_new_tournament(game_id):
                         "api_modified_at": match["match_modified_datetime"],
                         "team_a": team_a,
                         "team_b": team_b,
-                        "videogame": tournament["series_videogame"],
+                        "videogame": videogame,
                         "tournament": t1,
                         "stage": s1,
                         "game_date": match["match_start_datetime"],
@@ -532,7 +545,7 @@ def update_existing_tournaments():
     api_series = get_all_API_data_by_videogame(1)
     #iterate throught each tournament in the database
     print("data got")
-
+    print(api_series)
 
     for tournament in tournaments:
 
@@ -546,12 +559,23 @@ def update_existing_tournaments():
 
             for series in api_series:
                 if series["series_id"] == tournament.api_series_id:
-                    print("seies match")
+
+                    if series["series_videogame"] == None or series["series_videogame"] == "":
+                        videogame = None
+                    else:
+                        videogame, vcreated = Videogame.objects.get_or_create(
+                            videogame_name=(series["series_videogame"]).lower(),
+                            defaults={
+                                "api_videogame_id": 1
+                            }
+                        )
+
+                    print("seies match", videogame)
                     #changes to tournament
                     tournament.tournament_start_date = series["series_start_datetime"]
                     tournament.tournament_end_date = series["series_end_datetime"]
                     tournament.api_modified_at = series["series_modified_datetime"]
-                    tournament.videogame = series["series_videogame"]
+                    tournament.videogame = videogame
                     tournament.save()
 
                     stages = Stage.objects.filter(tournament__api_series_id=tournament.api_series_id)
@@ -563,7 +587,7 @@ def update_existing_tournaments():
 
                                 # changes to stage
                                 stage.stage_start_date = api_tournament["tournament_start_datetime"]
-                                stage.stage_end_date = api_tournament["tournament_name"]
+                                stage.stage_end_date = api_tournament["tournament_end_datetime"]
                                 stage.save()
 
                                 print("tournament match")
@@ -571,7 +595,9 @@ def update_existing_tournaments():
 
                                 games = Game.objects.filter(stage__api_tournament_id=stage.api_tournament_id)
                                 api_games = api_tournament["matches"]
+                                database_games = []
                                 for game in games:
+                                    database_games.append(game.api_match_id)
                                     for api_game in api_games:
                                         if api_game["match_id"] == game.api_match_id:
                                             print("match match")
@@ -669,16 +695,16 @@ def update_existing_tournaments():
                                                 game.save()
 
                                             game.api_modified_at = api_game["match_modified_datetime"]
-                                            game.videogame = series["series_videogame"]
+                                            game.videogame = videogame
                                             game.game_date =  api_game["match_start_datetime"]
                                             game.status = api_game["match_status"]
                                             game.winning_team = api_game["winner"]
                                             game.save()
-                                database_games = []
-                                for game in games:
-                                    database_games.append(game.api_match_id)
+
+                                print(database_games)
                                 for api_game in api_games:
                                     if api_game["match_id"] not in database_games:
+                                        print("found game not in database ", api_game["match_id"])
                                         team_a, team_a_created = Team.objects.get_or_create(
                                             api_team_id=api_game["team_a_id"],
                                             defaults={

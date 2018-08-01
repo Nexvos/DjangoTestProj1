@@ -1,0 +1,91 @@
+{% for game in latest_game_list %}
+
+    <div class="item col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
+        <div class="thumbnail">
+            <div class="widget" style="padding-top: 10px; padding-bottom: 10px;">
+                <div id="chartplaceholder{{ forloop.counter }}" class="chart-container"></div>
+            </div>
+            <div class="caption">
+                <h4 class="group inner list-group-item-heading" style="margin-top: 0.5rem;"><a href="{% url 'userBetting:detail' game.game_id %}">
+                    {{ game.team_a }} vs {{ game.team_b }}</a></h4>
+
+
+                    <p class="group inner list-group-item-text" style="margin-top: 5px">
+                {{ game.game_date|date:"d-F Y H:i" }}
+                    </p>
+
+                <div class="row">
+
+                    <div class="col-xs-12 col-md-12">
+                        <p class="lead font-weight-bold" style="color:green;">
+                            {{ game.status }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    // Create the team data
+    var dataset = [
+    {% for bet in game.game_bets.all %}
+        {
+        name:'{{ bet.user }}',
+        amount:{{ bet.amount }},
+        percent: 50,
+        team:'{{ bet.chosen_team }}',
+        colour:'#{{ bet.user.profile.colour }}'
+        },
+    {% endfor %}
+    ];
+
+    var teamdata_a_amount = 0;
+    var teamdata_b_amount = 0;
+
+    if (dataset === undefined || dataset.length == 0){
+        teamdata_a_amount = 1;
+        teamdata_b_amount = 1;
+    }
+    else{
+        for (i in dataset){
+           if (dataset[i].team=='{{ game.team_a }}') {
+               teamdata_a_amount += dataset[i].amount;
+           }
+           else if(dataset[i].team=='{{ game.team_b }}'){
+               teamdata_b_amount += dataset[i].amount;
+           }
+        };
+    };
+
+    var total_ab_amount = teamdata_a_amount + teamdata_b_amount;
+    var teamdata_a_percent = (teamdata_a_amount / total_ab_amount) * 100;
+    var teamdata_b_percent = (teamdata_b_amount / total_ab_amount) * 100;
+
+    var team_dataset = [
+        {
+        name:'{{ game.team_b }}',
+        amount:teamdata_b_amount,
+        percent: teamdata_b_percent,
+        team:'{{ game.team_b }}',
+        colour:'#{{ game.team_b.colour }}'
+    },
+    {
+        name:'{{ game.team_a }}',
+        amount:teamdata_a_amount,
+        percent: teamdata_a_percent,
+        team:'{{ game.team_a }}',
+        colour:'#{{ game.team_a.colour }}'
+        }];
+    var loop_addition = 0;
+    if (typeof loop_number !== 'undefined') {
+    // the variable is defined
+        loop_addition = loop_number;
+    }
+    $("#chartplaceholder{{ forloop.counter }}").attr("id", function(){
+        return "chart"+({{ forloop.counter }} + loop_addition).toString()
+    });
+    InitialPie(team_dataset, {{ forloop.counter }} + loop_addition);
+
+
+    </script>
+{% endfor %}

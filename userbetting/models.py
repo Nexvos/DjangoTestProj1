@@ -3,15 +3,27 @@ from datetime import timedelta
 from django.contrib.auth.models import User
 from colorfield.fields import ColorField
 from django.utils import timezone
+from DjangoTestProj1.settings import MEDIA_URL
 
 availiable_games = (
-    ("CSGO","cs:go"),
-    ("SC2","starcraft"),
-    ("LoL","League of Legends"),
-    ("Dota","Dota 2"),
-    ("Overwatch","Overwatch")
+    ("csgo","cs:go"),
+    ("sc2","starcraft"),
+    ("lol","League of Legends"),
+    ("dota","Dota 2"),
+    ("overwatch","Overwatch")
 )
 # Create your models here.
+class Videogame(models.Model):
+    videogame_name = models.CharField(unique=True, max_length=30,
+                              choices=availiable_games,
+                              default="LoL")
+    api_videogame_id = models.IntegerField(unique=True, null=True, blank=True)
+    picture = models.ImageField(upload_to="teamLogos", null=True, blank=True)
+    colour = models.CharField(max_length=7, null=False, blank=False, default="D3D3D3")
+    alt_colour = models.CharField(max_length=7, null=False, blank=False, default="D3D3D3")
+
+    def __str__(self):
+        return self.videogame_name
 
 class Team(models.Model):
     team_id = models.AutoField(primary_key=True)
@@ -49,9 +61,13 @@ class Tournament(models.Model):
     api_modified_at = models.DateTimeField('api_modified_at',null=True, blank=True)
     tournament_name = models.CharField(max_length=120, null=False, blank=False)
 
-    videogame = models.CharField(max_length=30,
-                              choices=availiable_games,
-                              default="cs:go")
+    videogame = models.ForeignKey(
+        Videogame,
+        related_name='videogame_tournaments',
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT
+    )
 
     tournament_start_date = models.DateTimeField('Tournament start date')
     tournament_end_date = models.DateTimeField('Tournament end date', blank=True, null=True)
@@ -109,9 +125,13 @@ class Game(models.Model):
     api_modified_at = models.DateTimeField('api_modified_at',null=True, blank=True)
     team_a = models.ForeignKey(Team, on_delete=models.PROTECT, related_name='%(class)s_team_a')
     team_b = models.ForeignKey(Team, on_delete=models.PROTECT, related_name='%(class)s_team_b')
-    videogame = models.CharField(max_length=30,
-                                 choices=availiable_games,
-                                 blank=True, null=True,)
+    videogame = models.ForeignKey(
+        Videogame,
+        related_name='videogame_games',
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT
+    )
     stage = models.ForeignKey(Stage, related_name='stage_games', blank=True, null=True, on_delete=models.PROTECT)
     tournament = models.ForeignKey(Tournament, related_name='games', blank=True, null=True, on_delete=models.PROTECT)
     game_date = models.DateTimeField('Game start date')

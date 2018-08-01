@@ -29,15 +29,17 @@ svg {
 {% endblock %}
 
 {% block jumbotron %}
-<div class="jumbotron" style="padding-bottom: 30px;">
-    <div class="container home-wide">
-        <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">
-            <div class="col-md-12">
-                <p class='display-3 text-align-left' style="margin-bottom: 0;">{{ query }} </p>
-            </div>
-        </div>
-    </div>
-</div>
+{#    {% ifnotequal query 'None' %}#}
+{#<div class="jumbotron" style="padding-bottom: 30px;">#}
+{#    <div class="container home-wide">#}
+{#        <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">#}
+{#            <div class="col-md-12">#}
+{#                <p class='display-4 text-align-left' style="margin-bottom: 0;">{{ query }} </p>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+{#    {% endifnotequal %}#}
 
 {#airplane#}
 <script src="{% static 'js/d3.js' %}"></script>
@@ -49,147 +51,156 @@ svg {
 {% endblock %}
 
 {% block content %}
-    <h4 class="display-4" style="font-size: 3rem;font-weight: 500;">Tournaments</h4>
-    <div class="row">
-        <div class="col-sm-4">
-            <h5 class="display-4" style="font-size: 1.6rem; font-weight: 500;">Upcoming</h5>
-
+    <h4 class="display-4 betting-title rounded" style="font-size: 3rem;font-weight: 500;">Tournaments<a style="font-size: 1rem;" href="{% url "userBetting:tournament_list_view" %}"><strong><< View all tournaments >></strong></a></h4>
+    <div class="row" style="margin-right: 0px; margin-left: 0px;">
+        <div class="col-sm-4" style="padding-top: 15px; padding-bottom: 15px;">
+        <div class="card" style="border: 1px solid #b5b5b5;">
+          <h5 class="card-header">Upcoming*</h5>
+          <div class="card-body" {% if upcoming_tournaments %}style="padding: 0;" {% endif %}>
             {% if upcoming_tournaments %}
-            <ul class="list-group">
+            <div class="list-group">
                 {% for tournament in upcoming_tournaments %}
-                    <a href="{% url 'userBetting:tournament_view' tournament.tournament_id %}">
-                        <li class="list-group-item">{{ tournament.tournament_name }}</li>
-                    </a>
-                {% endfor %}
-            </ul>
-            {% else %}
-                <p> no upcoming tournaments </p>
-            {% endif %}
 
-        </div>
-        <div class="col-sm-4">
-            <h5 class="display-4" style="font-size: 1.6rem; font-weight: 500;">Ongoing</h5>
-            {% if ongoing_tournamnts %}
-            <ul class="list-group">
-                {% for tournament in ongoing_tournamnts %}
-                    <a href="{% url 'userBetting:tournament_view' tournament.tournament_id %}">
-                        <li class="list-group-item">{{ tournament.tournament_name }}</li>
-                    </a>
+                        <a class="list-group-item list-group-item-action list-group-item-dark" href="{% url 'userBetting:tournament_view' tournament.tournament_id %}">
+                            {{ tournament.tournament_name }}
+                        </a>
+
                 {% endfor %}
-            </ul>
+            </div>
             {% else %}
-                <p> no ongoing tournaments </p>
+                <p class="card-text"> No upcoming tournaments. </p>
             {% endif %}
+          </div>
         </div>
-        <div class="col-sm-4">
-            <h5 class="display-4" style="font-size: 1.6rem; font-weight: 500;">Completed</h5>
-            {% if completed_tournaments %}
-            <ul class="list-group">
-                {% for tournament in completed_tournaments %}
-                    <a href="{% url 'userBetting:tournament_view' tournament.tournament_id %}">
-                        <li class="list-group-item">{{ tournament.tournament_name }}</li>
-                    </a>
-                {% endfor %}
-            </ul>
-            {% else %}
-                <p> no tournaments completed in the last 3 months</p>
-            {% endif %}
         </div>
-    </div>
+
+        <div class="col-sm-8" style="padding-top: 15px; padding-bottom: 15px;">
 
 
-    <h4 class="display-4" style="font-size: 3rem;font-weight: 500;">Latest Games</h4>
-    <br>
-    {% if latest_game_list %}
-        <div id="products" class="row grid-view">
-            {% for game in latest_game_list %}
-            <div class="item col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
-                <div class="thumbnail">
-                    <div class="widget" style="padding-top: 10px; padding-bottom: 10px;">
-                        <div id="chart{{ forloop.counter }}" class="chart-container"></div>
+        <div class="card" style="border: 1px solid #b5b5b5;">
+          <h5 class="card-header">Ongoing*</h5>
+          <div class="card-body" {% if ongoing_tournaments %}style="padding: 0;" {% endif %}>
+            {% if ongoing_tournaments %}
+            <div class="row" style="margin-right: 0px; margin-left: 0px;">
+                <div class="col-sm-6" style="padding: 0px;">
+                    <div class="list-group">
+                        {% for tournament in ongoing_tournaments|slice:":4" %}
+                            <a
+                                    class="list-group-item list-group-item-action list-group-item-dark"
+                                    href="{% url 'userBetting:tournament_view' tournament.tournament_id %}"
+                                    style="background-color:#{{ tournament.videogame.colour }};"
+                                    onmouseover="this.style.backgroundColor='#{{ tournament.videogame.alt_colour }}'"
+                                    onmouseout="this.style.backgroundColor='#{{ tournament.videogame.colour }}'"
+                            >
+                                <img src="{{ tournament.videogame.picture.url }}" style="height: 100%"> &nbsp; {{ tournament.tournament_name }}
+                            </a>
+
+                        {% endfor %}
                     </div>
-                    <div class="caption">
-                        <h4 class="group inner list-group-item-heading" style="margin-top: 0.5rem;"><a href="{% url 'userBetting:detail' game.game_id %}">
-                            {{ game.team_a }} vs {{ game.team_b }}</a></h4>
+                </div>
+                <div class="col-sm-6" style="padding: 0px;">
+                    <div class="list-group">
+                        {% for tournament in ongoing_tournaments|slice:"4:" %}
 
+                            <a
+                                    class="list-group-item list-group-item-action list-group-item-dark"
+                                    href="{% url 'userBetting:tournament_view' tournament.tournament_id %}"
+                                    style="background-color:#{{ tournament.videogame.colour }};"
+                                    onmouseover="this.style.backgroundColor='#{{ tournament.videogame.alt_colour }}'"
+                                    onmouseout="this.style.backgroundColor='#{{ tournament.videogame.colour }}'"
+                            >
+                                <img src="{{ tournament.videogame.picture.url }}" style="height: 100%"> &nbsp; {{ tournament.tournament_name }}
+                            </a>
 
-                            <p class="group inner list-group-item-text" style="margin-top: 5px">
-                        {{ game.game_date|date:"d-F Y H:i" }}
-                            </p>
-
-                        <div class="row">
-
-                            <div class="col-xs-12 col-md-12">
-                                <p class="lead font-weight-bold" style="color:green;">
-                                    {{ game.status }}
-                                </p>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
-            <script>
-            // Create the team data
-            var dataset = [
-            {% for bet in game.game_bets.all %}
-                {
-                name:'{{ bet.user }}',
-                amount:{{ bet.amount }},
-                percent: 50,
-                team:'{{ bet.chosen_team }}',
-                colour:'#{{ bet.user.profile.colour }}'
-                },
-            {% endfor %}
-            ];
-
-            var teamdata_a_amount = 0;
-            var teamdata_b_amount = 0;
-
-            if (dataset === undefined || dataset.length == 0){
-                teamdata_a_amount = 1;
-                teamdata_b_amount = 1;
-            }
-            else{
-                for (i in dataset){
-                   if (dataset[i].team=='{{ game.team_a }}') {
-                       teamdata_a_amount += dataset[i].amount;
-                   }
-                   else if(dataset[i].team=='{{ game.team_b }}'){
-                       teamdata_b_amount += dataset[i].amount;
-                   }
-                };
-            };
-
-            var total_ab_amount = teamdata_a_amount + teamdata_b_amount;
-            var teamdata_a_percent = (teamdata_a_amount / total_ab_amount) * 100;
-            var teamdata_b_percent = (teamdata_b_amount / total_ab_amount) * 100;
-
-            var team_dataset = [
-                {
-                name:'{{ game.team_b }}',
-                amount:teamdata_b_amount,
-                percent: teamdata_b_percent,
-                team:'{{ game.team_b }}',
-                colour:'#{{ game.team_b.colour }}'
-            },
-            {
-                name:'{{ game.team_a }}',
-                amount:teamdata_a_amount,
-                percent: teamdata_a_percent,
-                team:'{{ game.team_a }}',
-                colour:'#{{ game.team_a.colour }}'
-                }];
-
-            InitialPie(team_dataset, {{ forloop.counter }});
-
-
-            </script>
-            {% endfor %}
+            {% else %}
+                <p class="card-text"> No ongoing tournaments. </p>
+            {% endif %}
+          </div>
         </div>
+
+
+
+        </div>
+
+{#        <div class="col-sm-4" style="padding-top: 15px; padding-bottom: 15px;">#}
+{#        <div class="card" style="border: 1px solid #b5b5b5;">#}
+{#          <h5 class="card-header">Completed</h5>#}
+{#          <div class="card-body" {% if completed_tournaments %}style="padding: 0;" {% endif %}>#}
+{#            {% if completed_tournaments %}#}
+{#            <div class="list-group">#}
+{#                {% for tournament in completed_tournaments %}#}
+{##}
+{#                        <a class="list-group-item list-group-item-action list-group-item-dark" href="{% url 'userBetting:tournament_view' tournament.tournament_id %}">#}
+{#                            {{ tournament.tournament_name }}#}
+{#                        </a>#}
+{##}
+{#                {% endfor %}#}
+{#            </div>#}
+{#            {% else %}#}
+{#                <p class="card-text">No tournaments completed in the last 3 months.</p>#}
+{#            {% endif %}#}
+{#          </div>#}
+{#        </div>#}
+{#        </div>#}
+    </div>
+
+    <h4 class="display-4 betting-title rounded align-items-center" style="font-size: 3rem;font-weight: 500;">Latest Games</h4>
+    <br>
+    {% if latest_game_list %}
+        <div id="games_list" class="row grid-view">
+            {% include 'userbetting/games_list.html' %}
+        </div>
+        <div>
+            <button class= "btn btn-primary btn-lg btn-block" id="lazyLoadLink" data-page=2>Load more</button>
+        </div>
+        <br>
     {% else %}
         <p>No games are available at this time.</p>
     {% endif %}
 
+<script>
+
+
+// needed when making post requests in Django
+// we’ll use this for the ajax request in script.js
+window.CSRF_TOKEN = "{{ csrf_token }}";
+
+$('#lazyLoadLink').on('click', function() {
+    console.log("working?");
+    var link = $(this);
+    var page = link.data("page");
+    console.log(page)
+    $.ajax({
+      type: 'post',
+      url: '{% url 'userBetting:lazy_load_posts' %}',
+      data: {
+        'page': page,
+        'csrfmiddlewaretoken': window.CSRF_TOKEN // from index.html
+      },
+      success: function(data) {
+        // if there are still more pages to load,
+        // add 1 to the "Load More Posts" link's page data attribute
+        // else hide the link
+        console.log("Dat re");
+        if (data.has_next) {
+            link.data('page', page+1);
+        } else {
+            link.hide();
+        };
+        // append html to the posts div
+
+        $('#games_list').append(data.games_list_html);
+      },
+      error: function(xhr, status, error) {
+        // shit happens friends!
+      }
+    });
+  });
+</script>
 <style>
 
 .thumbnail
@@ -200,7 +211,7 @@ svg {
     -moz-border-radius: 0px;
     border-radius: 0px;
     background-color: #fff;
-    border: 1px solid #ddd;
+    border: 1px solid #b5b5b5;
 }
 .thumbnail img{
     max-width: 100%;
