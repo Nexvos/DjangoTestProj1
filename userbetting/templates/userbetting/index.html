@@ -6,26 +6,12 @@
 
 {% block head_title %}Betting | {{ block.super }}{% endblock %}
 
-<style>
-{% block style %}
-
-.thumbnail{
-    height: 95%;
-    width: 100%;
-}
-svg {
-	display: block;
-    margin: auto;
-}
-{% endblock %}
-</style>
 
 {% block extracss %}
     {% load static %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'userbetting/style.css' %}" />
     <meta charset="UTF-8">
-    <script src="{% static 'userbetting/miniPie.js' %}"></script>
 {% endblock %}
 
 {% block jumbotron %}
@@ -41,21 +27,30 @@ svg {
 {#</div>#}
 {#    {% endifnotequal %}#}
 
-{#airplane#}
-<script src="{% static 'js/d3.js' %}"></script>
-
-
 {#<script src="http://d3js.org/d3.v3.min.js"></script>#}
 
 
 {% endblock %}
 
 {% block content %}
-    <h4 class="display-4 betting-title rounded" style="font-size: 3rem;font-weight: 500;">Tournaments<a style="font-size: 1rem;" href="{% url "userBetting:tournament_list_view" %}"><strong><< View all tournaments >></strong></a></h4>
+    <div class="betting-title rounded row" style=" margin-right: 0px; margin-left: 0px;">
+        <div class="col-sm-8">
+            <h4 class="display-4" style="font-size: 3rem;font-weight: 500;">Tournaments </h4>
+        </div>
+        <div class="col-sm-4">
+            <a
+                    class="btn btn-dark float-md-right"
+                    style="font-size: 1rem; position: relative; top: 50%; transform: translateY(-50%); border: 1px white solid;"
+                    href="{% url "userBetting:tournament_list_view" %}?{% if query %}q={{ query }}&{% endif %}activesection=completed"
+            >
+                <strong>View completed tournaments</strong>
+            </a>
+        </div>
+    </div>
     <div class="row" style="margin-right: 0px; margin-left: 0px;">
         <div class="col-sm-4" style="padding-top: 15px; padding-bottom: 15px;">
-        <div class="card" style="border: 1px solid #b5b5b5;">
-          <h5 class="card-header">Upcoming*</h5>
+        <div class="card" style="border: 1px solid #b5b5b5;height: 100%;">
+          <h5 class="card-header"> <span data-toggle="tooltip" data-placement="right" title="Only 4 nearest tournaments displayed">Upcoming*</span></h5>
           <div class="card-body" {% if upcoming_tournaments %}style="padding: 0;" {% endif %}>
             {% if upcoming_tournaments %}
             <div class="list-group">
@@ -71,14 +66,17 @@ svg {
                 <p class="card-text"> No upcoming tournaments. </p>
             {% endif %}
           </div>
+        <div class="card-footer" style="padding: 0; background-color: #e9ecef;">
+          <a class= "btn btn-light btn-lg btn-block" style="background-color: #e9ecef;" href="{% url 'userBetting:tournament_list_view' %}?{% if query %}q={{ query }}&{% endif %}activesection=upcoming">View all Upcoming Tournaments</a>
+        </div>
         </div>
         </div>
 
         <div class="col-sm-8" style="padding-top: 15px; padding-bottom: 15px;">
 
 
-        <div class="card" style="border: 1px solid #b5b5b5;">
-          <h5 class="card-header">Ongoing*</h5>
+        <div class="card" style="border: 1px solid #b5b5b5;height: 100%;">
+            <h5 class="card-header"><span data-toggle="tooltip" data-placement="right" title="Only 8 tournaments displayed">Ongoing*</span></h5>
           <div class="card-body" {% if ongoing_tournaments %}style="padding: 0;" {% endif %}>
             {% if ongoing_tournaments %}
             <div class="row" style="margin-right: 0px; margin-left: 0px;">
@@ -120,6 +118,9 @@ svg {
                 <p class="card-text"> No ongoing tournaments. </p>
             {% endif %}
           </div>
+        <div class="card-footer" style="padding: 0; background-color: #e9ecef;">
+          <a class= "btn btn-light btn-lg btn-block" style="background-color: #e9ecef;" href="{% url 'userBetting:tournament_list_view' %}?{% if query %}q={{ query }}&{% endif %}activesection=ongoing">View all Ongoing Tournaments</a>
+        </div>
         </div>
 
 
@@ -147,8 +148,20 @@ svg {
 {#        </div>#}
 {#        </div>#}
     </div>
-
-    <h4 class="display-4 betting-title rounded align-items-center" style="font-size: 3rem;font-weight: 500;">Latest Games</h4>
+    <div class="betting-title rounded row" style=" margin-right: 0px; margin-left: 0px;">
+        <div class="col-sm-8">
+            <h4 class="display-4" style="font-size: 3rem;font-weight: 500;">Tournaments </h4>
+        </div>
+        <div class="col-sm-4">
+            <a
+                    class="btn btn-dark float-md-right"
+                    style="font-size: 1rem; position: relative; top: 50%; transform: translateY(-50%); border: 1px white solid;"
+                    href="{% url "userBetting:completed_games_list_view" %}{% if query %}?q={{ query }}{% endif %}"
+            >
+                <strong>View completed games</strong>
+            </a>
+        </div>
+    </div>
     <br>
     {% if latest_game_list %}
         <div id="games_list" class="row grid-view">
@@ -200,22 +213,14 @@ $('#lazyLoadLink').on('click', function() {
       }
     });
   });
+
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
 </script>
 <style>
 
-.thumbnail
-{
-    margin-bottom: 20px;
-    padding: 0px;
-    -webkit-border-radius: 0px;
-    -moz-border-radius: 0px;
-    border-radius: 0px;
-    background-color: #fff;
-    border: 1px solid #b5b5b5;
-}
-.thumbnail img{
-    max-width: 100%;
-}
+
 .item.list-group-item .list-group-image
 {
     margin-right: 10px;
@@ -238,9 +243,6 @@ $('#lazyLoadLink').on('click', function() {
 .list-group-item-text
 {
     margin: 0 0 11px;
-}
-.caption{
-    padding: 8px;
 }
 
 </style>

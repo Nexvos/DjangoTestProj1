@@ -47,7 +47,7 @@ div.tooltip {
     height: 42px;
     padding: 2px;
     font: 16px sans-serif;
-    background: mediumpurple;
+    /*background: mediumpurple;*/
     border: 0px;
     border-radius: 8px;
     pointer-events: none;
@@ -74,7 +74,6 @@ g text.total {
 .betting-title {
     background-color: #343a40;
     margin-bottom: 0;
-    padding-bottom: 10px;
     padding-left: 3%;
     color: white;
     border: 1px black solid;

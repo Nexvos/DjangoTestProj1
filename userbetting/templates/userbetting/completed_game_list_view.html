@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block head_title %}Completed Games | {{ block.super }}{% endblock %}
+
+{% block extracss %}
+    {% load static %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'userbetting/style.css' %}" />
+    <meta charset="UTF-8">
+{% endblock %}
+
+{% block jumbotron %}
+<div class="jumbotron jumbotron-fluid" id="jumbo" style="padding-bottom: 30px;">
+    <div class="container home-wide">
+        <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">
+            <div class="col-md-12">
+                <p class='display-4 text-align-left' style="margin-bottom: 0;">Completed Games </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+  {% if latest_game_list %}
+        <div id="games_list" class="row grid-view">
+            {% include 'userbetting/games_list.html' %}
+        </div>
+  {% else %}
+        <p>No completed games are available at this time.</p>
+  {% endif %}
+{##}
+{#<div class="list-group">#}
+{#{% for profile in model %}#}
+{#    <a href="{% url 'profiles:profile-public' profile.username %}" class="list-group-item list-group-item-action">#}
+{#        {{ profile.username }}#}
+{#    </a>#}
+{#{% endfor %}#}
+{#</div>#}
+
+{% endblock %}

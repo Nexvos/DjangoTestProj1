@@ -27,8 +27,9 @@
           Upcoming Tournaments
         </a>
       </div>
-      <div id="collapseOne" class="collapse show" data-parent="#accordion">
+      <div id="collapseOne" class="collapse {% ifequal activesection 'upcoming' %}show{% endifequal %}" data-parent="#accordion">
         <div class="card-body">
+          {% if upcoming_tournaments %}
           {% for tournament in upcoming_tournaments %}
 
             <a
@@ -42,6 +43,9 @@
             </a>
 
           {% endfor %}
+          {% else %}
+            <p class="card-text"> No upcoming tournaments. </p>
+          {% endif %}
         </div>
       </div>
     </div>
@@ -51,7 +55,7 @@
         Ongoing tournaments
       </a>
       </div>
-      <div id="collapseTwo" class="collapse" data-parent="#accordion">
+      <div id="collapseTwo" class="collapse {% ifequal activesection 'ongoing' %}show{% endifequal %}" data-parent="#accordion">
         <div class="card-body">
             {% for tournament in ongoing_tournaments %}
 
@@ -75,7 +79,7 @@
           Completed tournaments
         </a>
       </div>
-      <div id="collapseThree" class="collapse" data-parent="#accordion">
+      <div id="collapseThree" class="collapse {% ifequal activesection 'completed' %}show{% endifequal %}" data-parent="#accordion">
         <div class="card-body">
             {% for tournament in completed_tournaments %}
 

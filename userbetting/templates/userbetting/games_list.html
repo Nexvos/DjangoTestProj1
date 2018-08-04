@@ -1,9 +1,46 @@
+{#airplane#}
+{% load static %}
+<script src="{% static 'userbetting/miniPie.js' %}"></script>
+<script src="{% static 'js/d3.js' %}"></script>
+
+<style>
+{% block style %}
+
+.thumbnail{
+    height: 95%;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 0px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    background-color: #fff;
+    border: 1px solid #b5b5b5;
+}
+svg {
+	display: block;
+    margin: auto;
+}
+.thumbnail img{
+    max-width: 100%;
+}
+.caption{
+    padding: 8px;
+}
+{% endblock %}
+
+</style>
+
 {% for game in latest_game_list %}
 
     <div class="item col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
         <div class="thumbnail">
-            <div class="widget" style="padding-top: 10px; padding-bottom: 10px;">
+            <div class="widget" style="border: 1px solid #b5b5b5; padding-top: 10px; padding-bottom: 10px; position: relative;">
                 <div id="chartplaceholder{{ forloop.counter }}" class="chart-container"></div>
+                <div style="position: absolute; height: 35px;width: 35px;left:0px; bottom: 0px; border: 1px #343a40 solid; background-color: #{{ game.videogame.colour }};">
+                    <img src="{{ game.videogame.picture.url }}" style="margin-left: 5px; margin-bottom: 5px; margin-top: 5px; margin-right: 5px;">
+                </div>
+
             </div>
             <div class="caption">
                 <h4 class="group inner list-group-item-heading" style="margin-top: 0.5rem;"><a href="{% url 'userBetting:detail' game.game_id %}">

@@ -3,7 +3,7 @@ var w= (document.getElementsByClassName('jumbotron')[0].clientWidth) * 0.42;
 var h= w *0.75;
 
 //Set outer and inner radius of the donut
-var outerRadiusTeam=Math.min(w, h) / 2;
+var outerRadiusTeam=(Math.min(w, h) / 2) -1;
 var innerRadius=outerRadiusTeam *0.78;
 var outerRadius=outerRadiusTeam *0.90;
 
@@ -123,7 +123,7 @@ function InitialPie(dataset, totalamount, team_dataset) {
 
 	var arcTeam=d3.svg.arc()
 			.outerRadius(outerRadiusTeam)
-			.innerRadius(innerRadius);
+			.innerRadius(innerRadius + 5);
 
 
 
@@ -138,7 +138,10 @@ function InitialPie(dataset, totalamount, team_dataset) {
 					return d.data.colour;
 				},
 				class:'shadow'
-			});
+			})
+			.style("stroke", "#343a40")
+            .style("stroke-width", "1");
+
 
 	// Creates the pie elements
 	var path=gt.selectAll('path')

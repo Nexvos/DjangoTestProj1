@@ -154,23 +154,25 @@ class Game(models.Model):
     twitch_url =  models.URLField(max_length=200, unique=True, blank=True, null=True)
     expected_duration = models.DurationField(default=timedelta(minutes=2))
 
-    not_begun = "Not begun"
+    not_started = "not_started"
     starting = "Starting"
-    ongoing = "Ongoing"
+    running = "running"
+    finished = "finished"
     finished_not_confirmed = "Finished - Not yet confirmed"
     finished_confirmed = "Finished - Confirmed"
     finished_paid = "Finished - All bets paid"
 
-    availiable_statuses = ((not_begun, "Not begun"),
+    availiable_statuses = ((not_started, "Not started"),
                            (starting, "Starting"),
-                           (ongoing, "Ongoing"),
+                           (running, "Running"),
+                           (finished, "Finished"),
                            (finished_not_confirmed, "Finished - Not yet confirmed"),
                            (finished_confirmed, "Finished - Confirmed"),
                            (finished_paid, "Finished - All bets paid"))
 
     status = models.CharField(max_length=30,
                               choices=availiable_statuses,
-                              default=not_begun)
+                              default=not_started)
 
     # Goal: Make it so that teamaa =/ team_b...
     # Useful thread = https://stackoverflow.com/questions/35096607/how-to-enforce-different-values-in-multiple-foreignkey-fields-for-django

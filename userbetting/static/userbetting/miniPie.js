@@ -3,7 +3,7 @@ var w= 150;
 var h= 150;
 
 //Set outer and inner radius of the donut
-var outerRadiusTeam=Math.min(w, h) / 2;
+var outerRadiusTeam=(Math.min(w, h) / 2) -1;
 var innerRadius=outerRadiusTeam *0.78;
 var outerRadius=outerRadiusTeam *0.90;
 
@@ -51,7 +51,9 @@ function InitialPie(team_dataset, chartID) {
 				fill: function(d,i){
 					return d.data.colour;
 				}
-			});
+			})
+			.style("stroke", "#9a9b9c")
+            .style("stroke-width", "1");
 
 
 

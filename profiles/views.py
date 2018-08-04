@@ -16,12 +16,12 @@ def profile_view(request):
     user = get_object_or_404(User, username=request.user)
     profile, created = Profile.objects.get_or_create(user=user)
     qs = user.user_bets.all()
-    qs_active = qs.filter(Q(game__status=Game.not_begun)|Q(game__status=Game.starting)|Q(game__status=Game.ongoing)).order_by('-game__game_date')
+    qs_active = qs.filter(Q(game__status=Game.not_started) | Q(game__status=Game.starting) | Q(game__status=Game.running)).order_by('-game__game_date')
     qs_awaiting_validation = qs.filter(Q(game__status=Game.finished_not_confirmed) | Q(game__status=Game.finished_confirmed), Q(status=Bet.open)).order_by('-game__game_date')
     qs_settled = qs.filter(Q(status=Bet.lost) | Q(status=Bet.paid)).order_by('-game__game_date')
 
 
-    # 1 Queryset for active bets - I.e. Bets for games that have a status of "not_begun", "starting", "ongoing"
+    # 1 Queryset for active bets - I.e. Bets for games that have a status of "not_started", "starting", "running"
     # 2 Queryset for bets awaiting validation - I.e. Bts for games that have a status of "finished_not_confirmed" or "finished_confirmed" and bet status = "open"
     # 3 Queryset for settled bets - I.e. bets with a status of paid or "paid" or "lost"
     if request.method == 'POST':
