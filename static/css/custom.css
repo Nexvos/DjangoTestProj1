@@ -1,3 +1,22 @@
+.sidebar {
+ font-size: 85% !important;
+ /*font-family: Arial;*/
+}
+
+.navbar {
+ font-size: 82% !important;
+ /*font-family: Arial;*/
+}
+.card-header{
+    font-size: 1rem;
+}
+
+.card-footer-btn {
+    font-size: 1rem;
+}
+.list-group-item{
+    padding: .4rem 1rem;
+}
 .carousel-caption{
     width: 100%;
     left: 0px;
@@ -10,13 +29,13 @@
     background-color: rgba(0,0,0,0.25);
 }
 .home-wide {
-	max-width: 1400px;
+	max-width: 1100px;
 }
 .jumbotron {
     margin-bottom: 0;
 }
 body {
-    padding-top: 57px;
+    padding-top: 46px;
 }
 
 .text-align-center {
@@ -97,7 +116,7 @@ label{
 
 .sidebar {
   position: fixed;
-  top: 57px;
+  top: 46px;
   bottom: 0;
   left: 0;
   z-index: 1000;

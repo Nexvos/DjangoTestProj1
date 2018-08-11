@@ -29,7 +29,7 @@ svg {
 {% endblock %}
 
 {% block jumbotron %}
-<div class="jumbotron" style="padding-bottom: 30px;">
+<div class="jumbotron" style=" padding-bottom: 25px; padding-top: 20px;">
     <div class="container home-wide">
         <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">
             <div class="col-md-12">
@@ -49,7 +49,11 @@ svg {
 {% endblock %}
 
 {% block content %}
-    <h4 class="display-4 betting-title rounded align-content-center">Tournament Details</h4>
+    <div class="betting-title rounded row" style=" margin-right: 0px; margin-left: 0px;">
+        <div class="col-sm-12">
+            <h4 class="display-4" style="font-size: 2.3rem;font-weight: 500; margin-bottom: .25rem;">Tournament Details </h4>
+        </div>
+    </div>
     <br>
 
     <dl class="row">
@@ -65,94 +69,30 @@ svg {
         <dt class="col-sm-2">Status:</dt>
         <dd class="col-sm-10">{{ tournament.status }}</dd>
     </dl>
-    {% if games_qs %}
-        <h4 class="display-4 betting-title rounded">Tournament Games</h4>
-        <br>
-        <div id="products" class="row grid-view">
-            {% for game in games_qs %}
-            <div class="item col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
-                <div class="thumbnail">
-                    <div class="widget" style="padding-top: 10px; padding-bottom: 10px;">
-                        <div id="chart{{ forloop.counter }}" class="chart-container"></div>
-                    </div>
-                    <div class="caption">
-                        <h4 class="group inner list-group-item-heading" style="margin-top: 0.5rem;"><a href="{% url 'userBetting:detail' game.game_id %}">
-                            {{ game.team_a }} vs {{ game.team_b }}</a></h4>
-
-
-                            <p class="group inner list-group-item-text" style="margin-top: 5px">
-                        {{ game.game_date|date:"d-F Y H:i" }}
-                            </p>
-
-                        <div class="row">
-
-                            <div class="col-xs-12 col-md-12">
-                                <p class="lead font-weight-bold" style="color:green;">
-                                    {{ game.status }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <script>
-            // Create the team data
-            var dataset = [
-            {% for bet in game.game_bets.all %}
-                {
-                name:'{{ bet.user }}',
-                amount:{{ bet.amount }},
-                percent: 50,
-                team:'{{ bet.chosen_team }}',
-                colour:'#{{ bet.user.profile.colour }}'
-                },
-            {% endfor %}
-            ];
-
-            var teamdata_a_amount = 0;
-            var teamdata_b_amount = 0;
-
-            if (dataset === undefined || dataset.length == 0){
-                teamdata_a_amount = 1;
-                teamdata_b_amount = 1;
-            }
-            else{
-                for (i in dataset){
-                   if (dataset[i].team=='{{ game.team_a }}') {
-                       teamdata_a_amount += dataset[i].amount;
-                   }
-                   else if(dataset[i].team=='{{ game.team_b }}'){
-                       teamdata_b_amount += dataset[i].amount;
-                   }
-                };
-            };
-
-            var total_ab_amount = teamdata_a_amount + teamdata_b_amount;
-            var teamdata_a_percent = (teamdata_a_amount / total_ab_amount) * 100;
-            var teamdata_b_percent = (teamdata_b_amount / total_ab_amount) * 100;
-
-            var team_dataset = [
-                {
-                name:'{{ game.team_b }}',
-                amount:teamdata_b_amount,
-                percent: teamdata_b_percent,
-                team:'{{ game.team_b }}',
-                colour:'#{{ game.team_b.colour }}'
-            },
-            {
-                name:'{{ game.team_a }}',
-                amount:teamdata_a_amount,
-                percent: teamdata_a_percent,
-                team:'{{ game.team_a }}',
-                colour:'#{{ game.team_a.colour }}'
-                }];
-
-            InitialPie(team_dataset, {{ forloop.counter }});
-
-
-            </script>
-            {% endfor %}
+    <div class="betting-title rounded row" style=" margin-right: 0px; margin-left: 0px;">
+        <div class="col-sm-8">
+            <h4 class="display-4" style="font-size: 2.3rem;font-weight: 500; margin-bottom: .25rem;">Tournament Games </h4>
         </div>
+        <div class="col-sm-4">
+            <a
+                    class="btn btn-dark float-md-right"
+                    style="font-size: 0.75rem; position: relative; top: 50%; transform: translateY(-50%); border: 1px white solid;"
+                    href="{% url "userBetting:completed_games_list_view" %}{% if query %}?q={{ query }}{% endif %}"
+            >
+                <strong>View completed games</strong>
+            </a>
+        </div>
+    </div>
+
+        <br>
+    {% if latest_game_list %}
+        <div id="games_list" class="row grid-view">
+            {% include 'userbetting/games_list.html' %}
+        </div>
+        <div>
+            <button class= "btn btn-primary btn-lg btn-block" id="lazyLoadLink" data-page=2>Load more</button>
+        </div>
+        <br>
     {% else %}
         <p>No games are available at this time.</p>
     {% endif %}

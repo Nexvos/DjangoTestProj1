@@ -34,8 +34,8 @@ svg {
 {% for game in latest_game_list %}
 
     <div class="item col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
-        <div class="thumbnail">
-            <div class="widget" style="border: 1px solid #b5b5b5; padding-top: 10px; padding-bottom: 10px; position: relative;">
+        <div class="thumbnail rounded">
+            <div class="widget rounded" style="padding-top: 10px; padding-bottom: 10px; position: relative;">
                 <div id="chartplaceholder{{ forloop.counter }}" class="chart-container"></div>
                 <div style="position: absolute; height: 35px;width: 35px;left:0px; bottom: 0px; border: 1px #343a40 solid; background-color: #{{ game.videogame.colour }};">
                     <img src="{{ game.videogame.picture.url }}" style="margin-left: 5px; margin-bottom: 5px; margin-top: 5px; margin-right: 5px;">
@@ -43,7 +43,7 @@ svg {
 
             </div>
             <div class="caption">
-                <h4 class="group inner list-group-item-heading" style="margin-top: 0.5rem;"><a href="{% url 'userBetting:detail' game.game_id %}">
+                <h4 class="group inner list-group-item-heading" style="font-size:1.25rem; margin-top: 0.5rem;"><a href="{% url 'userBetting:detail' game.game_id %}">
                     {{ game.team_a }} vs {{ game.team_b }}</a></h4>
 
 
@@ -54,7 +54,7 @@ svg {
                 <div class="row">
 
                     <div class="col-xs-12 col-md-12">
-                        <p class="lead font-weight-bold" style="color:green;">
+                        <p class="lead font-weight-bold" style="font-size: 1rem; color:green;">
                             {{ game.status }}
                         </p>
                     </div>

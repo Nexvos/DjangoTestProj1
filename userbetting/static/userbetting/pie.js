@@ -211,7 +211,7 @@ function InitialPie(dataset, totalamount, team_dataset) {
 	  .attr("transform", function (d) {
 		  return "translate(" + arc.centroid(d) + ")";
 	  })
-	  .attr("dy", ".4em")
+	  .attr("dy", "0.2rem")
 	  .attr("text-anchor", "middle")
 	  .attr("class", "strokeme")
 	  .attr("id", "percentagetext")
@@ -267,7 +267,7 @@ function InitialPie(dataset, totalamount, team_dataset) {
 			  class:'total',
 			  transform:function(d,i){
 				  //Just a calculation for x and y position
-				  return 'translate(-70,' + -15 + ')';
+				  return 'translate(-65,' + -15 + ')';
 			  }
 		  });
 	var total = svg.append("text")
@@ -277,7 +277,7 @@ function InitialPie(dataset, totalamount, team_dataset) {
 			  "id":'totalMoney',
 			  transform:function(d,i){
 				  //Just a calculation for x and y position
-				  return 'translate(-35,' + 15 + ')';
+				  return 'translate(-25,' + 15 + ')';
 			  }
 		  })
 

@@ -24,10 +24,10 @@ tbody {
      
 {% block jumbotron %}
 
-<div class="jumbotron jumbotron-fluid" id="jumbo">
+<div class="jumbotron jumbotron-fluid" id="jumbo" style="padding: 2rem 2rem;">
     <div class="container fullWidth" style="max-width: 1400px;">
         <div class="row fullWidth">
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                     <div style="background: linear-gradient(red, yellow, blue);height: 100%;width: 100%;"></div>
                   <ol class="carousel-indicators">
@@ -68,7 +68,7 @@ tbody {
                   </a>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-5">
 
 
                     {% if ongoing_tournamnts %}
@@ -86,8 +86,8 @@ tbody {
                         {% for tournament in ongoing_tournamnts %}
                                 <tr>
 
-                                    <td>{{ tournament.game }}</td>
-                                    <td>{{ tournament.tournament_name }}</td>
+                                    <td><img src="{{ tournament.videogame.picture.url }}" style="height: 100%"></td>
+                                    <td>{{ tournament.tournament_name|make_list|slice:':40'|join:'' }}</td>
                                     <td>{{ tournament.tournament_start_date }}</td>
                                     <td>{{ tournament.tournament_end_date }}</td>
                                 </tr>
@@ -107,7 +107,6 @@ tbody {
         </div>
         </div>
     </div>
-</div>
 
 {% endblock %}
 

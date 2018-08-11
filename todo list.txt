@@ -2,10 +2,8 @@
 • REST API - Maybe change the pie to update on Rest API update?
      - Read updates from Rest API instead of hitting the database
 • Read external APIs to get results for matches
-• Pay money into bank
+• Pay money into bank (actual money)
 • Search for games
-• Dashboard for User (home page?)
-• History page?
 • Explain withdrawable and non-withdrawable funds
 
 
@@ -14,7 +12,6 @@
 
 
 -- Small improvements/ Bug fixes --
-• Ensure team_a and team_b are in alphabetical order always
 • Fix update of pie with new betting user
 • Shadow behind the pie or from first pie onto second pie
 (https://stackoverflow.com/questions/6088409/svg-drop-shadow-using-css3)
@@ -34,3 +31,6 @@
 • Add twitter/ social media icons (font awesome?) - 23/06/2018
 • active tab at the top - 23/06/2018
 • Filter by game - 23/06/2018
+• Ensure team_a and team_b are in alphabetical order always - 10/08/2018
+• History page (I guess) - 10/08/2018
+• Dashboard for User (home page?) - 10/08/2018

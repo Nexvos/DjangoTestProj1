@@ -1,6 +1,6 @@
 // //svg size variables - also controls size of pie --- Trying to make the pie page size reactive
-var w= 150;
-var h= 150;
+var w= 120;
+var h= 120;
 
 //Set outer and inner radius of the donut
 var outerRadiusTeam=(Math.min(w, h) / 2) -1;

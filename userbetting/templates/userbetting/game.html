@@ -46,6 +46,7 @@ img {
     transform: translateY(-50%);
     text-align: center;
 }
+
 {% endblock %}
 </style>
 
@@ -63,7 +64,7 @@ img {
     <div class="row fullWidth">
         <div class="col-md-3 col-sm-2 d-none d-sm-block">
             <img src="{{ game.team_a.picture.url }}">
-            <h3 id="team_a_info">50%</h3>
+            <h3 id="team_a_info" style="font-size: 1.5rem;">50.00%</h3>
         </div>
         <div class="col-md-6 col-sm-8 col-xs-12">
             <div class="widget">
@@ -72,7 +73,7 @@ img {
         </div>
         <div class="col-md-3 col-sm-2 d-none d-sm-block">
             <img src="{{ game.team_b.picture.url }}">
-            <h3 id="team_b_info">50%</h3>
+            <h3 id="team_b_info" style="font-size: 1.5rem;">50.00%</h3>
         </div>
 </div>
 </div>
@@ -89,8 +90,6 @@ img {
 
 <script>
 {#pie chart stuff#}
-var color = d3.scale.ordinal()
-    .range(["#222222", "#404B69", "#FF7100", "#BE3030", "#F3ECC8"]);
 
 // Create bet data for this game
 var dataset = [
@@ -125,6 +124,7 @@ var teamdata_b_amount = 0;
 var teamdata_a_percent = 0;
 var teamdata_b_percent = 0;
 
+// calculate the percentage and amount bet on each team
 for (i in grouped){
    if (grouped[i].team=='{{ game.team_a }}') {
        teamdata_a_amount += grouped[i].amount;
@@ -137,6 +137,7 @@ for (i in grouped){
 
 };
 
+// construct data for the team pie (outside ring)
 var team_dataset = [{
             name:'{{ game.team_a }}',
             amount:teamdata_a_amount,
@@ -152,7 +153,6 @@ var team_dataset = [{
             colour:'#{{ game.team_b.colour }}'
             }];
 
-console.log(team_dataset);
 // Create some placeholder data in the event no one bets
 if (grouped === undefined || grouped.length == 0){
     grouped.push(
@@ -189,11 +189,11 @@ if (grouped === undefined || grouped.length == 0){
             ];
 };
 
-var indexTeamA = _.where(team_dataset, {team:"{{ game.team_a }}"});
-var indexTeamB = _.where(team_dataset, {team:"{{ game.team_b }}"});
 
-$("#team_a_info").html(indexTeamA[0].percent.toFixed(2) + "%");
-$("#team_b_info").html(indexTeamB[0].percent.toFixed(2) + "%");
+if (teamdata_a_percent != 0){
+    $("#team_a_info").html(teamdata_a_percent.toFixed(2) + "%");
+    $("#team_b_info").html(teamdata_b_percent.toFixed(2) + "%");
+};
 
 var totalamount = {{ total_bet }};
 

@@ -13,7 +13,7 @@ def home(request):
 	ongoing_tournamnts = tournament_list.filter(
 		Q(tournament_start_date__lt=datetime.now()),
 		Q(tournament_end_date__gt=datetime.now())
-	).order_by('tournament_start_date')
+	).order_by('tournament_start_date')[:5]
 
 	context = {
 		'ongoing_tournamnts': ongoing_tournamnts
