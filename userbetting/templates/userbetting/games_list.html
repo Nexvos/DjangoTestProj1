@@ -5,7 +5,13 @@
 
 <style>
 {% block style %}
-
+.dot {
+  height: 10px;
+  width: 10px;
+  background-color: red;
+  border-radius: 50%;
+  display: inline-block;
+}
 .thumbnail{
     height: 95%;
     width: 100%;
@@ -31,31 +37,35 @@ svg {
 
 </style>
 
-{% for game in latest_game_list %}
+{% for game_betting_group in latest_game_list %}
 
     <div class="item col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
         <div class="thumbnail rounded">
-            <div class="widget rounded" style="padding-top: 10px; padding-bottom: 10px; position: relative;">
+            <div class="widget rounded" style="padding-top: 10px; padding-bottom: 10px; position: relative; background-color: rgba(0, 0, 0, 0.03); border-bottom: 1px #b5b5b5 solid;">
                 <div id="chartplaceholder{{ forloop.counter }}" class="chart-container"></div>
-                <div style="position: absolute; height: 35px;width: 35px;left:0px; bottom: 0px; border: 1px #343a40 solid; background-color: #{{ game.videogame.colour }};">
-                    <img src="{{ game.videogame.picture.url }}" style="margin-left: 5px; margin-bottom: 5px; margin-top: 5px; margin-right: 5px;">
+                <div style="position: absolute; height: 35px;width: 35px;left:0px; bottom: 0px; border: 1px #343a40 solid; background-color: #{{ game_betting_group.game.videogame.colour }};">
+                    <img src="{{ game_betting_group.game.videogame.picture.url }}" style="margin-left: 5px; margin-bottom: 5px; margin-top: 5px; margin-right: 5px;">
                 </div>
-
+                {% ifequal game_betting_group.game.status game_betting_group.game.running %}
+                    <div style="top: 0; right: 0; position: absolute; background-color: #343a40; border-radius: 0px 3px 0px 10px; border-bottom: 1px #b5b5b5 solid; border-left: 1px #b5b5b5 solid;">
+                        <p style="padding: 5px; margin-bottom: 0; font-weight: 600; color: white;"><span class="dot"></span> LIVE</p>
+                    </div>
+                {% endifequal %}
             </div>
             <div class="caption">
-                <h4 class="group inner list-group-item-heading" style="font-size:1.25rem; margin-top: 0.5rem;"><a href="{% url 'userBetting:detail' game.game_id %}">
-                    {{ game.team_a }} vs {{ game.team_b }}</a></h4>
+                <h4 class="group inner list-group-item-heading" style="font-size:1.25rem; margin-top: 0.5rem;"><a href="{% url 'community:detail' community_id=group.community_id betting_group_id=game_betting_group.betting_group_id %}">
+                    {{ game_betting_group.game.team_a }} vs {{ game_betting_group.game.team_b }}</a></h4>
 
 
                     <p class="group inner list-group-item-text" style="margin-top: 5px">
-                {{ game.game_date|date:"d-F Y H:i" }}
+                {{ game_betting_group.game.game_date|date:"d-F Y H:i" }}
                     </p>
 
                 <div class="row">
 
                     <div class="col-xs-12 col-md-12">
                         <p class="lead font-weight-bold" style="font-size: 1rem; color:green;">
-                            {{ game.status }}
+                            {{ game_betting_group.game.status }}
                         </p>
                     </div>
                 </div>
@@ -65,7 +75,7 @@ svg {
     <script>
     // Create the team data
     var dataset = [
-    {% for bet in game.game_bets.all %}
+    {% for bet in game_betting_group.game_bets.all %}
         {
         name:'{{ bet.user }}',
         amount:{{ bet.amount }},
@@ -85,10 +95,10 @@ svg {
     }
     else{
         for (i in dataset){
-           if (dataset[i].team=='{{ game.team_a }}') {
+           if (dataset[i].team=='{{ game_betting_group.game.team_a }}') {
                teamdata_a_amount += dataset[i].amount;
            }
-           else if(dataset[i].team=='{{ game.team_b }}'){
+           else if(dataset[i].team=='{{ game_betting_group.game.team_b }}'){
                teamdata_b_amount += dataset[i].amount;
            }
         };
@@ -100,18 +110,18 @@ svg {
 
     var team_dataset = [
         {
-        name:'{{ game.team_b }}',
+        name:'{{ game_betting_group.game.team_b }}',
         amount:teamdata_b_amount,
         percent: teamdata_b_percent,
-        team:'{{ game.team_b }}',
-        colour:'#{{ game.team_b.colour }}'
+        team:'{{ game_betting_group.game.team_b }}',
+        colour:'#{{ game_betting_group.game.team_b.colour }}'
     },
     {
-        name:'{{ game.team_a }}',
+        name:'{{ game_betting_group.game.team_a }}',
         amount:teamdata_a_amount,
         percent: teamdata_a_percent,
-        team:'{{ game.team_a }}',
-        colour:'#{{ game.team_a.colour }}'
+        team:'{{ game_betting_group.game.team_a }}',
+        colour:'#{{ game_betting_group.game.team_a.colour }}'
         }];
     var loop_addition = 0;
     if (typeof loop_number !== 'undefined') {

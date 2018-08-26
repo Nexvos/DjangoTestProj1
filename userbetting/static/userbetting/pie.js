@@ -1,11 +1,13 @@
 // //svg size variables - also controls size of pie --- Trying to make the pie page size reactive
 var w= (document.getElementsByClassName('jumbotron')[0].clientWidth) * 0.42;
+var wOffset = (document.getElementsByClassName('sidebar')[0].clientWidth) * 0.42;
+console.log(w);
+console.log(wOffset);
 var h= w *0.75;
-
 //Set outer and inner radius of the donut
 var outerRadiusTeam=(Math.min(w, h) / 2) -1;
 var innerRadius=outerRadiusTeam *0.78;
-var outerRadius=outerRadiusTeam *0.90;
+var outerRadius=outerRadiusTeam *0.88;
 
 // //legend variables
 var legendRectSize=20;
@@ -94,7 +96,7 @@ function InitialPie(dataset, totalamount, team_dataset) {
 				height:h
 			}).append('g')
 			.attr({
-				transform:'translate('+w/2+','+h/2+')'
+				transform:'translate('+((w/2)+(wOffset/2))+','+h/2+')'
 			});
 
 
@@ -123,7 +125,7 @@ function InitialPie(dataset, totalamount, team_dataset) {
 
 	var arcTeam=d3.svg.arc()
 			.outerRadius(outerRadiusTeam)
-			.innerRadius(innerRadius + 5);
+			.innerRadius(innerRadius);
 
 
 
@@ -153,8 +155,8 @@ function InitialPie(dataset, totalamount, team_dataset) {
 				fill: function(d,i){
 					return d.data.colour;
 				},
-				class:'shadow',
-				opacity: 0.95
+				class:'shadow bet-path',
+				opacity: 0.65
 			})
 			//tooltip mouseover animation
 			.on("mouseover", mouseover)
@@ -170,7 +172,8 @@ function InitialPie(dataset, totalamount, team_dataset) {
 			.duration(200)
             .style("border", "black")
 			.style("stroke", "white")
-			.style("stroke-width", "2");
+			.style("stroke-width", "2")
+			.style("opacity", 1);
 		div.transition()
 			.duration(200)
 			.style("opacity", .85)
@@ -185,7 +188,8 @@ function InitialPie(dataset, totalamount, team_dataset) {
 		d3.select(this).transition()
 			.duration(200)
 			.style("stroke", "black")
-            .style("stroke-width", "1");
+            .style("stroke-width", "1")
+			.style("opacity", 0.65);
 		div.transition()
 			.duration(500)
 			.style("opacity", 0);
@@ -346,32 +350,47 @@ function change(asd, ads, team_dataset) {
     $("#fadein").attr("id", "");
 
 
-
 	// Creates the pie elements
 	pathTeam.data(pie(team_dataset))
-			.enter()
-			.append('path')
-			.attr({
-				d:arcTeam,
-				fill: function(d,i){
-					return d.data.colour;
-				}
-			});
+		.enter()
+		.append('path')
+		.attr({
+			d:arcTeam,
+			fill: function(d,i){
+				return d.data.colour;
+			},
+			class: 'shadow'
+		});
 
     path.data(pie(asd))
         .enter()
         .append('path')
         .attr({
             d: arc,
-            fill: function (d, i) {
+            fill: function (d) {
+            	console.log(d.data.colour);
                 return d.data.colour;
             },
+			class: 'shadow bet-path',
             "id": "fadein",
-			opacity: 0.95
+			opacity: 0.65
         })
         //tooltip mouseover animation
         .on("mouseover", mouseover)
         .on("mouseout", mouseout);
+	function update() {
+	  // Update selection: Resize and position existing
+	  // DOM elements with data bound to them.
+	  var selection = d3.select("#gt")
+		.selectAll("path").data(pie(asd))
+		.style('fill', function (d) {
+            	console.log(d.data.colour);
+                return d.data.colour;
+            });
+	};
+	update();
+
+
 
     var div = d3.select("body").append("div")
 		.attr("class", "tooltip")
@@ -381,7 +400,8 @@ function change(asd, ads, team_dataset) {
 		d3.select(this).transition()
 			.duration(200)
 			.style("stroke", "white")
-			.style("stroke-width", "2");
+			.style("stroke-width", "2")
+			.style("opacity", 1);
 		div.transition()
 			.duration(200)
 			.style("opacity", .85)
@@ -395,7 +415,8 @@ function change(asd, ads, team_dataset) {
 		d3.select(this).transition()
 			.duration(200)
 			.style("stroke", "black")
-            .style("stroke-width", "1");
+            .style("stroke-width", "1")
+			.style("opacity", 0.65);
 		div.transition()
 			.duration(500)
 			.style("opacity", 0);

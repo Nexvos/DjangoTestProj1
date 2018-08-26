@@ -1,0 +1,45 @@
+{% load static %}
+{% url 'community:communityPage' community_id=group.community_id as community_page %}
+{% url 'userBetting:index' as public_page %}
+{% url 'community:tournament_list_view' community_id=group.community_id as tournament_page%}
+{% url 'community:adminPage' community_id=group.community_id as admin_page %}
+{% url 'community:invitePage' community_id=group.community_id as invite_page %}
+{% url 'community:completed_games_list_view' community_id=group.community_id as completed_games %}
+<style>
+    .nav-link.active_community {
+        background-color: #e9ecef !important;
+        border-color: #dee2e6 #b5b5b5 #e9ecef !important;
+        color:black;
+    }
+</style>
+<ul class="nav nav-tabs" style="background-color: #f6f6f6; border-bottom: 1px #b5b5b5 solid;">
+  <li class="nav-item" style="margin-left: 0.2rem;">
+    <a
+            class="nav-link{% ifequal request.path community_page %} active_community{% endifequal %} {% ifequal request.path public_page %} active_community{% endifequal %}"
+            href="{{ community_page }}">
+        <i style="color: gray" class="fas fa-home"></i> &nbsp{{ group.name }} Home
+    </a>
+  </li>
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle {% ifequal request.path tournament_page %} active_community{% endifequal %}" data-toggle="dropdown" href="{% url 'community:tournament_list_view' community_id=group.community_id %}" role="button" aria-haspopup="true" aria-expanded="false">Tournaments</a>
+    <div class="dropdown-menu">
+      <a class="dropdown-item" href="{{ tournament_page }}?activesection=upcoming">Upcoming</a>
+      <a class="dropdown-item" href="{{ tournament_page }}?activesection=ongoing">Ongoing</a>
+      <a class="dropdown-item" href="{{ tournament_page }}?activesection=completed">Completed</a>
+{#      <div class="dropdown-divider"></div>#}
+{#      <a class="dropdown-item" href="#">Separated link</a>#}
+    </div>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link{% ifequal  request.get_full_path invite_page %} active_community{% endifequal %}" href="{{ invite_page }}">Invite</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link{% ifequal  request.get_full_path admin_page %} active_community{% endifequal %}" href="{{ admin_page }}">Admin</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link{% ifequal  request.path completed_games %} active_community{% endifequal %}" href="{{ completed_games }}">Completed Games</a>
+  </li>
+{#  <li class="nav-item">#}
+{#    <a class="nav-link disabled" href="#">Admin</a>#}
+{#  </li>#}
+</ul>

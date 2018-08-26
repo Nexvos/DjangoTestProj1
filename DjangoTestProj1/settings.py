@@ -49,9 +49,11 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # My apps
+    'community.apps.CommunityConfig',
     'userbetting.apps.UserbettingConfig',
     'profiles.apps.ProfilesConfig',
-    'BettingAdmin.apps.BettingadminConfig'
+    'BettingAdmin.apps.BettingadminConfig',
+
 ]
 #Registration Settings
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window; you may, of course, use a different value.

@@ -14,37 +14,52 @@ import os
 from django.template import loader
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
+from django.contrib.auth import get_user_model
+from django.http import Http404
+from community.models import CommunityGroup
+
+User = get_user_model()
 
 
 # Create your views here.
-def index(request):
-    latest_game_list = Game.objects.all()
-    tournament_list = Tournament.objects.all()
+def index(request, community_id=1):
+    #Assuming PUBLIC is 1
+    user = get_object_or_404(User, username=request.user)
+    group = get_object_or_404(CommunityGroup, community_id=community_id)
+
+    if group not in user.profile.groups.all():
+        raise Http404('Page not found')
+
+    latest_game_list = BettingGameGroup.objects.filter(Q(group__community_id=community_id),
+                                                       Q(status=BettingGameGroup.active)
+                                                       )
+    tournament_list = group.group_tournaments.all()
+    test_t = Tournament.objects.get(tournament_id=89)
+    print(test_t.games.all())
     # Nd to create separate qurysets for different tournament statuses and only display active tournaments
     # & tournaments not yet begun
     query = request.GET.get('q')
     current_datetime = datetime.now()
     three_months = timedelta(days=90)
-    print(request.GET.get('q'))
-    print(request.GET.get('activepage'))
+
     if query:
         latest_game_list = latest_game_list.filter(
-            ~Q(status=Game.finished),
-            ~Q(status=Game.finished_not_confirmed),
-            ~Q(status=Game.finished_confirmed),
-            ~Q(status=Game.finished_paid),
-            Q(videogame__videogame_name__iexact=query)
-        ).order_by('game_date')[:12]
+            ~Q(game__status=Game.finished),
+            ~Q(game__status=Game.finished_not_confirmed),
+            ~Q(game__status=Game.finished_confirmed),
+            ~Q(game__status=Game.finished_paid),
+            Q(game__videogame__videogame_name__iexact=query)
+        ).order_by('game__game_date')[:12]
         tournament_list = tournament_list.filter(videogame__videogame_name__iexact=query)
+
     else:
         latest_game_list = latest_game_list.filter(
-            ~Q(status=Game.finished),
-            ~Q(status=Game.finished_not_confirmed),
-            ~Q(status=Game.finished_confirmed),
-            ~Q(status=Game.finished_paid)
-        ).order_by('game_date')[:12]
-        query = False
-
+            ~Q(game__status=Game.finished),
+            ~Q(game__status=Game.finished_not_confirmed),
+            ~Q(game__status=Game.finished_confirmed),
+            ~Q(game__status=Game.finished_paid)
+        ).order_by('game__game_date')[:12]
+        query = "None"
 
     upcoming_tournaments = tournament_list.filter(
             Q(tournament_start_date__gt=current_datetime),
@@ -54,33 +69,38 @@ def index(request):
     ongoing_tournaments = tournament_list.filter(
             Q(tournament_start_date__lt=current_datetime),
             Q(tournament_end_date__gt=current_datetime)
-        ).order_by('tournament_start_date')[:8]
+        ).order_by('tournament_start_date')[:12]
+
+    ongoing_tournaments1 = ongoing_tournaments[:(-(-len(ongoing_tournaments)//2))]
+    ongoing_tournaments2 = ongoing_tournaments[(-(-len(ongoing_tournaments)//2)):]
 
     completed_tournaments = tournament_list.filter(
             Q(tournament_start_date__lt=current_datetime),
             Q(tournament_end_date__lt=current_datetime),
             Q(tournament_end_date__gt=current_datetime - three_months)
         ).order_by('tournament_start_date')
-
+    print(latest_game_list)
     context = {
+        'group': group,
         'latest_game_list': latest_game_list,
         'upcoming_tournaments': upcoming_tournaments,
-        'ongoing_tournaments': ongoing_tournaments,
+        'ongoing_tournaments1': ongoing_tournaments1,
+        'ongoing_tournaments2': ongoing_tournaments2,
         'completed_tournaments': completed_tournaments,
         'query': query
     }
     return render(request, 'userbetting/index.html', context)
 
-def lazy_load_games(request):
+def lazy_load_games(request, community_id=1):
   page = request.POST.get('page')[:12]
   print(page)
-  latest_game_list = Game.objects.all() # get just 5 posts
+  latest_game_list = BettingGameGroup.objects.filter(Q(group__community_id=community_id), Q(status=BettingGameGroup.active)) # get just 5 posts
   latest_game_list = latest_game_list.filter(
-      ~Q(status=Game.finished),
-      ~Q(status=Game.finished_not_confirmed),
-      ~Q(status=Game.finished_confirmed),
-      ~Q(status=Game.finished_paid)
-  ).order_by('game_date')
+      ~Q(game__status=Game.finished),
+      ~Q(game__status=Game.finished_not_confirmed),
+      ~Q(game__status=Game.finished_confirmed),
+      ~Q(game__status=Game.finished_paid)
+  ).order_by('game__game_date')
   # use Django’s pagination
   # https://docs.djangoproject.com/en/dev/topics/pagination/
   results_per_page = 12
@@ -107,72 +127,6 @@ def lazy_load_games(request):
   print(output_data)
   return JsonResponse(output_data)
 
-def tournament_view(request, tournament_id):
-    tournament = get_object_or_404(Tournament, pk=tournament_id)
-    tournament_games = tournament.games.all().order_by('game_date')
-
-
-    context = {
-        "tournament": tournament,
-        "latest_game_list": tournament_games
-    }
-    return render(request, 'userbetting/tournament_view.html', context)
-
-def tournament_list_view(request):
-    tournament_list = Tournament.objects.all()
-    activesection = request.GET.get('activesection')
-    query = request.GET.get('q')
-    current_datetime = datetime.now()
-
-    if query:
-        tournament_list = tournament_list.filter(videogame__videogame_name__iexact=query)
-    else:
-        query = 'None'
-
-    upcoming_tournaments = tournament_list.filter(
-        Q(tournament_start_date__gt=current_datetime)
-    ).order_by('tournament_start_date')
-
-    ongoing_tournaments = tournament_list.filter(
-        Q(tournament_start_date__lt=current_datetime),
-        Q(tournament_end_date__gt=current_datetime)
-    ).order_by('tournament_start_date')
-
-    completed_tournaments = tournament_list.filter(
-        Q(tournament_start_date__lt=current_datetime),
-        Q(tournament_end_date__lt=current_datetime)
-    ).order_by('tournament_start_date')
-
-    context = {
-        "upcoming_tournaments": upcoming_tournaments,
-        "ongoing_tournaments": ongoing_tournaments,
-        "completed_tournaments": completed_tournaments,
-        "activesection": activesection
-    }
-    return render(request, "userbetting/tournament_list_view.html", context)
-
-def completed_game_list_view(request):
-    game_list = Game.objects.all()
-
-    query = request.GET.get('q')
-
-    if query:
-        game_list = game_list.filter(videogame__videogame_name__iexact=query)
-    else:
-        query = False
-
-    completed_games = game_list.filter(
-        Q(status=Game.finished) |
-        Q(status=Game.finished_not_confirmed) |
-        Q(status=Game.finished_confirmed) |
-        Q(status=Game.finished_paid)
-    ).order_by('game_date')
-
-    context = {
-        "latest_game_list": completed_games
-    }
-    return render(request, "userbetting/completed_game_list_view.html", context)
-
 def testPage(request):
     print("view works")
     # update_existing_tournaments()
@@ -180,19 +134,3 @@ def testPage(request):
     context = {
     }
     return render(request, 'userbetting/test.html', context)
-
-def detail(request, game_id):
-    user = request.user
-    userbets = user.user_bets.all().filter(game__game_id=game_id)
-    game = get_object_or_404(Game, pk=game_id)
-    qs = game.game_bets.all()
-
-    total_bet = 0
-    for bet in qs:
-        total_bet += bet.amount
-    context = {
-        'game': game,
-        'total_bet': total_bet,
-        'userbets':userbets
-               }
-    return render(request, 'userbetting/game.html', context)

@@ -1,6 +1,7 @@
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .models import Game, Bet, Team
+from .models import Game, Bet, Team, BettingGameGroup
+from profiles.models import Wallet
 from django.shortcuts import get_object_or_404
 import json
 from .forms import BetForm
@@ -9,9 +10,11 @@ from django import forms
 class DataConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
-        self.game_id = self.scope['url_route']['kwargs']['game_id']
-        self.room_group_name = 'chat_%s' % self.game_id
+        self.betting_group_id = self.scope['url_route']['kwargs']['betting_group_id']
+        self.room_group_name = 'chat_%s' % self.betting_group_id
         self.user = self.scope["user"]
+        print(self.betting_group_id)
+        self.game_bgg = get_object_or_404(BettingGameGroup, pk=self.betting_group_id)
         # Join room group
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -41,22 +44,20 @@ class DataConsumer(AsyncWebsocketConsumer):
             chosenTeam = form.cleaned_data['chosen_team']
             amountBid = form.cleaned_data['amount']
 
-            game = get_object_or_404(Game, pk=self.game_id)
             team = get_object_or_404(Team, name=chosenTeam)
-            print("team is a team")
-            print(self.user.profile.bank)
-            if game.team_a == team or game.team_b == team:
-                if amountBid <= self.user.profile.bank:
-                    if self.user.profile.non_withdrawable_bank >= amountBid:
-                        self.user.profile.non_withdrawable_bank = self.user.profile.non_withdrawable_bank - amountBid
-                        self.user.profile.save()
+            user_wallet = Wallet.objects.get(profile=self.user.profile, group=self.game_bgg.group)
+            if self.game_bgg.game.team_a == team or self.game_bgg.game.team_b == team:
+                if amountBid <= user_wallet.bank:
+                    if user_wallet.non_withdrawable_bank >= amountBid:
+                        user_wallet.non_withdrawable_bank = user_wallet.non_withdrawable_bank - amountBid
+                        user_wallet.save()
                     else:
-                        amountBid = amountBid - self.user.profile.non_withdrawable_bank
-                        self.user.profile.non_withdrawable_bank = 0
-                        self.user.profile.withdrawable_bank = self.user.profile.withdrawable_bank - amountBid
-                        self.user.profile.save()
+                        amountBid = amountBid - user_wallet.non_withdrawable_bank
+                        user_wallet.non_withdrawable_bank = 0
+                        user_wallet.withdrawable_bank = user_wallet.withdrawable_bank - amountBid
+                        user_wallet.save()
 
-                    newBet = Bet(user= self.user, game= game,chosen_team=team, amount= amountBid)
+                    newBet = Bet(user= self.user, betting_group= self.game_bgg, chosen_team=team, amount= amountBid)
                     newBet.save()
 
                     message = "nothing"
@@ -78,9 +79,9 @@ class DataConsumer(AsyncWebsocketConsumer):
 
     async def send_update(self, event):
         message = event['message']
-        self.game = get_object_or_404(Game, pk=self.game_id)
+        self.game_bgg = get_object_or_404(BettingGameGroup, pk=self.betting_group_id)
         data = '['
-        qs = self.game.game_bets.all()
+        qs = self.game_bgg.game_bets.all()
         total_bet = 0
         count = 0
         for bet in qs:

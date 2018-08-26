@@ -4,5 +4,5 @@ from django.urls import path
 from . import consumers
 
 websocket_urlpatterns = [
-    path('ws/betting/<int:game_id>/', consumers.DataConsumer),
+    path('ws/betting/<int:betting_group_id>/', consumers.DataConsumer),
 ]

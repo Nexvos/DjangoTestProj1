@@ -72,15 +72,46 @@ g text.total {
     background-color: rgba(255,255,255,1);
 }
 
-.betting-title {
-    background-color: #343a40;
-    margin-bottom: 0;
-    padding-left: 3%;
-    color: white;
-    border: 1px black solid;
-}
 
 .index-subtitle {
     padding-bottom: 10px;
     padding-top: 5px;
+}
+/*#chart-overlay-div {*/
+    /*position: absolute;*/
+    /*height: 55%;*/
+    /*width: 55%;*/
+    /*top: 22.5%;*/
+    /*left: 22.5%;*/
+    /*background-color: rgba(0, 0, 0, 0.5);*/
+    /*border: 2px black solid;*/
+/*}*/
+/*#chart-overlay-div-inner {*/
+    /*position: absolute;*/
+    /*height: 95%;*/
+    /*width: 95%;*/
+    /*top: 2.5%;*/
+    /*left: 2.5%;*/
+    /*background-color: rgba(255, 255, 255, 0.8);*/
+    /*border: 1px black solid;*/
+/*}*/
+/*#chart-overlay-div-inner p {*/
+    /*position: relative;*/
+    /*float: left;*/
+    /*top: 45%;*/
+    /*left: 50%;*/
+    /*transform: translate(-50%, -50%);*/
+    /*padding: 5%;*/
+/*}*/
+
+.jumbotron {
+    background-color: white;
+    padding-bottom: 25px;
+    padding-top: 20px;
+    border-bottom: 1px #b5b5b5 solid;
+    border-radius: 0;
+}
+
+main {
+    background-color: #e9ecef;
 }

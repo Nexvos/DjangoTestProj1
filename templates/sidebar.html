@@ -3,25 +3,41 @@
 
  <nav class="col-sm-1 col-md-1 d-none d-sm-block bg-faded sidebar">
           <ul class="nav nav-pills flex-column">
+          {% if group %}
             <li class="nav-item">
-              <a class="nav-link{% ifequal query 'None' %} active {% endifequal %}" href="{% url 'userBetting:index' %}">All Games<span class="sr-only">(current)</span></a>
+              <a class="nav-link{% ifequal query 'None' %} active {% endifequal %}" href="{% url 'community:communityPage' community_id=group.community_id %}">All Games<span class="sr-only">(current)</span></a>
             </li>
             <li class="sidenav-divider">
             </li>
             <li class="nav-item">
-              <a class="nav-link {% ifequal query 'SC2'%} active {%  endifequal %}" href="{% url 'userBetting:index' %}?q=SC2">Starcraft 2</a>
+              <a class="nav-link {% ifequal query 'SC2'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=group.community_id %}?q=SC2">Starcraft 2</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% ifequal query 'CSGO'%} active {%  endifequal %}" href="{% url 'userBetting:index' %}?q=CSGO">CS:GO</a>
+              <a class="nav-link {% ifequal query 'CSGO'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=group.community_id %}?q=CSGO">CS:GO</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% ifequal query 'Dota'%} active {%  endifequal %}" href="{% url 'userBetting:index' %}?q=Dota">Dota 2</a>
+              <a class="nav-link {% ifequal query 'Dota'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=group.community_id %}?q=Dota">Dota 2</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% ifequal query 'LOL'%} active {%  endifequal %}" href="{% url 'userBetting:index' %}?q=LOL">Lol</a>
+              <a class="nav-link {% ifequal query 'LOL'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=group.community_id %}?q=LOL">Lol</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% ifequal query 'Overwatch'%} active {%  endifequal %}" href="{% url 'userBetting:index' %}?q=Overwatch">Overwatch</a>
+              <a class="nav-link {% ifequal query 'Overwatch'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=group.community_id %}?q=Overwatch">Overwatch</a>
+            </li>
+          {% endif %}
+            <li class="nav-item">
+                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="nav-link dropdown-toggle">Pages</a>
+                <ul class="collapse list-unstyled" id="pageSubmenu">
+                    <li>
+                        <a class="nav-link" href="#">Page 1</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="#">Page 2</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="#">Page 3</a>
+                    </li>
+                </ul>
             </li>
             <li class="sidenav-divider">
             </li>
@@ -43,7 +59,7 @@
                    data-target="#myModal"
                    data-toggle="tooltip"
                    data-placement="right"
-                   title="Click for further Breakdown">£{{ user.profile.bank }}
+                   title="Click for further Breakdown">£
                 </a>
             </p>
         </li>

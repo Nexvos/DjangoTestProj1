@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from colorfield.fields import ColorField
 from django.utils import timezone
 from DjangoTestProj1.settings import MEDIA_URL
+from community.models import CommunityGroup
+from django.db.models.signals import post_save, pre_save, m2m_changed
+from django.dispatch import receiver
 
 availiable_games = (
     ("csgo","cs:go"),
@@ -60,6 +63,8 @@ class Tournament(models.Model):
     api_series_id = models.IntegerField(unique=False, null=True, blank=True)
     api_modified_at = models.DateTimeField('api_modified_at',null=True, blank=True)
     tournament_name = models.CharField(max_length=120, null=False, blank=False)
+
+    groups = models.ManyToManyField(CommunityGroup,related_name='group_tournaments')
 
     videogame = models.ForeignKey(
         Videogame,
@@ -185,11 +190,33 @@ class Game(models.Model):
     def __str__(self):
         return str(self.team_a) + " vs " + str(self.team_b) + " - " + str(self.game_date)
 
+class BettingGameGroup(models.Model):
+    betting_group_id = models.AutoField(primary_key=True)
+    game = models.ForeignKey(Game, related_name='game_bgg', on_delete=models.PROTECT)
+    group = models.ForeignKey(CommunityGroup, related_name='group_bgg', on_delete=models.PROTECT)
+
+    active = "active"
+    deactivated = "deactivated"
+
+    availiable_statuses = ((active, "Active"),
+                           (deactivated, "Deactivated"))
+
+    status = models.CharField(max_length=30,
+                              choices=availiable_statuses,
+                              default=active,
+                              null=False,
+                              blank=False)
+    class Meta:
+        unique_together = ('game', 'group')
+
+    def __str__(self):
+        return str(self.group.name) + "'s betting group for : " + str(self.game.__str__())
+
 
 class Bet(models.Model):
     bet_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, related_name='user_bets', on_delete=models.PROTECT)
-    game = models.ForeignKey(Game, related_name='game_bets', on_delete=models.PROTECT)
+    betting_group = models.ForeignKey(BettingGameGroup, related_name='game_bets', on_delete=models.PROTECT)
     chosen_team = models.ForeignKey(Team, on_delete=models.PROTECT)
     amount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
 
@@ -220,3 +247,43 @@ class Bet(models.Model):
 
     def __str__(self):
         return str(self.game) + " | " + str(self.user) + " | £" + str(self.amount) +" bet for: " + str(self.chosen_team)
+
+
+@receiver(post_save, sender=Game)
+def add_new_betting_groups(sender, instance, created, **kwargs):
+    if created:
+        groups = instance.tournament.groups.all()
+        for group in groups:
+            BettingGameGroup.objects.create(game=instance, group=group)
+
+
+pre_save_groups = []
+
+@receiver(post_save, sender=Tournament)
+def add_existing_betting_groups(sender, instance, **kwargs):
+    global pre_save_groups
+    pre_save_groups = Tournament.objects.get(tournament_id=instance.tournament_id).groups.all()
+
+@receiver(m2m_changed, sender=Tournament.groups.through)
+def add_existing_betting_groups2(sender, instance, **kwargs):
+    local_pre_save_groups = pre_save_groups
+    # print(Tournament.objects.get(tournament_id=instance.tournament_id).groups.all())
+    post_save_groups = instance.groups.all()
+
+    if pre_save_groups != post_save_groups:
+        print(local_pre_save_groups)
+        print(post_save_groups)
+        for group in post_save_groups:
+            if group not in pre_save_groups:
+                for game in instance.games.all():
+                    betting_group, created_bgg = BettingGameGroup.objects.get_or_create(game=game, group=group)
+                    if created_bgg == False:
+                        betting_group.status = betting_group.active
+                        betting_group.save()
+
+        for group in pre_save_groups:
+            if group not in post_save_groups:
+                for betting_group in group.group_bgg.all():
+                    #change to deactivate + hide?
+                    betting_group.status = betting_group.deactivated
+                    betting_group.save()

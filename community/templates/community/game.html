@@ -12,11 +12,25 @@
 .navbar-static-top {
 	margin-bottom: 0px !important;
 }
+
+{#.bet-path {#}
+{#    mask: url(#mask);#}
+{#}#}
 .jumbotron {
-	background: linear-gradient(to right, rgb({{ game.team_a.colour_rgb_whitened }}),#e7e7e7,#e7e7e7,#e7e7e7,rgb({{ game.team_b.colour_rgb_whitened }}));
-	color: #000000;
-    width: 100%;
-    border-bottom: 1px solid #909090;
+	background: linear-gradient(
+            to right,
+            rgb({{ game_bgg.game.team_a.colour_rgb_whitened }}),
+            #e7e7e7,
+            #e7e7e7,
+            #e7e7e7,
+            rgb({{ game_bgg.game.team_b.colour_rgb_whitened }})
+    ) !important;
+	color: #000000 !important;
+    width: 100% !important;
+    border-bottom: 1px solid #909090 !important;
+}
+main {
+    background-color: white !important;
 }
 svg {
 
@@ -63,16 +77,22 @@ img {
     <div class="container fullWidth">
     <div class="row fullWidth">
         <div class="col-md-3 col-sm-2 d-none d-sm-block">
-            <img src="{{ game.team_a.picture.url }}">
+            <img src="{{ game_bgg.game.team_a.picture.url }}">
             <h3 id="team_a_info" style="font-size: 1.5rem;">50.00%</h3>
         </div>
-        <div class="col-md-6 col-sm-8 col-xs-12">
+        <div class="col-md-6 col-sm-8 col-xs-12" id="chart-widget">
+{#            <div class="rounded" id="chart-overlay-div">#}
+{#                <div class="rounded" id="chart-overlay-div-inner">#}
+{#                    <p>No current bets - Please use the form below to make a bet.</p>#}
+{#                    <button class="btn btn-dark">Click here</button>#}
+{#                </div>#}
+{#            </div>#}
             <div class="widget">
                 <div id="chart" class="chart-container"></div>
             </div>
         </div>
         <div class="col-md-3 col-sm-2 d-none d-sm-block">
-            <img src="{{ game.team_b.picture.url }}">
+            <img src="{{ game_bgg.game.team_b.picture.url }}">
             <h3 id="team_b_info" style="font-size: 1.5rem;">50.00%</h3>
         </div>
 </div>
@@ -93,7 +113,7 @@ img {
 
 // Create bet data for this game
 var dataset = [
-        {% for bet in game.game_bets.all %}
+        {% for bet in game_bgg.game_bets.all %}
             {
             name:'{{ bet.user }}',
             amount:{{ bet.amount }},
@@ -126,11 +146,11 @@ var teamdata_b_percent = 0;
 
 // calculate the percentage and amount bet on each team
 for (i in grouped){
-   if (grouped[i].team=='{{ game.team_a }}') {
+   if (grouped[i].team=='{{ game_bgg.game.team_a }}') {
        teamdata_a_amount += grouped[i].amount;
        teamdata_a_percent += grouped[i].percent;
    }
-   else if(grouped[i].team=='{{ game.team_b }}'){
+   else if(grouped[i].team=='{{ game_bgg.game.team_b }}'){
        teamdata_b_amount += grouped[i].amount;
        teamdata_b_percent += grouped[i].percent;
    }
@@ -139,52 +159,36 @@ for (i in grouped){
 
 // construct data for the team pie (outside ring)
 var team_dataset = [{
-            name:'{{ game.team_a }}',
+            name:'{{ game_bgg.game.team_a }}',
             amount:teamdata_a_amount,
             percent: teamdata_a_percent,
-            team:'{{ game.team_a }}',
-            colour:'#{{ game.team_a.colour }}'
+            team:'{{ game_bgg.game.team_a }}',
+            colour:'#{{ game_bgg.game.team_a.colour }}'
             },
             {
-            name:'{{ game.team_b }}',
+            name:'{{ game_bgg.game.team_b }}',
             amount:teamdata_b_amount,
             percent: teamdata_b_percent,
-            team:'{{ game.team_b }}',
-            colour:'#{{ game.team_b.colour }}'
+            team:'{{ game_bgg.game.team_b }}',
+            colour:'#{{ game_bgg.game.team_b.colour }}'
             }];
 
 // Create some placeholder data in the event no one bets
 if (grouped === undefined || grouped.length == 0){
-    grouped.push(
-        {
-            name:'{{ user }}',
-            amount:0,
-            percent: 50,
-            team:'{{ game.team_a }}',
-            colour:'#D3D3D3'
-            },
-            {
-            name:'{{ user }}',
-            amount:0,
-            percent: 50,
-            team:'{{ game.team_b }}',
-            colour:'#D3D3D3'
-            }
-            );
     team_dataset= [
         {
-            name:'{{ game.team_b }}',
+            name:'{{ game_bgg.game.team_b }}',
             amount:0,
             percent: 50,
-            team:'{{ game.team_b }}',
-            colour:'#{{ game.team_b.colour }}'
+            team:'{{ game_bgg.game.team_b }}',
+            colour:'#{{ game_bgg.game.team_b.colour }}'
             },
             {
-            name:'{{ game.team_a }}',
+            name:'{{ game_bgg.game.team_a }}',
             amount:0,
             percent: 50,
-            team:'{{ game.team_a }}',
-            colour:'#{{ game.team_a.colour }}'
+            team:'{{ game_bgg.game.team_a }}',
+            colour:'#{{ game_bgg.game.team_a.colour }}'
             }
             ];
 };
@@ -206,7 +210,7 @@ InitialPie(grouped,totalamount,team_dataset);
 <script>
 
 {# Websocket stuff#}
-var gameId = {{ game.game_id }};
+var gameId = {{ game_bgg.betting_group_id }};
 
 function onOpen (evt) {
     console.log("connected to websocket!");
@@ -235,11 +239,11 @@ function onMessage (evt) {
     var teamdata_b_percent = 0;
 
     for (i in message_grouped){
-       if (message_grouped[i].team=='{{ game.team_a }}') {
+       if (message_grouped[i].team=='{{ game_bgg.game.team_a }}') {
            teamdata_a_amount += message_grouped[i].amount;
            teamdata_a_percent += message_grouped[i].percent;
        }
-       else if(message_grouped[i].team=='{{ game.team_b }}'){
+       else if(message_grouped[i].team=='{{ game_bgg.game.team_b }}'){
            teamdata_b_amount += message_grouped[i].amount;
            teamdata_b_percent += message_grouped[i].percent;
        }
@@ -247,18 +251,18 @@ function onMessage (evt) {
 
     var message_team_dataset = [
                 {
-                name:'{{ game.team_b }}',
+                name:'{{ game_bgg.game.team_b }}',
                 amount:teamdata_b_amount,
                 percent: teamdata_b_percent,
-                team:'{{ game.team_b }}',
-                colour:'#{{ game.team_b.colour }}'
+                team:'{{ game_bgg.game.team_b }}',
+                colour:'#{{ game_bgg.game.team_b.colour }}'
                 },
                 {
-                name:'{{ game.team_a }}',
+                name:'{{ game_bgg.game.team_a }}',
                 amount:teamdata_a_amount,
                 percent: teamdata_a_percent,
-                team:'{{ game.team_a }}',
-                colour:'#{{ game.team_a.colour }}'
+                team:'{{ game_bgg.game.team_a }}',
+                colour:'#{{ game_bgg.game.team_a.colour }}'
                 }];
 
 
@@ -293,27 +297,27 @@ dataSocket.onclose = function (evt) { onClose(evt) };
 
 {% block content %}
 
-    <h1>{{ game.team_a }} vs {{ game.team_b }} <small>{{ game.game_date|date:"d-F Y H:i" }}</small></h1>
+    <h1>{{ game_bgg.game.team_a }} vs {{ game_bgg.game.team_b }} <small>{{ game_bgg.game.game_date|date:"d-F Y H:i" }}</small></h1>
 
 <div class="row" style="margin-top: 20px">
         <div class="col-md-6">
             <form>
                 <div class="form-group">
                     <label for="teamSelect">Team</label>
-                    <select class="form-control" id="teamSelect" style="width: 95%">
-                      <option>{{ game.team_a }}</option>
-                      <option>{{ game.team_b }}</option>
+                    <select class="form-control" id="teamSelect" style="width: 95%" required>
+                      <option>{{ game_bgg.game.team_a }}</option>
+                      <option>{{ game_bgg.game.team_b }}</option>
                     </select>
                 </div>
                 <div class="input-group mb-3" style="width: 95%">
                   <div class="input-group-prepend">
                     <span class="input-group-text">£</span>
                   </div>
-                  <input type="number" class="form-control" aria-label="Amount (to the nearest pound)" min="0.01" step="0.01" max="2500" placeholder="5.00" id="amountBid">
+                  <input type="number" class="form-control" aria-label="Amount (to the nearest pound)" min="0.01" step="0.01" max="10000" placeholder="5.00" id="amountBid" required>
                   <div class="input-group-append">
                   </div>
                 </div>
-                <button type="button" id="update">Submit</button>
+                <button type="submit" id="update">Submit</button>
             </form>
         </div>
         <div class="col-md-6">

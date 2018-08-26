@@ -3,6 +3,7 @@
 {% url 'userBetting:index' as betting_index %}
 {% url 'profiles:profile-list' as profile_list %}
 {% url 'profiles:profile' as profile %}
+{% url 'community:communityHome' as community %}
 
    <!-- Static navbar -->
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" style="z-index:1; padding-bottom: 0.25rem; padding-top: 0.25rem; ">
@@ -13,13 +14,16 @@
                     <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
                   </li>
                   <li class="nav-item {% ifequal  request.get_full_path betting_index %} active {% endifequal %}">
-                    <a class="nav-link" href="{% url 'userBetting:index' %}">Betting Page</a>
+                    <a class="nav-link" href="{% url 'userBetting:index' %}">Public Betting Page</a>
                   </li>
                   <li class="nav-item {% ifequal  request.get_full_path profile %} active {% endifequal %}">
                     <a class="nav-link" href="{% url 'profiles:profile' %}">Dashboard</a>
                   </li>
                   <li class="nav-item {% ifequal  request.get_full_path profile_list %} active {% endifequal %}">
                     <a class="nav-link" href="{% url 'profiles:profile-list' %}">Users</a>
+                  </li>
+                  <li class="nav-item {% ifequal  request.get_full_path community %} active {% endifequal %}">
+                    <a class="nav-link" href="{% url 'community:communityHome' %}">Community</a>
                   </li>
             </ul>
             <ul class="navbar-nav ml-auto" style="margin-right: 20px;">

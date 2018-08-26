@@ -4,18 +4,26 @@
 
 {% block head_title %}Profile | {{ block.super }}{% endblock %}
 
+{% block extracss %}
+    {% load static %}
 
+    <link rel="stylesheet" type="text/css" href="{% static 'userbetting/style.css' %}" />
+    <meta charset="UTF-8">
+{% endblock %}
 
 {% block jumbotron %}
-<div class="jumbotron jumbotron-fluid" id="jumbo" style="padding-bottom: 30px;">
+<div class="jumbotron jumbotron-fluid" id="jumbo">
     <div class="container home-wide">
         <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">
             <div class="col-md-12">
-                <p class='display-4 text-align-left' style="margin-bottom: 0;">Tournament List </p>
+                <p class='display-3 text-align-left' style="margin-bottom: 0;">{{ group.name }} Tournament List </p>
             </div>
         </div>
     </div>
 </div>
+
+{% include 'community/community_nav.html' %}
+
 {% endblock %}
 
 {% block content %}
@@ -34,12 +42,12 @@
 
             <a
                     class="list-group-item list-group-item-action list-group-item-dark"
-                    href="{% url 'userBetting:tournament_view' tournament.tournament_id %}"
+                    href="{% url 'community:tournament_view' community_id=group.community_id tournament_id=tournament.tournament_id %}"
                     style="background-color:#{{ tournament.videogame.colour }};"
                     onmouseover="this.style.backgroundColor='#{{ tournament.videogame.alt_colour }}'"
                     onmouseout="this.style.backgroundColor='#{{ tournament.videogame.colour }}'"
             >
-                <img src="{{ tournament.videogame.picture.url }}" style="height: 100%"> &nbsp; {{ tournament.tournament_name }}
+                <img src="{{ tournament.videogame.picture.url }}" style="width: 20px;"> &nbsp; {{ tournament.tournament_name }}
             </a>
 
           {% endfor %}
@@ -61,12 +69,12 @@
 
             <a
                     class="list-group-item list-group-item-action list-group-item-dark"
-                    href="{% url 'userBetting:tournament_view' tournament.tournament_id %}"
+                    href="{% url 'community:tournament_view' community_id=group.community_id tournament_id=tournament.tournament_id %}"
                     style="background-color:#{{ tournament.videogame.colour }};"
                     onmouseover="this.style.backgroundColor='#{{ tournament.videogame.alt_colour }}'"
                     onmouseout="this.style.backgroundColor='#{{ tournament.videogame.colour }}'"
             >
-                <img src="{{ tournament.videogame.picture.url }}" style="height: 100%"> &nbsp; {{ tournament.tournament_name }}
+                <img src="{{ tournament.videogame.picture.url }}" style="width: 20px;"> &nbsp; {{ tournament.tournament_name }}
             </a>
 
           {% endfor %}
@@ -85,12 +93,12 @@
 
             <a
                     class="list-group-item list-group-item-action list-group-item-dark"
-                    href="{% url 'userBetting:tournament_view' tournament.tournament_id %}"
+                    href="{% url 'community:tournament_view' community_id=group.community_id tournament_id=tournament.tournament_id %}"
                     style="background-color:#{{ tournament.videogame.colour }};"
                     onmouseover="this.style.backgroundColor='#{{ tournament.videogame.alt_colour }}'"
                     onmouseout="this.style.backgroundColor='#{{ tournament.videogame.colour }}'"
             >
-                <img src="{{ tournament.videogame.picture.url }}" style="height: 100%"> &nbsp; {{ tournament.tournament_name }}
+                <img src="{{ tournament.videogame.picture.url }}" style="width: 20px;"> &nbsp; {{ tournament.tournament_name }}
             </a>
 
           {% endfor %}

@@ -6,6 +6,7 @@ import scipy
 import scipy.misc
 import scipy.cluster
 from userbetting.models import Game, Tournament, Team, Stage, Videogame
+from community.models import CommunityGroup
 from urllib import request as urllib_request
 from django.core.files import File
 import os
@@ -434,6 +435,12 @@ def Add_new_tournament(game_id):
                 "videogame": videogame
             }
         )
+        #if the tournament is new (created), then add the PUBLIC community group association
+        if created:
+            community_group = CommunityGroup.objects.get(name__exact="PUBLIC")
+            t1.groups.add(community_group)
+            t1.save()
+
         for stage in tournament["tournaments"]:
 
             s1 , stage_created = Stage.objects.get_or_create(

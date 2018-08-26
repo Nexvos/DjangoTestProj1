@@ -15,50 +15,55 @@
 {% endblock %}
 
 {% block jumbotron %}
-{#    {% ifnotequal query 'None' %}#}
-{#<div class="jumbotron" style="padding-bottom: 30px;">#}
-{#    <div class="container home-wide">#}
-{#        <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">#}
-{#            <div class="col-md-12">#}
-{#                <p class='display-4 text-align-left' style="margin-bottom: 0;">{{ query }} </p>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#</div>#}
-{#    {% endifnotequal %}#}
 
-{#<script src="http://d3js.org/d3.v3.min.js"></script>#}
+<div class="jumbotron">
+    <div class="container home-wide">
+        <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">
+            <div class="col-md-12">
+                <p class='display-3 text-align-left' style="margin-bottom: 0;">{% ifequal group.community_id 1 %}Public Bets {% else %}{{ group.name }}{% endifequal %} </p>
+            </div>
+        </div>
+    </div>
+</div>
 
+{% include 'community/community_nav.html' %}
 
 {% endblock %}
 
 {% block content %}
+
     <div class="betting-title rounded row" style=" margin-right: 0px; margin-left: 0px;">
         <div class="col-sm-8">
             <h4 class="display-4" style="font-size: 2.3rem;font-weight: 500; margin-bottom: .25rem;">Tournaments </h4>
         </div>
         <div class="col-sm-4">
-            <a
-                    class="btn btn-dark float-md-right"
-                    style="font-size: 0.75rem; position: relative; top: 50%; transform: translateY(-50%); border: 1px white solid;"
-                    href="{% url "userBetting:tournament_list_view" %}?{% if query %}q={{ query }}&{% endif %}activesection=completed"
-            >
-                <strong>View completed tournaments</strong>
-            </a>
+{#            <a#}
+{#                    class="btn btn-dark float-md-right"#}
+{#                    style="font-size: 0.75rem; position: relative; top: 50%; transform: translateY(-50%); border: 1px white solid;"#}
+{#                    href="{% url 'community:tournament_list_view' community_id=group.community_id %}?{% if query %}q={{ query }}&{% endif %}activesection=completed"#}
+{#            >#}
+{#                <strong>View completed tournaments</strong>#}
+{#            </a>#}
         </div>
     </div>
     <div class="row" style="margin-right: 0px; margin-left: 0px;">
         <div class="col-sm-4" style="padding-top: 15px; padding-bottom: 15px; padding-left: 0px;">
         <div class="card" style="border: 1px solid #b5b5b5;height: 100%;">
-          <h5 class="card-header"> <span data-toggle="tooltip" data-placement="right" title="Only 4 nearest tournaments displayed">Upcoming*</span></h5>
+          <h5 class="card-header" style="background-color: rgba(0, 0, 0, 0.02);"> <span data-toggle="tooltip" data-placement="right" title="Only 4 nearest tournaments displayed">Upcoming*</span></h5>
           <div class="card-body" {% if upcoming_tournaments %}style="padding: 0;" {% endif %}>
             {% if upcoming_tournaments %}
             <div class="list-group">
                 {% for tournament in upcoming_tournaments %}
 
-                        <a class="list-group-item list-group-item-action list-group-item-dark" href="{% url 'userBetting:tournament_view' tournament.tournament_id %}">
-                            {{ tournament.tournament_name }}
-                        </a>
+                    <a
+                            class="list-group-item list-group-item-action list-group-item-dark"
+                            href="{% url 'community:tournament_view' community_id=group.community_id tournament_id=tournament.tournament_id %}"
+                            style="background-color:#{{ tournament.videogame.colour }}; border-radius: 0px;"
+                            onmouseover="this.style.backgroundColor='#{{ tournament.videogame.alt_colour }}'"
+                            onmouseout="this.style.backgroundColor='#{{ tournament.videogame.colour }}'"
+                    >
+                        <img src="{{ tournament.videogame.picture.url }}" style="width: 20px;"> &nbsp; {{ tournament.tournament_name|make_list|slice:':40'|join:'' }}
+                    </a>
 
                 {% endfor %}
             </div>
@@ -66,8 +71,15 @@
                 <p class="card-text"> No upcoming tournaments. </p>
             {% endif %}
           </div>
-        <div class="card-footer" style="padding: 0; background-color: #e9ecef;">
-          <a class= "btn btn-light btn-lg btn-block card-footer-btn" style="background-color: #e9ecef;" href="{% url 'userBetting:tournament_list_view' %}?{% if query %}q={{ query }}&{% endif %}activesection=upcoming">View all Upcoming Tournaments</a>
+        <div class="card-footer" style="padding: 0; background-color: rgba(0, 0, 0, 0.02);">
+          <a
+                  class= "btn btn-light btn-lg btn-block card-footer-btn"
+                  style="background-color: rgba(0, 0, 0, 0.02);"
+                  onMouseOver="this.style.border='1px grey solid';"
+                  onMouseOut="this.style.border='1px rgba(0, 0, 0, 0.02) solid';"
+                  href="{% url 'community:tournament_list_view' community_id=group.community_id %}?{% if query %}q={{ query }}&{% endif %}activesection=upcoming">
+              View all Upcoming Tournaments
+          </a>
         </div>
         </div>
         </div>
@@ -76,17 +88,17 @@
 
 
         <div class="card" style="border: 1px solid #b5b5b5;height: 100%;">
-            <h5 class="card-header"><span data-toggle="tooltip" data-placement="right" title="Only 8 tournaments displayed">Ongoing*</span></h5>
-          <div class="card-body" {% if ongoing_tournaments %}style="padding: 0;" {% endif %}>
-            {% if ongoing_tournaments %}
+            <h5 class="card-header" style="background-color: rgba(0, 0, 0, 0.02);"><span data-toggle="tooltip" data-placement="right" title="Only 8 tournaments displayed">Ongoing*</span></h5>
+          <div class="card-body" {% if ongoing_tournaments1 %}style="padding: 0;" {% endif %}>
+            {% if ongoing_tournaments1 %}
             <div class="row" style="margin-right: 0px; margin-left: 0px;">
                 <div class="col-sm-6" style="padding: 0px;">
                     <div class="list-group">
-                        {% for tournament in ongoing_tournaments|slice:":4" %}
+                        {% for tournament in ongoing_tournaments1 %}
                             <a
                                     class="list-group-item list-group-item-action list-group-item-dark"
-                                    href="{% url 'userBetting:tournament_view' tournament.tournament_id %}"
-                                    style="background-color:#{{ tournament.videogame.colour }};"
+                                    href="{% url 'community:tournament_view' community_id=group.community_id tournament_id=tournament.tournament_id %}"
+                                    style="background-color:#{{ tournament.videogame.colour }}; border-radius: 0px;"
                                     onmouseover="this.style.backgroundColor='#{{ tournament.videogame.alt_colour }}'"
                                     onmouseout="this.style.backgroundColor='#{{ tournament.videogame.colour }}'"
                             >
@@ -98,12 +110,12 @@
                 </div>
                 <div class="col-sm-6" style="padding: 0px;">
                     <div class="list-group">
-                        {% for tournament in ongoing_tournaments|slice:"4:" %}
+                        {% for tournament in ongoing_tournaments2 %}
 
                             <a
                                     class="list-group-item list-group-item-action list-group-item-dark"
-                                    href="{% url 'userBetting:tournament_view' tournament.tournament_id %}"
-                                    style="background-color:#{{ tournament.videogame.colour }};"
+                                    href="{% url 'community:tournament_view' community_id=group.community_id tournament_id=tournament.tournament_id %}"
+                                    style="background-color:#{{ tournament.videogame.colour }}; border-radius: 0px;"
                                     onmouseover="this.style.backgroundColor='#{{ tournament.videogame.alt_colour }}'"
                                     onmouseout="this.style.backgroundColor='#{{ tournament.videogame.colour }}'"
                             >
@@ -118,8 +130,15 @@
                 <p class="card-text"> No ongoing tournaments. </p>
             {% endif %}
           </div>
-        <div class="card-footer" style="padding: 0; background-color: #e9ecef;">
-          <a class= "btn btn-light btn-lg btn-block card-footer-btn" style="background-color: #e9ecef;" href="{% url 'userBetting:tournament_list_view' %}?{% if query %}q={{ query }}&{% endif %}activesection=ongoing">View all Ongoing Tournaments</a>
+        <div class="card-footer" style="padding: 0; background-color: rgba(0, 0, 0, 0.02);">
+          <a
+                  class= "btn btn-light btn-lg btn-block card-footer-btn"
+                  style="background-color: rgba(0, 0, 0, 0.02);"
+                  onMouseOver="this.style.border='1px grey solid';"
+                  onMouseOut="this.style.border='1px rgba(0, 0, 0, 0.02) solid';"
+                  href="{% url 'community:tournament_list_view' community_id=group.community_id %}?{% if query %}q={{ query }}&{% endif %}activesection=ongoing">
+              View all Ongoing Tournaments
+          </a>
         </div>
         </div>
 
@@ -153,13 +172,13 @@
             <h4 class="display-4" style="font-size: 2.3rem;font-weight: 500; margin-bottom: .25rem;">Games </h4>
         </div>
         <div class="col-sm-4">
-            <a
-                    class="btn btn-dark float-md-right"
-                    style="font-size: 0.75rem; position: relative; top: 50%; transform: translateY(-50%); border: 1px white solid;"
-                    href="{% url "userBetting:completed_games_list_view" %}{% if query %}?q={{ query }}{% endif %}"
-            >
-                <strong>View completed games</strong>
-            </a>
+{#            <a#}
+{#                    class="btn btn-dark float-md-right"#}
+{#                    style="font-size: 0.75rem; position: relative; top: 50%; transform: translateY(-50%); border: 1px white solid;"#}
+{#                    href="{% url "community:completed_games_list_view" community_id=group.community_id %}{% if query %}?q={{ query }}{% endif %}"#}
+{#            >#}
+{#                <strong>View completed games</strong>#}
+{#            </a>#}
         </div>
     </div>
     <br>
@@ -244,9 +263,7 @@ $(function () {
 {
     margin: 0 0 11px;
 }
-main {
-    background-color: #e9ecef;
-}
+
 </style>
 
 {% endblock %}
