@@ -3,47 +3,43 @@
 
  <nav class="col-sm-1 col-md-1 d-none d-sm-block bg-faded sidebar">
           <ul class="nav nav-pills flex-column">
-          {% if group %}
-            <li class="nav-item">
-              <a class="nav-link{% ifequal query 'None' %} active {% endifequal %}" href="{% url 'community:communityPage' community_id=group.community_id %}">All Games<span class="sr-only">(current)</span></a>
-            </li>
+          {% if user.is_authenticated %}
             <li class="sidenav-divider">
             </li>
             <li class="nav-item">
-              <a class="nav-link {% ifequal query 'SC2'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=group.community_id %}?q=SC2">Starcraft 2</a>
+                <p class="nav-link" style="margin-bottom: 0;">Groups</p>
             </li>
-            <li class="nav-item">
-              <a class="nav-link {% ifequal query 'CSGO'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=group.community_id %}?q=CSGO">CS:GO</a>
+            <li class="sidenav-divider">
             </li>
+
+
+          {% for navgroup in request.user.profile.groups.all %}
             <li class="nav-item">
-              <a class="nav-link {% ifequal query 'Dota'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=group.community_id %}?q=Dota">Dota 2</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% ifequal query 'LOL'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=group.community_id %}?q=LOL">Lol</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% ifequal query 'Overwatch'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=group.community_id %}?q=Overwatch">Overwatch</a>
-            </li>
-          {% endif %}
-            <li class="nav-item">
-                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="nav-link dropdown-toggle">Pages</a>
-                <ul class="collapse list-unstyled" id="pageSubmenu">
-                    <li>
-                        <a class="nav-link" href="#">Page 1</a>
+                <a href="#pageSubmenu{{ forloop.counter }}" data-toggle="collapse" aria-expanded="false" class="nav-link dropdown-toggle">{{ navgroup.name }}</a>
+                <ul style="background-color: grey;" class="collapse list-unstyled" id="pageSubmenu{{ forloop.counter }}">
+                    <li class="nav-item">
+                      <a class="nav-link{% ifequal query 'None' %} active {% endifequal %}" href="{% url 'community:communityPage' community_id=navgroup.community_id %}">All Games<span class="sr-only">(current)</span></a>
                     </li>
-                    <li>
-                        <a class="nav-link" href="#">Page 2</a>
+                    <li class="nav-item">
+                      <a class="nav-link {% ifequal query 'SC2'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=navgroup.community_id %}?q=SC2">Starcraft 2</a>
                     </li>
-                    <li>
-                        <a class="nav-link" href="#">Page 3</a>
+                    <li class="nav-item">
+                      <a class="nav-link {% ifequal query 'CSGO'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=navgroup.community_id %}?q=CSGO">CS:GO</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link {% ifequal query 'Dota'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=navgroup.community_id %}?q=Dota">Dota 2</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link {% ifequal query 'LOL'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=navgroup.community_id %}?q=LOL">Lol</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link {% ifequal query 'Overwatch'%} active {%  endifequal %}" href="{% url 'community:communityPage' community_id=navgroup.community_id %}?q=Overwatch">Overwatch</a>
                     </li>
                 </ul>
             </li>
-            <li class="sidenav-divider">
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">About</a>
-            </li>
+          {% endfor %}
+          {% endif %}
+
           </ul>
      {% if request.user.is_authenticated %}
      <ul class="nav nav-pills flex-column mt-2 mt-md-0" style="position: absolute; bottom: 0; width: 100%; text-align: center;">

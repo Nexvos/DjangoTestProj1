@@ -8,22 +8,18 @@
 
 {% block extracss %}
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'userbetting/style.css' %}" />
-    <meta charset="UTF-8">
+    <style>
+        main {
+        background-color: #e9ecef;
+    }
+    .home-wide {
+        margin-top: 2rem;
+    }
+    body { height:100vh; }
+    </style>
 {% endblock %}
 
 {% block jumbotron %}
-    <div class="jumbotron" style="background-color: white; padding-bottom: 25px; padding-top: 20px; border-bottom: 1px #b5b5b5 solid; border-radius: 0;">
-        <div class="container home-wide">
-            <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">
-                <div class="col-md-12">
-                    <p class='display-3 text-align-left' style="margin-bottom: 0;">{{ group.name }} Invite Page</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {% include 'community/community_nav.html' %}
 
 {% endblock %}
 
@@ -36,9 +32,9 @@
 
     <div class="col-md-9">
         <ul class="list-group" id="myUL">
-        {% for profile in model %}
-            <li class="list-group-item list-group-item-action"><a href="{% url 'profiles:profile-public' profile.username %}" class="">
-                {{ profile.username }}</a>
+        {% for group in model %}
+            <li class="list-group-item list-group-item-action"><a href="#" class="">
+                {{ group.name }}</a>
             <div style="float: right;">
                 <button class="btn btn-primary" href="{% url 'userBetting:index' %}" style="font-size: 80%">Invite</button>
             </div>
@@ -65,5 +61,5 @@ function searchFunction() {
     }
 }
 </script>
-{% endblock %}
 
+{% endblock %}

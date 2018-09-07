@@ -27,8 +27,8 @@
 {% block content %}
 <div class="row" style="margin-bottom: 1.5rem;">
     <div class="col-md-4">
-        <button class='btn btn-primary' style="height: 12rem;width: 100%; margin-bottom: 5px;"><p style="font-size: 3rem;white-space: normal;margin-bottom: 0;">Search for Groups<p></p></button>
-        <button class='btn btn-outline-info' style="width: 100%;">Create Group</button>
+        <a class='btn btn-primary' href="{% url 'community:communitySearch' %}" style="height: 12rem;width: 100%; margin-bottom: 5px;"><p style="font-size: 3rem;white-space: normal;margin-bottom: 0;">Search for Groups<p></p></a>
+        <a class='btn btn-outline-info' href="{% url 'community:communityCreate' %}" style="width: 100%;">Create Group</a>
     </div>
     <div class="col-md-8">
          <div class="card" style="border: 1px solid #b5b5b5;height: 100%;">

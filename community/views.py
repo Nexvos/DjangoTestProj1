@@ -24,6 +24,27 @@ def communityHome(request):
     }
     return render(request, 'community/community_home.html', context)
 
+def communitySearch(request):
+    groups = CommunityGroup.objects.all()
+    print("ys")
+    context = {
+        "model": groups,
+    }
+    return render(request, 'community/search_community.html', context)
+
+def communityCreate(request):
+    user = get_object_or_404(User, username=request.user)
+    wallets = user.profile.wallets_profile.all()
+    admin_wallets = wallets.filter(Q(admin=True))
+    invites = user.profile.community_invites_profile.all()
+    print("ys")
+    print(admin_wallets)
+    context = {
+        "wallets": wallets,
+        "admin_wallets": admin_wallets,
+        "invites": invites
+    }
+    return render(request, 'community/create_community.html', context)
 
 def communityPage(request, community_id):
     user = get_object_or_404(User, username=request.user)
@@ -91,7 +112,37 @@ def invitePage(request, community_id):
     }
     return render(request, 'community/community_invite.html', context)
 
-def adminPage(request, community_id):
+def adminPageOptions(request, community_id):
+    user = get_object_or_404(User, username=request.user)
+    group = get_object_or_404(CommunityGroup, community_id=community_id)
+    if group not in user.profile.groups.all():
+        raise Http404('Page not found')
+
+    context = {
+        "group": group
+    }
+    return render(request, 'community/community_admin.html', context)
+def adminPageTournaments(request, community_id):
+    user = get_object_or_404(User, username=request.user)
+    group = get_object_or_404(CommunityGroup, community_id=community_id)
+    if group not in user.profile.groups.all():
+        raise Http404('Page not found')
+
+    context = {
+        "group": group
+    }
+    return render(request, 'community/community_admin.html', context)
+def adminPageAddGames(request, community_id):
+    user = get_object_or_404(User, username=request.user)
+    group = get_object_or_404(CommunityGroup, community_id=community_id)
+    if group not in user.profile.groups.all():
+        raise Http404('Page not found')
+
+    context = {
+        "group": group
+    }
+    return render(request, 'community/community_admin.html', context)
+def adminPageEditGames(request, community_id):
     user = get_object_or_404(User, username=request.user)
     group = get_object_or_404(CommunityGroup, community_id=community_id)
     if group not in user.profile.groups.all():
@@ -102,6 +153,16 @@ def adminPage(request, community_id):
     }
     return render(request, 'community/community_admin.html', context)
 
+def adminPageMembers(request, community_id):
+    user = get_object_or_404(User, username=request.user)
+    group = get_object_or_404(CommunityGroup, community_id=community_id)
+    if group not in user.profile.groups.all():
+        raise Http404('Page not found')
+
+    context = {
+        "group": group
+    }
+    return render(request, 'community/community_admin.html', context)
 
 def tournament_view(request, tournament_id, community_id=1):
     group = get_object_or_404(CommunityGroup, community_id=community_id)

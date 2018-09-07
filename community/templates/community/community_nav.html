@@ -1,10 +1,11 @@
 {% load static %}
 {% url 'community:communityPage' community_id=group.community_id as community_page %}
 {% url 'userBetting:index' as public_page %}
-{% url 'community:tournament_list_view' community_id=group.community_id as tournament_page%}
+{% url 'community:tournament_list_view' community_id=group.community_id as tournament_page %}
 {% url 'community:adminPage' community_id=group.community_id as admin_page %}
 {% url 'community:invitePage' community_id=group.community_id as invite_page %}
 {% url 'community:completed_games_list_view' community_id=group.community_id as completed_games %}
+
 <style>
     .nav-link.active_community {
         background-color: #e9ecef !important;
@@ -13,11 +14,11 @@
     }
 </style>
 <ul class="nav nav-tabs" style="background-color: #f6f6f6; border-bottom: 1px #b5b5b5 solid;">
-  <li class="nav-item" style="margin-left: 0.2rem;">
+  <li class="nav-item" style="margin-left: 0rem;">
     <a
             class="nav-link{% ifequal request.path community_page %} active_community{% endifequal %} {% ifequal request.path public_page %} active_community{% endifequal %}"
             href="{{ community_page }}">
-        <i style="color: gray" class="fas fa-home"></i> &nbsp{{ group.name }} Home
+        <i class="fas fa-home"></i> &nbsp{{ group.name }} Home
     </a>
   </li>
   <li class="nav-item dropdown">
@@ -34,7 +35,7 @@
     <a class="nav-link{% ifequal  request.get_full_path invite_page %} active_community{% endifequal %}" href="{{ invite_page }}">Invite</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link{% ifequal  request.get_full_path admin_page %} active_community{% endifequal %}" href="{{ admin_page }}">Admin</a>
+    <a class="nav-link{% if admin_page in request.path %} active_community{% endif %}" href="{{ admin_page }}">Admin</a>
   </li>
   <li class="nav-item">
     <a class="nav-link{% ifequal  request.path completed_games %} active_community{% endifequal %}" href="{{ completed_games }}">Completed Games</a>

@@ -22,7 +22,7 @@
                   <li class="nav-item {% ifequal  request.get_full_path profile_list %} active {% endifequal %}">
                     <a class="nav-link" href="{% url 'profiles:profile-list' %}">Users</a>
                   </li>
-                  <li class="nav-item {% ifequal  request.get_full_path community %} active {% endifequal %}">
+                  <li class="nav-item {% if  community in request.path %} active {% endif %}">
                     <a class="nav-link" href="{% url 'community:communityHome' %}">Community</a>
                   </li>
             </ul>
