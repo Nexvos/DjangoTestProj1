@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from userbetting.views import index
+from userbetting.views import index, lazy_load_games
 
 app_name = 'community'
 urlpatterns = [
@@ -9,6 +9,7 @@ urlpatterns = [
     path('search/', views.communitySearch, name='communitySearch'),
     path('create/', views.communityCreate, name='communityCreate'),
     path('<int:community_id>/', index, name='communityPage'),
+    # path('<int:community_id>/lazy_load/', lazy_load_games, name='communityLazyLoad'),
     path('<int:community_id>/invite/', views.invitePage, name='invitePage'),
     path('<int:community_id>/admin/', views.adminPageOptions, name='adminPage'),
     path('<int:community_id>/admin/games/edit', views.adminPageEditGames, name='adminPageEditGames'),

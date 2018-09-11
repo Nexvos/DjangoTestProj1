@@ -94,6 +94,7 @@ def index(request, community_id=1):
 def lazy_load_games(request, community_id=1):
   page = request.POST.get('page')[:12]
   print(page)
+  group = get_object_or_404(CommunityGroup, community_id=community_id)
   latest_game_list = BettingGameGroup.objects.filter(Q(group__community_id=community_id), Q(status=BettingGameGroup.active)) # get just 5 posts
   latest_game_list = latest_game_list.filter(
       ~Q(game__status=Game.finished),
@@ -113,17 +114,23 @@ def lazy_load_games(request, community_id=1):
       games = paginator.page(2)
   except EmptyPage:
       games = paginator.page(paginator.num_pages)
+  print("test")
   # build a html posts list with the paginated posts
   games_list_html = loader.render_to_string(
     'userbetting/games_list.html',
-    {'latest_game_list': latest_game_list}
+    {
+        'latest_game_list': latest_game_list,
+        'group': group,
+     }
   )
+  print("test2")
   additional_html = "<script>var loop_number=" + str(int(page) * 12 - 12) + "</script>"
   # package output data and return it as a JSON object
   output_data = {
     'games_list_html': additional_html + games_list_html,
     'has_next': games.has_next()
   }
+  print("test")
   print(output_data)
   return JsonResponse(output_data)
 
