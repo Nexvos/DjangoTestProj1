@@ -13,15 +13,7 @@
 {% endblock %}
 
 {% block jumbotron %}
-    <div class="jumbotron" style="background-color: white; padding-bottom: 25px; padding-top: 20px; border-bottom: 1px #b5b5b5 solid; border-radius: 0;">
-        <div class="container home-wide">
-            <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">
-                <div class="col-md-12">
-                    <p class='display-3 text-align-left' style="margin-bottom: 0;">{{ group.name }} Admin Page</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include 'community/community_jumbotron.html' with title_pager="Admin Page" %}
 
     {% include 'community/community_nav.html' %}
 
@@ -34,6 +26,7 @@
     {% url 'community:adminPageEditGames' community_id=group.community_id as admin_edit_game_page %}
     {% url 'community:adminPageTournaments' community_id=group.community_id as admin_tournament_page %}
     {% url 'community:adminPageMembers' community_id=group.community_id as admin_member_page %}
+
 <div class="row" style="padding-top: 1rem;">
     <div class="col-sm-2">
         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">

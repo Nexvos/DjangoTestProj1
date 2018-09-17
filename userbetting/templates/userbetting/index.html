@@ -16,15 +16,7 @@
 
 {% block jumbotron %}
 
-<div class="jumbotron">
-    <div class="container home-wide">
-        <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">
-            <div class="col-md-12">
-                <p class='display-3 text-align-left' style="margin-bottom: 0;">{% ifequal group.community_id 1 %}Public Bets {% else %}{{ group.name }}{% endifequal %} </p>
-            </div>
-        </div>
-    </div>
-</div>
+{% include 'community/community_jumbotron.html' with title_pager="" %}
 
 {% include 'community/community_nav.html' %}
 

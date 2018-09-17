@@ -12,15 +12,7 @@
 {% endblock %}
 
 {% block jumbotron %}
-<div class="jumbotron jumbotron-fluid" id="jumbo" style="padding-bottom: 30px;">
-    <div class="container home-wide">
-        <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">
-            <div class="col-md-12">
-                <p class='display-4 text-align-left' style="margin-bottom: 0;">{{ group.name }} Completed Games </p>
-            </div>
-        </div>
-    </div>
-</div>
+{% include 'community/community_jumbotron.html' with title_pager="Completed Games" %}
 
     {% include 'community/community_nav.html' %}
 

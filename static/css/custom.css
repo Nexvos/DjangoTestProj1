@@ -175,3 +175,7 @@ label{
     color: white;
     border: 1px black solid;
 }
+.active-grey {
+    background-color: #6c757d;
+    color: white;
+}

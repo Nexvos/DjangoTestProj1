@@ -13,15 +13,7 @@
 {% endblock %}
 
 {% block jumbotron %}
-    <div class="jumbotron" style="background-color: white; padding-bottom: 25px; padding-top: 20px; border-bottom: 1px #b5b5b5 solid; border-radius: 0;">
-        <div class="container home-wide">
-            <div class="row" style="border-bottom: 2px solid #c3c3c3; margin-bottom: 15px;">
-                <div class="col-md-12">
-                    <p class='display-3 text-align-left' style="margin-bottom: 0;">{{ group.name }} Invite Page</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include 'community/community_jumbotron.html' with title_pager="Invite Page" %}
 
     {% include 'community/community_nav.html' %}
 
@@ -29,6 +21,7 @@
 
 
 {% block content %}
+<form action="{% url 'community:invitePage' community_id=group.community_id %}" method="post">{% csrf_token %}
 <div class="row">
     <div class="col-md-3">
         <input class="form-control" type="text" onkeyup="searchFunction()" placeholder="Search" aria-label="Search" id="nameSearch">
@@ -40,14 +33,14 @@
             <li class="list-group-item list-group-item-action"><a href="{% url 'profiles:profile-public' profile.username %}" class="">
                 {{ profile.username }}</a>
             <div style="float: right;">
-                <button class="btn btn-primary" href="{% url 'userBetting:index' %}" style="font-size: 80%">Invite</button>
+                <button name="profile_id" type="submit" value="{{ profile.id }}" class="btn btn-primary" href="{% url 'userBetting:index' %}" style="font-size: 80%">Invite</button>
             </div>
             </li>
         {% endfor %}
         </ul>
     </div>
 </div>
-
+</form>
 <script>
 function searchFunction() {
     var input, filter, ul, li, a, i;

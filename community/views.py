@@ -1,11 +1,17 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404
-from userbetting.models import Game, BettingGameGroup, Tournament
+from userbetting.models import Game, BettingGameGroup, Tournament, Videogame
 from .models import CommunityGroup
+from profiles.models import Wallet, Profile, CommunityInvite
 from django.db.models import Q
 from django.http import Http404
 from datetime import datetime
 from datetime import timedelta
+from .forms import CreateGroupForm, UpdateGroupOptionsForm, InviteMembersForm
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
+from django.views import View
+from django.contrib import messages
 
 User = get_user_model()
 
@@ -33,18 +39,104 @@ def communitySearch(request):
     return render(request, 'community/search_community.html', context)
 
 def communityCreate(request):
-    user = get_object_or_404(User, username=request.user)
-    wallets = user.profile.wallets_profile.all()
-    admin_wallets = wallets.filter(Q(admin=True))
-    invites = user.profile.community_invites_profile.all()
-    print("ys")
-    print(admin_wallets)
+    form = CreateGroupForm()
+    if request.method == "POST":
+
+        print(request.POST)
+        community_name = request.POST['community_name']
+        if 'invite_only' in request.POST:
+            invite_only = request.POST['invite_only']
+        else:
+            invite_only = False
+        if 'members_can_invite' in request.POST:
+            members_can_invite = request.POST['members_can_invite']
+        else:
+            members_can_invite = False
+        header_background_colour = request.POST['header_background_colour']
+        header_text_colour = request.POST['header_text_colour']
+        tournaments = ""
+        if 'tournaments' in request.POST:
+            for t in request.POST.getlist("tournaments"):
+                tournaments += (t + ",")
+        daily_payout = request.POST["daily_payout"]
+
+        form_dict = {
+            "community_name": community_name,
+            "invite_only": invite_only,
+            "members_can_invite": members_can_invite,
+            "header_background_colour": header_background_colour,
+            "header_text_colour": header_text_colour,
+            "tournaments": tournaments,
+            "daily_payout": daily_payout
+        }
+        form = CreateGroupForm(form_dict)
+        # check whether it's valid:
+        if form.is_valid():
+            print("valid")
+            user = get_object_or_404(User, username=request.user)
+            community_name = form.cleaned_data['community_name']
+            invite_only = form.cleaned_data['invite_only']
+            members_can_invite = form.cleaned_data['members_can_invite']
+            header_background_colour = form.cleaned_data['header_background_colour']
+            header_text_colour = form.cleaned_data['header_text_colour']
+            tournaments = form.cleaned_data['tournaments']
+            daily_payout = form.cleaned_data['daily_payout']
+
+            new_group = CommunityGroup()
+            new_group.name = community_name
+            new_group.private = invite_only
+            new_group.members_can_inv = members_can_invite
+            new_group.header_background_colour = header_background_colour
+            new_group.header_text_colour = header_text_colour
+            new_group.daily_payout = daily_payout
+            new_group.save()
+
+            user_wallet = Wallet()
+            user_wallet.profile = user.profile
+            user_wallet.group = new_group
+            user_wallet.withdrawable_bank = daily_payout
+            user_wallet.founder = True
+            user_wallet.admin = True
+            user_wallet.save()
+
+            tournament_list = tournaments.split(",")
+            tournament_list_int = []
+            tournament_objs = []
+            print(tournament_list)
+            for t in tournament_list:
+                try:
+                    t = int(t)
+                    tournament_list_int.append(t)
+                except:
+                    pass
+            print(tournament_list_int)
+            for t in tournament_list_int:
+                if isinstance(t, int):
+                    tournament_to_add = get_object_or_404(Tournament, tournament_id=t)
+                    tournament_to_add.groups.add(new_group)
+
+            return redirect('community:communityPage', community_id=new_group.community_id)
+
+    public = get_object_or_404(CommunityGroup, name="PUBLIC")
+    tournaments = public.group_tournaments.all()
+    videogame_list = []
+    videogame_dict = []
+    for tournament in tournaments:
+        if tournament.videogame not in videogame_list:
+            videogame_list.append(tournament.videogame)
+            videogame_dict.append({"videogame": tournament.videogame, "tournaments": []})
+        for dict in videogame_dict:
+            if dict["videogame"] == tournament.videogame:
+                dict["tournaments"].append(tournament)
+
+    print(videogame_dict)
+
     context = {
-        "wallets": wallets,
-        "admin_wallets": admin_wallets,
-        "invites": invites
+        "videogame_dict": videogame_dict,
+        "form": form
     }
     return render(request, 'community/create_community.html', context)
+
 
 def communityPage(request, community_id):
     user = get_object_or_404(User, username=request.user)
@@ -98,6 +190,8 @@ def tournament_list_view(request, community_id=1):
     return render(request, "community/tournament_list_view.html", context)
 
 def invitePage(request, community_id):
+    form = InviteMembersForm(request.POST or None)
+
     user = get_object_or_404(User, username=request.user)
     group = get_object_or_404(CommunityGroup, community_id=community_id)
 
@@ -106,20 +200,67 @@ def invitePage(request, community_id):
     if group not in user.profile.groups.all():
         raise Http404('Page not found')
 
+    if request.method == "POST":
+        if form.is_valid():
+            invitee_id = form.cleaned_data['profile_id']
+
+            invitee_profile = get_object_or_404(Profile, id=invitee_id)
+            invite, invite_created = CommunityInvite.objects.get_or_create(
+                profile=invitee_profile,
+                group=group,
+                defaults={
+                    "status": CommunityInvite.sent,
+                    "inviter": user.profile
+                }
+            )
+            if invite_created:
+                messages.success(request, 'Form submission successful')
+            else:
+                if invite.status == invite.sent:
+                    form.add_error(None, "This user already has a pending invite")
+                elif invite.status == invite.accepted:
+                    form.add_error(None, "This user is already a member")
+                elif invite.status == invite.declined_blocked:
+                    form.add_error(None, "This user is blocking invites from this group")
+                else:
+                    invite.status = invite.sent
+                    invite.inviter = user.profile
+                    invite.save()
+                    messages.success(request, 'Form submission successful')
+
+
     context = {
         "group": group,
-        "model": model
+        "model": model,
+        "form": form
     }
     return render(request, 'community/community_invite.html', context)
 
 def adminPageOptions(request, community_id):
+    form = UpdateGroupOptionsForm(request.POST or None)
     user = get_object_or_404(User, username=request.user)
     group = get_object_or_404(CommunityGroup, community_id=community_id)
     if group not in user.profile.groups.all():
         raise Http404('Page not found')
 
+    if request.method == "POST":
+        if form.is_valid():
+            invite_only = form.cleaned_data['invite_only']
+            members_can_invite = form.cleaned_data['members_can_invite']
+            header_background_colour = form.cleaned_data['header_background_colour']
+            header_text_colour = form.cleaned_data['header_text_colour']
+            daily_payout = form.cleaned_data['daily_payout']
+
+            group.private = invite_only
+            group.members_can_inv = members_can_invite
+            group.header_background_colour = header_background_colour
+            group.header_text_colour = header_text_colour
+            group.daily_payout = daily_payout
+            group.save()
+
     context = {
-        "group": group
+        "group": group,
+        "form": form
     }
     return render(request, 'community/community_admin.html', context)
 def adminPageTournaments(request, community_id):

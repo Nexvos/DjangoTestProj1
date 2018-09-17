@@ -421,7 +421,7 @@ def Add_new_tournament(game_id):
             videogame, vcreated = Videogame.objects.get_or_create(
                 videogame_name=(tournament["series_videogame"]).lower(),
                 defaults={
-                    "api_videogame_id": game_id
+                    "api_videogame_id": game_id,
                 }
             )
 
