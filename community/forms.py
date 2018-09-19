@@ -34,3 +34,6 @@ class InviteMembersForm(forms.Form):
 class AcceptInviteForm(forms.Form):
     accept_invite = forms.BooleanField(required=False)
     wallet_id = forms.IntegerField(required=True)
+
+class JoinGroupForm(forms.Form):
+    group_id = forms.IntegerField(required=True)

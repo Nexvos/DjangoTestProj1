@@ -49,6 +49,7 @@ class Wallet(models.Model):
     active = "active"
     deactivated = "deactivated"
     sent = "sent"
+    requesting_invite = "requesting_invite"
     declined = "declined"
     declined_blocked = "declined_blocked"
 
@@ -57,7 +58,8 @@ class Wallet(models.Model):
         (declined, "Deactivated"),
         (declined_blocked, "Declined and Blocked"),
         (active, "Active"),
-        (deactivated, "Deactivated")
+        (deactivated, "Deactivated"),
+        (requesting_invite, "Requesting invite")
     )
 
     status = models.CharField(max_length=30,

@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.http import Http404
 from datetime import datetime
 from datetime import timedelta
-from .forms import CreateGroupForm, UpdateGroupOptionsForm, InviteMembersForm, AcceptInviteForm
+from .forms import CreateGroupForm, UpdateGroupOptionsForm, InviteMembersForm, AcceptInviteForm, JoinGroupForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.views import View
@@ -44,31 +44,7 @@ def communityHome(request):
                     form.add_error(None, "This invite is not active.")
             else:
                 form.add_error(None, "You are not the owner of this invite.")
-            # invitee_id = form.cleaned_data['profile_id']
-            #
-            # invitee_profile = get_object_or_404(Profile, id=invitee_id)
-            # invite, invite_created = Wallet.objects.get_or_create(
-            #     profile=invitee_profile,
-            #     group=group,
-            #     defaults={
-            #         "status": Wallet.sent,
-            #         "inviter": user.profile
-            #     }
-            # )
-            # if invite_created:
-            #     messages.success(request, 'Form submission successful')
-            # else:
-            #     if invite.status == invite.sent:
-            #         form.add_error(None, "This user already has a pending invite")
-            #     elif invite.status == invite.active:
-            #         form.add_error(None, "This user is already a member")
-            #     elif invite.status == invite.declined_blocked:
-            #         form.add_error(None, "This user is blocking invites from this group")
-            #     else:
-            #         invite.status = invite.sent
-            #         invite.inviter = user.profile
-            #         invite.save()
-            #         messages.success(request, 'Form submission successful')
+
         else:
             print("form not valid")
     context = {
@@ -80,10 +56,56 @@ def communityHome(request):
     return render(request, 'community/community_home.html', context)
 
 def communitySearch(request):
-    groups = CommunityGroup.objects.all()
+    user = get_object_or_404(User, username=request.user)
+
+    user_groups = user.profile.groups.all()
+
+    groups = CommunityGroup.objects.all().exclude(community_id__in=user_groups).order_by('private')
+    wallets = user.profile.wallets_profile.all()
     print("ys")
+    form = JoinGroupForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            group_id = form.cleaned_data['group_id']
+
+            group = get_object_or_404(CommunityGroup, community_id=group_id)
+
+
+            wallet, wallet_created = Wallet.objects.get_or_create(
+                profile=user.profile,
+                group=group,
+                defaults={
+                    "status": Wallet.deactivated
+                }
+            )
+            if wallet_created:
+                if group.private:
+                    # ask for invite
+                    wallet.status = wallet.requesting_invite
+                    messages.success(request, 'Invite requested')
+                else:
+                    wallet.status = wallet.active
+                    messages.success(request, 'Successfully joined group.')
+            else:
+                if wallet.status == wallet.active:
+                    form.add_error(None, "You are already a member of this group.")
+                else:
+                    if group.private:
+                        # ask for invite
+                        if wallet.status == wallet.requesting_invite:
+                            form.add_error(None, "You have already requested an invite from this group.")
+                        else:
+                            wallet.status = wallet.requesting_invite
+                            messages.success(request, 'Invite requested')
+                    else:
+                        wallet.status = wallet.active
+                        messages.success(request, 'Successfully joined group.')
+            wallet.save()
+    print(user_groups)
     context = {
         "model": groups,
+        "form": form,
+        "wallets": wallets
     }
     return render(request, 'community/search_community.html', context)
 
@@ -294,6 +316,9 @@ def invitePage(request, community_id):
                     model_array.append({"user": user_obj, "invite_status": "invite"})
         if invite_count == 0:
             model_array.append({"user": user_obj, "invite_status": "invite"})
+    SORT_ORDER = {"member": 0, "sent": 1, "invite": 2, "blocked": 3}
+
+    model_array = sorted(model_array, key=lambda k: SORT_ORDER[k['invite_status']])
 
     context = {
         "group": group,

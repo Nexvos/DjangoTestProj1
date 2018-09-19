@@ -31,16 +31,74 @@
     </div>
 
     <div class="col-md-9">
-        <ul class="list-group" id="myUL">
-        {% for group in model %}
-            <li class="list-group-item list-group-item-action"><a href="#" class="">
-                {{ group.name }}</a>
-            <div style="float: right;">
-                <button class="btn btn-primary" href="{% url 'userBetting:index' %}" style="font-size: 80%">Invite</button>
-            </div>
-            </li>
-        {% endfor %}
-        </ul>
+        <form action="{% url 'community:communitySearch' %}" method="post">{% csrf_token %}
+            <ul class="list-group" id="myUL">
+            {% for wallet in wallets %}
+                {% ifequal wallet.status wallet.active %}
+                <li class="list-group-item list-group-item-action" style="background-color: #bae5ff;">
+                    <a href="#" class="" style="color: black;">
+                        {% ifequal wallet.group.private True %}<i class="fas fa-lock"></i>{% endifequal %} {{ wallet.group.name }}
+                    </a>
+                    <div style="float: right;">
+                        <button class="btn btn-dark" name="group_id" type="submit" value="{{ wallet.group.community_id }}" style="font-size: 80%">Already a Member</button>
+                    </div>
+                </li>
+                {% else %}
+                    {% ifequal wallet.status wallet.requesting_invite %}
+                        <li class="list-group-item list-group-item-action" style="background-color: #bdffc5;">
+                            <a href="#" class="" style="color: black;">
+                                {% ifequal wallet.group.private True %}<i class="fas fa-lock"></i>{% endifequal %} {{ wallet.group.name }}
+                            </a>
+                            <div style="float: right;">
+                                <button class="btn btn-dark" name="group_id" type="submit" value="{{ wallet.group.community_id }}" style="font-size: 80%">Invite Pending</button>
+                            </div>
+                        </li>
+                    {% else%}
+                        {% ifequal wallet.group.private True %}
+                            <li class="list-group-item list-group-item-action" style="background-color: #f6f6f6;">
+                                <a href="#" class="">
+                                    <i class="fas fa-lock"></i> {{ wallet.group.name }}
+                                </a>
+                                <div style="float: right;">
+                                    <button class="btn btn-info" name="group_id" type="submit" value="{{ wallet.group.community_id }}" style="font-size: 80%">Ask for Invite</button>
+                                </div>
+                            </li>
+                        {% else %}
+                            <li class="list-group-item list-group-item-action">
+                                <a href="#" class="">
+                                    {{ wallet.group.name }}
+                                </a>
+                                <div style="float: right;">
+                                    <button class="btn btn-primary" name="group_id" type="submit" value="{{ wallet.group.community_id }}" style="font-size: 80%">Join</button>
+                                </div>
+                            </li>
+                        {% endifequal %}
+                    {% endifequal %}
+                {% endifequal %}
+            {% endfor %}
+            {% for group in model %}
+                {% ifequal group.private True %}
+                    <li class="list-group-item list-group-item-action" style="background-color: #f6f6f6;">
+                        <a href="#" class="">
+                            <i class="fas fa-lock"></i> {{ group.name }}
+                        </a>
+                        <div style="float: right;">
+                            <button class="btn btn-info" name="group_id" type="submit" value="{{ group.community_id }}" style="font-size: 80%">Ask for Invite</button>
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="list-group-item list-group-item-action">
+                        <a href="#" class="">
+                            {{ group.name }}
+                        </a>
+                        <div style="float: right;">
+                            <button class="btn btn-primary" name="group_id" type="submit" value="{{ group.community_id }}" style="font-size: 80%">Join</button>
+                        </div>
+                    </li>
+                {% endifequal %}
+            {% endfor %}
+            </ul>
+        </form>
     </div>
 </div>
 
