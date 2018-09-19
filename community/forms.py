@@ -30,3 +30,7 @@ class UpdateGroupOptionsForm(forms.Form):
 
 class InviteMembersForm(forms.Form):
     profile_id = forms.IntegerField(required=True)
+
+class AcceptInviteForm(forms.Form):
+    accept_invite = forms.BooleanField(required=False)
+    wallet_id = forms.IntegerField(required=True)

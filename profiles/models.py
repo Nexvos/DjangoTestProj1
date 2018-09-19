@@ -26,12 +26,7 @@ class Profile(models.Model):
         through_fields=('profile', 'group'),
         related_name="profiles_groups"
     )
-    groups_invited_to = models.ManyToManyField(
-        CommunityGroup,
-        through='CommunityInvite',
-        through_fields=('profile', 'group'),
-        related_name="profiles_invites"
-    )
+
 
     def __str__(self):
         return self.user.username
@@ -47,15 +42,23 @@ class Wallet(models.Model):
     ranking = models.IntegerField(default=0)
     founder = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)
-
+    inviter = models.ForeignKey(Profile, related_name='community_invites_inviter', blank=True, null=True, on_delete=models.PROTECT)
     created = models.DateTimeField(editable=False)
     modified = models.DateTimeField()
 
     active = "active"
     deactivated = "deactivated"
+    sent = "sent"
+    declined = "declined"
+    declined_blocked = "declined_blocked"
 
-    availiable_statuses = ((active, "Active"),
-                           (deactivated, "Deactivated"))
+    availiable_statuses = (
+        (sent, "Active"),
+        (declined, "Deactivated"),
+        (declined_blocked, "Declined and Blocked"),
+        (active, "Active"),
+        (deactivated, "Deactivated")
+    )
 
     status = models.CharField(max_length=30,
                               choices=availiable_statuses,
@@ -90,42 +93,6 @@ class Wallet(models.Model):
     def __str__(self):
         return str(self.profile.user.username) + "'s Wallet for: " + str(self.group.name)
 
-class CommunityInvite(models.Model):
-    profile = models.ForeignKey(Profile, related_name='community_invites_profile', blank=False, null=False, on_delete=models.PROTECT)
-    group = models.ForeignKey(CommunityGroup, related_name='community_invites_group', blank=False, null=False, on_delete=models.PROTECT)
-    inviter = models.ForeignKey(Profile, related_name='community_invites_inviter', blank=True, null=True, on_delete=models.PROTECT)
-
-    created = models.DateTimeField(editable=False)
-    modified = models.DateTimeField()
-
-    sent = "sent"
-    declined = "declined"
-    declined_blocked = "declined_blocked"
-    accepted = "accepted"
-
-    availiable_statuses = ((sent, "Active"),
-                           (declined, "Deactivated"),
-                           (declined_blocked, "Declined and Blocked"),
-                           (accepted, "Accepted"))
-
-    status = models.CharField(max_length=30,
-                              choices=availiable_statuses,
-                              default=sent,
-                              null=False,
-                              blank=False)
-
-    def save(self, *args, **kwargs):
-        ''' On save, update timestamps '''
-        if not self.id:
-            self.created = timezone.now()
-        self.modified = timezone.now()
-        return super(CommunityInvite, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = ('profile', 'group')
-
-    def __str__(self):
-        return str(self.profile.user.username) + ": invite for: " + str(self.group.name)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

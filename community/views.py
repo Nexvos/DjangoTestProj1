@@ -2,12 +2,12 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render, get_object_or_404
 from userbetting.models import Game, BettingGameGroup, Tournament, Videogame
 from .models import CommunityGroup
-from profiles.models import Wallet, Profile, CommunityInvite
+from profiles.models import Wallet, Profile
 from django.db.models import Q
 from django.http import Http404
 from datetime import datetime
 from datetime import timedelta
-from .forms import CreateGroupForm, UpdateGroupOptionsForm, InviteMembersForm
+from .forms import CreateGroupForm, UpdateGroupOptionsForm, InviteMembersForm, AcceptInviteForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.views import View
@@ -20,13 +20,62 @@ def communityHome(request):
     user = get_object_or_404(User, username=request.user)
     wallets = user.profile.wallets_profile.all()
     admin_wallets = wallets.filter(Q(admin=True))
-    invites = user.profile.community_invites_profile.all()
+    invites = wallets.filter(
+        Q(status=Wallet.sent)
+    )
     print("ys")
     print(admin_wallets)
+    form = AcceptInviteForm(request.POST or None)
+    if request.method == "POST":
+        print(request.POST)
+        if form.is_valid():
+            print(request.POST)
+            wallet_id = form.cleaned_data['wallet_id']
+            accept_invite = form.cleaned_data['accept_invite']
+            wallet = get_object_or_404(Wallet,id=wallet_id)
+            if wallet.profile == user.profile:
+                if wallet.status == wallet.sent:
+                    if accept_invite:
+                        wallet.status = wallet.active
+                    else:
+                        wallet.status = wallet.declined
+                    wallet.save()
+                else:
+                    form.add_error(None, "This invite is not active.")
+            else:
+                form.add_error(None, "You are not the owner of this invite.")
+            # invitee_id = form.cleaned_data['profile_id']
+            #
+            # invitee_profile = get_object_or_404(Profile, id=invitee_id)
+            # invite, invite_created = Wallet.objects.get_or_create(
+            #     profile=invitee_profile,
+            #     group=group,
+            #     defaults={
+            #         "status": Wallet.sent,
+            #         "inviter": user.profile
+            #     }
+            # )
+            # if invite_created:
+            #     messages.success(request, 'Form submission successful')
+            # else:
+            #     if invite.status == invite.sent:
+            #         form.add_error(None, "This user already has a pending invite")
+            #     elif invite.status == invite.active:
+            #         form.add_error(None, "This user is already a member")
+            #     elif invite.status == invite.declined_blocked:
+            #         form.add_error(None, "This user is blocking invites from this group")
+            #     else:
+            #         invite.status = invite.sent
+            #         invite.inviter = user.profile
+            #         invite.save()
+            #         messages.success(request, 'Form submission successful')
+        else:
+            print("form not valid")
     context = {
         "wallets": wallets,
         "admin_wallets": admin_wallets,
-        "invites": invites
+        "invites": invites,
+        "form": form
     }
     return render(request, 'community/community_home.html', context)
 
@@ -195,7 +244,10 @@ def invitePage(request, community_id):
     user = get_object_or_404(User, username=request.user)
     group = get_object_or_404(CommunityGroup, community_id=community_id)
 
+    model_array = []
     model = User.objects.all()
+
+    group_invites = group.wallets_group.all()
 
     if group not in user.profile.groups.all():
         raise Http404('Page not found')
@@ -205,11 +257,11 @@ def invitePage(request, community_id):
             invitee_id = form.cleaned_data['profile_id']
 
             invitee_profile = get_object_or_404(Profile, id=invitee_id)
-            invite, invite_created = CommunityInvite.objects.get_or_create(
+            invite, invite_created = Wallet.objects.get_or_create(
                 profile=invitee_profile,
                 group=group,
                 defaults={
-                    "status": CommunityInvite.sent,
+                    "status": Wallet.sent,
                     "inviter": user.profile
                 }
             )
@@ -218,7 +270,7 @@ def invitePage(request, community_id):
             else:
                 if invite.status == invite.sent:
                     form.add_error(None, "This user already has a pending invite")
-                elif invite.status == invite.accepted:
+                elif invite.status == invite.active:
                     form.add_error(None, "This user is already a member")
                 elif invite.status == invite.declined_blocked:
                     form.add_error(None, "This user is blocking invites from this group")
@@ -227,12 +279,27 @@ def invitePage(request, community_id):
                     invite.inviter = user.profile
                     invite.save()
                     messages.success(request, 'Form submission successful')
-
+    for user_obj in model:
+        invite_count = 0
+        for user_invite in user_obj.profile.wallets_profile.all():
+            if user_invite in group_invites:
+                invite_count += 1
+                if user_invite.status == user_invite.sent:
+                    model_array.append({"user": user_obj, "invite_status": "sent"})
+                elif user_invite.status == user_invite.active:
+                    model_array.append({"user": user_obj, "invite_status": "member"})
+                elif user_invite.status == user_invite.declined_blocked:
+                    model_array.append({"user": user_obj, "invite_status": "blocked"})
+                else:
+                    model_array.append({"user": user_obj, "invite_status": "invite"})
+        if invite_count == 0:
+            model_array.append({"user": user_obj, "invite_status": "invite"})
 
     context = {
         "group": group,
         "model": model,
-        "form": form
+        "form": form,
+        "model_array": model_array
     }
     return render(request, 'community/community_invite.html', context)
 

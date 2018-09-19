@@ -179,3 +179,7 @@ label{
     background-color: #6c757d;
     color: white;
 }
+
+.alert {
+    margin-bottom: 0 !important;
+}

@@ -87,24 +87,43 @@
                               <td style="width: 30%;">{{ item.inviter }}</td>
                               <td style="width: 16%;">
                                   <div style="float: right;">
-                                      <button class="btn" style="font-size: 82%;
-                                        background-color: #4CAF50;
-                                        color: white;
-                                        font-weight: 500;
-                                        padding: initial;
-                                        width: 25px;
-                                        height: 25px;">
-                                        <i class="fas fa-check"></i>
-                                      </button>
-                                      <button class="btn" style="font-size: 82%;
-                                        background-color: #f44336;
-                                        color: white;
-                                        font-weight: 500;
-                                        padding: initial;
-                                        width: 25px;
-                                        height: 25px;">
-                                        <i class="fas fa-times"></i>
-                                      </button>
+                                      <form action="{% url 'community:communityHome' %}" method="post">{% csrf_token %}
+                                          <input type="hidden" value={{ item.id }} name="wallet_id">
+
+                                          <button
+                                                  class="btn"
+                                                  name="accept_invite"
+                                                  value=True
+                                                  style="
+                                                    font-size: 82%;
+                                                    background-color: #4CAF50;
+                                                    color: white;
+                                                    font-weight: 500;
+                                                    padding: initial;
+                                                    width: 25px;
+                                                    height: 25px;"
+                                                  type="submit"
+                                          >
+                                            <i class="fas fa-check"></i>
+                                          </button>
+                                          <button
+                                                  class="btn"
+                                                  name="accept_invite"
+                                                  value=False
+                                                  style="
+                                                    font-size: 82%;
+                                                    background-color: #f44336;
+                                                    color: white;
+                                                    font-weight: 500;
+                                                    padding: initial;
+                                                    width: 25px;
+                                                    height: 25px;"
+                                                  type="submit"
+
+                                          >
+                                            <i class="fas fa-times"></i>
+                                          </button>
+                                      </form>
                                   </div>
                               </td>
                             </tr>
