@@ -61,7 +61,7 @@ def communitySearch(request):
     user_groups = user.profile.groups.all()
 
     groups = CommunityGroup.objects.all().exclude(community_id__in=user_groups).order_by('private')
-    wallets = user.profile.wallets_profile.all()
+    wallets = user.profile.wallets_profile.all().order_by('group__private')
     print("ys")
     form = JoinGroupForm(request.POST or None)
     if request.method == "POST":
@@ -208,23 +208,14 @@ def communityCreate(request):
     }
     return render(request, 'community/create_community.html', context)
 
-
-def communityPage(request, community_id):
+def tournament_list_view(request, community_id=1):
     user = get_object_or_404(User, username=request.user)
     group = get_object_or_404(CommunityGroup, community_id=community_id)
-    if group not in user.profile.groups.all():
-        raise Http404('Page not found')
 
-
-
-    context = {
-
-        "group": group
-    }
-    return render(request, 'community/community_page.html', context)
-
-def tournament_list_view(request, community_id=1):
-    group = get_object_or_404(CommunityGroup, community_id=community_id)
+    try:
+        wallet = Wallet.objects.get(group=group, profile=user.profile, status=Wallet.active)
+    except Wallet.DoesNotExist:
+        raise Http404('You are not a member of this group.')
     tournament_list = group.group_tournaments.all()
     activesection = request.GET.get('activesection')
     query = request.GET.get('q')
@@ -261,18 +252,19 @@ def tournament_list_view(request, community_id=1):
     return render(request, "community/tournament_list_view.html", context)
 
 def invitePage(request, community_id):
-    form = InviteMembersForm(request.POST or None)
-
     user = get_object_or_404(User, username=request.user)
     group = get_object_or_404(CommunityGroup, community_id=community_id)
 
+    try:
+        wallet = Wallet.objects.get(group=group, profile=user.profile, status=Wallet.active)
+    except Wallet.DoesNotExist:
+        raise Http404('You are not a member of this group.')
+
+    form = InviteMembersForm(request.POST or None)
     model_array = []
     model = User.objects.all()
 
     group_invites = group.wallets_group.all()
-
-    if group not in user.profile.groups.all():
-        raise Http404('Page not found')
 
     if request.method == "POST":
         if form.is_valid():
@@ -332,8 +324,11 @@ def adminPageOptions(request, community_id):
     form = UpdateGroupOptionsForm(request.POST or None)
     user = get_object_or_404(User, username=request.user)
     group = get_object_or_404(CommunityGroup, community_id=community_id)
-    if group not in user.profile.groups.all():
-        raise Http404('Page not found')
+
+    try:
+        wallet = Wallet.objects.get(group=group, profile=user.profile, status=Wallet.active)
+    except Wallet.DoesNotExist:
+        raise Http404('You are not a member of this group.')
 
     if request.method == "POST":
         if form.is_valid():
@@ -358,8 +353,11 @@ def adminPageOptions(request, community_id):
 def adminPageTournaments(request, community_id):
     user = get_object_or_404(User, username=request.user)
     group = get_object_or_404(CommunityGroup, community_id=community_id)
-    if group not in user.profile.groups.all():
-        raise Http404('Page not found')
+
+    try:
+        wallet = Wallet.objects.get(group=group, profile=user.profile, status=Wallet.active)
+    except Wallet.DoesNotExist:
+        raise Http404('You are not a member of this group.')
 
     context = {
         "group": group
@@ -368,8 +366,11 @@ def adminPageTournaments(request, community_id):
 def adminPageAddGames(request, community_id):
     user = get_object_or_404(User, username=request.user)
     group = get_object_or_404(CommunityGroup, community_id=community_id)
-    if group not in user.profile.groups.all():
-        raise Http404('Page not found')
+
+    try:
+        wallet = Wallet.objects.get(group=group, profile=user.profile, status=Wallet.active)
+    except Wallet.DoesNotExist:
+        raise Http404('You are not a member of this group.')
 
     context = {
         "group": group
@@ -378,8 +379,11 @@ def adminPageAddGames(request, community_id):
 def adminPageEditGames(request, community_id):
     user = get_object_or_404(User, username=request.user)
     group = get_object_or_404(CommunityGroup, community_id=community_id)
-    if group not in user.profile.groups.all():
-        raise Http404('Page not found')
+
+    try:
+        wallet = Wallet.objects.get(group=group, profile=user.profile, status=Wallet.active)
+    except Wallet.DoesNotExist:
+        raise Http404('You are not a member of this group.')
 
     context = {
         "group": group
@@ -389,8 +393,11 @@ def adminPageEditGames(request, community_id):
 def adminPageMembers(request, community_id):
     user = get_object_or_404(User, username=request.user)
     group = get_object_or_404(CommunityGroup, community_id=community_id)
-    if group not in user.profile.groups.all():
-        raise Http404('Page not found')
+
+    try:
+        wallet = Wallet.objects.get(group=group, profile=user.profile, status=Wallet.active)
+    except Wallet.DoesNotExist:
+        raise Http404('You are not a member of this group.')
 
     context = {
         "group": group
@@ -398,7 +405,14 @@ def adminPageMembers(request, community_id):
     return render(request, 'community/community_admin.html', context)
 
 def tournament_view(request, tournament_id, community_id=1):
+    user = get_object_or_404(User, username=request.user)
     group = get_object_or_404(CommunityGroup, community_id=community_id)
+
+    try:
+        wallet = Wallet.objects.get(group=group, profile=user.profile, status=Wallet.active)
+    except Wallet.DoesNotExist:
+        raise Http404('You are not a member of this group.')
+
     tournament = get_object_or_404(Tournament, tournament_id=tournament_id)
     tournament_games = BettingGameGroup.objects.filter(
         Q(group__community_id=community_id),
@@ -413,7 +427,14 @@ def tournament_view(request, tournament_id, community_id=1):
     return render(request, 'community/tournament_view.html', context)
 
 def completed_game_list_view(request, community_id=1):
+    user = get_object_or_404(User, username=request.user)
     group = get_object_or_404(CommunityGroup, community_id=community_id)
+
+    try:
+        wallet = Wallet.objects.get(group=group, profile=user.profile, status=Wallet.active)
+    except Wallet.DoesNotExist:
+        raise Http404('You are not a member of this group.')
+
     game_list = BettingGameGroup.objects.filter(
         Q(group__community_id=community_id)
     ).order_by('game__game_date')
@@ -442,7 +463,14 @@ def completed_game_list_view(request, community_id=1):
     return render(request, "community/completed_game_list_view.html", context)
 
 def detail(request, betting_group_id, community_id):
-    user = request.user
+    user = get_object_or_404(User, username=request.user)
+    group = get_object_or_404(CommunityGroup, community_id=community_id)
+
+    try:
+        wallet = Wallet.objects.get(group=group, profile=user.profile, status=Wallet.active)
+    except Wallet.DoesNotExist:
+        raise Http404('You are not a member of this group.')
+
     userbets = user.user_bets.all().filter(betting_group__betting_group_id=betting_group_id)
     game_bgg = get_object_or_404(BettingGameGroup, pk=betting_group_id)
     qs = game_bgg.game_bets.all()

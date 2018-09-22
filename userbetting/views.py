@@ -26,9 +26,10 @@ def index(request, community_id=1):
     #Assuming PUBLIC is 1
     user = get_object_or_404(User, username=request.user)
     group = get_object_or_404(CommunityGroup, community_id=community_id)
-
-    if group not in user.profile.groups.all():
-        raise Http404('Page not found')
+    try:
+        wallet = Wallet.objects.get(group=group, profile=user.profile, status=Wallet.active)
+    except Wallet.DoesNotExist:
+        raise Http404('You are not a member of this group.')
 
     latest_game_list = BettingGameGroup.objects.filter(Q(group__community_id=community_id),
                                                        Q(status=BettingGameGroup.active)
